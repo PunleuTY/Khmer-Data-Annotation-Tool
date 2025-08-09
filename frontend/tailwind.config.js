@@ -3,6 +3,12 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  theme: { extend: {} },
+  theme: { 
+    extend: {
+      color: {
+        'custom-blue': '#4db8ff',
+      },
+    } 
+  },
   plugins: [],
 }
