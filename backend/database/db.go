@@ -17,7 +17,7 @@ func ConnectDB() {
 		panic("Failed to connect to database!")
 	}
 	fmt.Println("Database connected successfully!")
-	fmt.Println("Database connected successfully!")
+	fmt.Println("successfully!")
 
 	DB = db
 }
