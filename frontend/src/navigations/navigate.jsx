@@ -16,7 +16,7 @@ const Sidebar = () => {
 
   const navigationItems = [
     { name: "Home", path: "/", icon: FaHome },
-    { name: "Upload", path: "/upload", icon: MdOutlineUploadFile },
+    { name: "Annotate", path: "/upload", icon: MdOutlineUploadFile },
     { name: "Result", path: "/result", icon: FaSortAmountUp },
     { name: "Report", path: "/report", icon: TbReport },
     { name: "About", path: "/about", icon: RiErrorWarningLine },
@@ -40,7 +40,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-4 space-y-3">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -48,7 +48,7 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                `flex items-center space-x-8 px-4 py-3 rounded-lg transition-all duration-200 ${
                   isActive
                     ? "bg-[#DFEFFA] bg-opacity-15 text-[#0099FFB3] shadow-lg"
                     : "text-blue-100 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3]"
