@@ -23,12 +23,12 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-blue-400 text-white flex flex-col h-screen">
+    <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen">
       {/* Logo Section */}
       <div className="p-6 bg-white bg-opacity-20 rounded-br-3xl mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#0099FFB3] rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold">BL</span>
             </div>
           </div>
@@ -50,8 +50,8 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   isActive
-                    ? "bg-white bg-opacity-25 text-blue-500 shadow-lg"
-                    : "text-blue-100 hover:bg-white hover:bg-opacity-10 hover:text-blue-500"
+                    ? "bg-[#DFEFFA] bg-opacity-15 text-[#0099FFB3] shadow-lg"
+                    : "text-blue-100 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3]"
                 }`
               }
             >
@@ -66,7 +66,7 @@ const Sidebar = () => {
       <div className="p-4 border-t border-blue-300 border-opacity-30">
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-3 w-full px-4 py-3 hover:bg-white hover:bg-opacity-10 hover:text-blue-500 rounded-lg"
+          className="flex items-center space-x-3 w-full px-4 py-3 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3] rounded-lg"
         >
           <TbLogout2 className="w-6 h-6" />
           <span className="font-medium">Log Out</span>
