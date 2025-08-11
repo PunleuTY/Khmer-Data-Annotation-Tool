@@ -3,7 +3,7 @@ const Home = () => {
   
   return (
     <div className="min-h-full bg-gray-50 m-6">
-      <h1 className="text-xl font-bold">Home Page</h1>
+      <h1 className="text-3xl font-bold">Home Page</h1>
       <Footer/>
     </div>
   );
