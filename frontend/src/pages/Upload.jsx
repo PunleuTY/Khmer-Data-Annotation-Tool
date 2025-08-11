@@ -1,3 +1,4 @@
+import Footer from '../components/Footer'
 const Upload = () => {
   
   return (
@@ -6,6 +7,7 @@ const Upload = () => {
       <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
         <h4 className="text-sm font-semibold">Tip: Use keyboard shortcuts</h4>
       </div>
+      <Footer/>
     </div>
   );
 };
