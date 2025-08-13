@@ -9,11 +9,8 @@ import { TbLogout2 } from "react-icons/tb";
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logging out...");
-  };
 
+  
   const navigationItems = [
     { name: "Home", path: "/", icon: FaHome },
     { name: "Annotate", path: "/upload", icon: MdOutlineUploadFile },
@@ -62,16 +59,6 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Logout Button */}
-      <div className="p-4 border-t border-blue-300 border-opacity-30">
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-8 w-full px-4 py-3 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3] rounded-lg"
-        >
-          <TbLogout2 className="w-6 h-6" />
-          <span className="font-medium">Log Out</span>
-        </button>
-      </div>
     </div>
   );
 };
