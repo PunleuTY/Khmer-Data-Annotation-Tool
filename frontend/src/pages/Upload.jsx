@@ -17,6 +17,10 @@ import {
   Trash2,
   ScanText,
 } from "lucide-react";
+
+// Import the API service
+import { annotationApi } from "../services/annotationApi";
+
 const Upload = () => {
   // Todo: Global variabls
   const [mode, setMode] = React.useState("box"); // 'box' | 'polygon'
@@ -27,10 +31,31 @@ const Upload = () => {
   const currentImage = images.find((i) => i.id === currentId);
 
   React.useEffect(() => {
-    // Initialize with some default images or fetch from server if needed
-    // For now, we will just log the current state
-    console.log("Current images:", annotations);
-  }, [annotations]);
+    // Fetch annotations when the component mounts
+    fetchAnnotations();
+  }, [annotations, currentId, images]);
+
+  const fetchAnnotations = async () => {
+    const data = {
+      id: "a_1755156679281",
+      label: "cat",
+      image: "http://localhost:8080/uploads/cat.png",
+      rect: {
+        x: 10,
+        y: 20,
+        w: 100,
+        h: 80,
+      },
+      text: "hello ahh thork",
+    };
+
+    try {
+      const response = await annotationApi(data);
+      console.log("Fetched annotations:", response);
+    } catch (error) {
+      console.error("Failed to fetch annotations:", error);
+    }
+  };
 
   const handleFiles = async (items) => {
     // items are provided from ImageUploader as processed objects with dataURL, width, height

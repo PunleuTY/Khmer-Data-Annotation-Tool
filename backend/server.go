@@ -7,7 +7,13 @@ import (
 	// "log"
 	// "net/http"
 	// "github.com/gorilla/mux"
-	"backend/api"
+
+	// controller
+	apiPython "backend/api"
+	annotationController "backend/controller"
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +33,17 @@ func main() {
 	// log.Println("Server running on port 8080")
 	// log.Fatal(http.ListenAndServe(":8080", r))
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	r.POST("/annotations", annotationController.PostAnnotation)
 	r.GET("/login", apiPython.Login)
 	r.Run(":8080") // run on port 8080
 }
