@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUploader } from "@/components/image-uploader";
-import { AnnotationCanvas } from "@/components/annotation-canvas";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ImagePlus,
@@ -26,6 +25,7 @@ import { annotationApi } from "../services/annotationApi";
 // Main Upload component
 import { JsonEditor } from "@/components/json-editor";
 import { AnnotationList } from "@/components/annotation-list";
+import { AnnotationCanvas } from "@/components/annotation-canvas";
 
 const Upload = () => {
   // Todo: Global variabls
@@ -284,14 +284,22 @@ const Upload = () => {
                     <Button
                       variant={mode === "polygon" ? "default" : "outline"}
                       className={
-                        mode === "polygon"
-                          ? "bg-blue-500 hover:bg-blue-600"
-                          : ""
+                        mode === "polygon" ? "bg-blue-500 hover:bg-blue-600" : ""
                       }
                       onClick={() => setMode("polygon")}
                     >
                       <PenTool className="w-4 h-4" />
                       {/* Polygon */}
+                    </Button>
+                    <Button
+                      variant={mode === "edit" ? "default" : "outline"}
+                      className={
+                        mode === "edit" ? "bg-blue-500 hover:bg-blue-600" : ""
+                      }
+                      onClick={() => setMode("edit")}
+                    >
+                      <PenTool className="w-4 h-4" />
+                      edit
                     </Button>
                     <Button
                       id="btn-ocr-entire"
@@ -310,12 +318,18 @@ const Upload = () => {
                 <CardContent>
                   {currentImage ? (
                     <AnnotationCanvas
-                      key={currentImage.id}
                       image={currentImage}
                       mode={mode}
-                      onAddAnnotation={addAnnotation}
                       annotations={annotations[currentId] || []}
-                      onUpdateAnnotation={updateAnnotation}
+                      onAddAnnotation={(ann) => {
+                        setAnnotations((prev) => {
+                          const list = prev[currentId]
+                            ? [...prev[currentId], ann]
+                            : [ann];
+                          return { ...prev, [currentId]: list };
+                        });
+                      }}
+                      onUpdateAnnotation={updateAnnotation} // uses your patch logic
                     />
                   ) : (
                     <div className="h-[420px] flex items-center justify-center text-gray-500">
