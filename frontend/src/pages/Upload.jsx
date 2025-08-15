@@ -6,16 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUploader } from "@/components/image-uploader";
 import { AnnotationCanvas } from "@/components/annotation-canvas";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Download,
   ImagePlus,
   Settings,
-  GalleryVerticalEnd,
-  Keyboard,
   ChevronLeft,
   ChevronRight,
   Trash2,
   ScanText,
+  SquareDashedMousePointer,
+  PenTool,
+  Zap,
+  FileJson,
 } from "lucide-react";
 
 // Import the API service
@@ -27,6 +29,7 @@ const Upload = () => {
   const [currentId, setCurrentId] = React.useState(null);
   const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
   const [annotations, setAnnotations] = React.useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
+  const [activeTab, setActiveTab] = React.useState("detected");
 
   const currentImage = images.find((i) => i.id === currentId);
 
@@ -112,7 +115,7 @@ const Upload = () => {
       <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
         <h4 className="text-sm font-semibold">Tip: Use keyboard shortcuts</h4>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {/* Upload images to annotate them. You can use the following keyboard shortcuts: */}
         <div>
           <Card>
@@ -193,20 +196,30 @@ const Upload = () => {
         </div>
 
         {/* Anotation Canvas */}
-        <div className="col-span-2">
+        <div className="col-span-3">
           <Card className="overflow-hidden">
             <CardHeader className="pb-3 flex items-center justify-between">
-              <CardTitle className="text-base">
-                {/* {t("annotate.canvasTitle")} */}
-              </CardTitle>
+              <CardTitle className="text-base">Annotation Canvas</CardTitle>
               <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
-                  size="sm"
-                  // onClick={() => setGalleryOpen(true)}
+                  variant={mode === "box" ? "default" : "outline"}
+                  className={
+                    mode === "box" ? "bg-blue-500 hover:bg-blue-600" : ""
+                  }
+                  onClick={() => setMode("box")}
                 >
-                  <GalleryVerticalEnd className="w-4 h-4 mr-2" />
-                  Gallery
+                  <SquareDashedMousePointer className="w-4 h-4" />
+                  {/* Box */}
+                </Button>
+                <Button
+                  variant={mode === "polygon" ? "default" : "outline"}
+                  className={
+                    mode === "polygon" ? "bg-blue-500 hover:bg-blue-600" : ""
+                  }
+                  onClick={() => setMode("polygon")}
+                >
+                  <PenTool className="w-4 h-4" />
+                  {/* Polygon */}
                 </Button>
                 <Button
                   id="btn-ocr-entire"
@@ -239,6 +252,56 @@ const Upload = () => {
               )}
             </CardContent>
           </Card>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="detected" className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                AI Detected Text Regions
+                {/* {hasDetectedRegions && (
+                  <Badge variant="secondary" className="ml-1">
+                    {selectedDetectedCount}
+                  </Badge>
+                )} */}
+              </TabsTrigger>
+              <TabsTrigger value="visual" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                Visual Editor
+              </TabsTrigger>
+              <TabsTrigger value="json" className="flex items-center gap-2">
+                <FileJson className="w-4 h-4" />
+                Json Editor
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Annotation */}
+            <TabsContent value="detected" className="mt-4">
+              {/* <DetectedRegionsList
+                image={currentImage}
+                detectedRegions={currentImage?.detectedRegions || []}
+                onToggleRegion={toggleDetectedRegion}
+                onSelectAll={selectAllDetected}
+                onConvertToAnnotations={convertDetectedToAnnotations}
+              /> */}
+            </TabsContent>
+
+            <TabsContent value="visual" className="mt-4">
+              {/* <AnnotationList
+                image={currentImage}
+                annotations={annotations[currentId] || []}
+                onSetGT={handleSetGT}
+                onDelete={deleteAnnotation}
+                onUpdate={updateAnnotation}
+                lang={lang}
+                onBatchStart={onBatchStart}
+                onBatchStep={onBatchStep}
+                onBatchEnd={onBatchEnd}
+              /> */}
+            </TabsContent>
+
+            <TabsContent value="json" className="mt-4">
+              {/* <JsonEditor images={images} annotations={annotations} currentId={currentId} onUpdate={handleJsonUpdate} /> */}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       <Footer />
