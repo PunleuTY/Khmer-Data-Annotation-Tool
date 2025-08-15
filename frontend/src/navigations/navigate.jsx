@@ -9,8 +9,6 @@ import { TbLogout2 } from "react-icons/tb";
 const Sidebar = () => {
   const navigate = useNavigate();
 
-
-  
   const navigationItems = [
     { name: "Home", path: "/", icon: FaHome },
     { name: "Annotate", path: "/upload", icon: MdOutlineUploadFile },
@@ -20,7 +18,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen">
+    <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen ">
       {/* Logo Section */}
       <div className="p-6 bg-white bg-opacity-20 rounded-br-3xl mb-6">
         <div className="flex items-center space-x-3">
@@ -58,7 +56,6 @@ const Sidebar = () => {
           );
         })}
       </nav>
-
     </div>
   );
 };

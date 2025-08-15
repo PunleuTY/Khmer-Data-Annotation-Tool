@@ -23,6 +23,9 @@ import {
 // Import the API service
 import { annotationApi } from "../services/annotationApi";
 
+// Main Upload component
+import { JsonEditor } from "@/components/json-editor"
+
 const Upload = () => {
   // Todo: Global variabls
   const [mode, setMode] = React.useState("box"); // 'box' | 'polygon'
@@ -107,6 +110,10 @@ const Upload = () => {
       }
       return { ...prev, [currentId]: list };
     });
+  };
+
+  const handleJsonUpdate = (newAnnotations) => {
+    setAnnotations(newAnnotations);
   };
 
   return (
@@ -299,7 +306,12 @@ const Upload = () => {
             </TabsContent>
 
             <TabsContent value="json" className="mt-4">
-              {/* <JsonEditor images={images} annotations={annotations} currentId={currentId} onUpdate={handleJsonUpdate} /> */}
+              <JsonEditor
+                images={images}
+                annotations={annotations}
+                currentId={currentId}
+                onUpdate={handleJsonUpdate}
+              />
             </TabsContent>
           </Tabs>
         </div>
