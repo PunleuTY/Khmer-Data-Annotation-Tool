@@ -176,33 +176,8 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <FileJson className="w-4 h-4 text-emerald-600" />
-            {t("json.title")}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            {hasChanges && (
-              <Badge
-                variant="secondary"
-                className="text-orange-700 bg-orange-100"
-              >
-                {t("json.unsavedChanges")}
-              </Badge>
-            )}
-            {!error && !hasChanges && (
-              <Badge
-                variant="secondary"
-                className="text-green-700 bg-green-100"
-              >
-                <CheckCircle2 className="w-3 h-3 mr-1" />
-                {t("json.valid")}
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardHeader>
+      {/* <CardHeader className="pb-3">
+      </CardHeader> */}
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -231,6 +206,25 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+            {hasChanges && (
+              <Badge
+                variant="secondary"
+                className="text-orange-700 bg-orange-100"
+              >
+                {t("json.unsavedChanges")}
+              </Badge>
+            )}
+            {!error && !hasChanges && (
+              <Badge
+                variant="secondary"
+                className="text-green-700 bg-green-100"
+              >
+                <CheckCircle2 className="w-3 h-3 mr-1" />
+                {t("json.valid")}
+              </Badge>
+            )}
+          </div>
             <Button variant="outline" size="sm" onClick={copyToClipboard}>
               <Copy className="w-4 h-4 mr-2" />
               {t("json.copy")}
@@ -262,7 +256,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
           </Alert>
         )}
 
-        <div className="relative">
+        <div className="relative overflow-y-auto h-[500px]">
           <Textarea
             value={jsonText}
             onChange={(e) => handleTextChange(e.target.value)}
@@ -274,7 +268,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
           </div>
         </div>
 
-        <div className="text-xs text-gray-500 space-y-1">
+        {/* <div className="text-xs text-gray-500 space-y-1">
           <p>
             <strong>{t("json.tips")}:</strong>
           </p>
@@ -284,7 +278,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
             <li>{t("json.tip3")}</li>
             <li>{t("json.tip4")}</li>
           </ul>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );
