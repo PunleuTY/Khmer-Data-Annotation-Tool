@@ -33,7 +33,7 @@ const Upload = () => {
   const [currentId, setCurrentId] = React.useState(null);
   const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
   const [annotations, setAnnotations] = React.useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
-  const [activeTab, setActiveTab] = React.useState("detected");
+  const [activeTab, setActiveTab] = React.useState("annotation"); // 'annotation' | 'visual' | 'detected' | 'json'
   const [lang, setLang] = React.useState("khm"); // OCR language
 
   const currentImage = images.find((i) => i.id === currentId);
@@ -149,7 +149,7 @@ const Upload = () => {
 
   return (
     <div className="min-h-full bg-gray-50 m-6">
-      {/* <h1 className="text-3xl font-bold">Annotate</h1> */}
+      <h1 className="text-3xl font-bold">Annotate</h1>
 
       <div className="grid grid-cols-4 gap-4">
         {/* Upload images to annotate them. You can use the following keyboard shortcuts: */}

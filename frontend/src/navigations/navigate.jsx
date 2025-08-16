@@ -18,7 +18,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="hidden">
+    <div className="">
     <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen">
       {/* Logo Section */}
       <div className="p-6 bg-white bg-opacity-20 rounded-br-3xl mb-6">
