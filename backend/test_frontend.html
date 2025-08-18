@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Khmer Data Annotation Tool</title>
+<style>
+#canvasContainer { position: relative; border: 1px solid #ccc; display: inline-block; }
+canvas { border: 1px solid #333; }
+button { margin: 5px; }
+pre { max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
+</style>
+</head>
+<body>
+<h1>Image Annotation Tool</h1>
+
+<input type="file" id="imageInput" accept="image/*"/>
+<button id="uploadBtn">Upload Image</button>
+<button id="annotateBtn">Show Backend Annotations</button>
+<button id="exportBtn">Export Annotations</button>
+<button id="downloadBtn" style="display:none;">Download JSON</button>
+<button id="saveBtn">Save Ground Truth</button>
+
+<div id="canvasContainer">
+  <canvas id="annotationCanvas"></canvas>
+</div>
+
+<pre id="annotationsOutput"></pre>
+
+<script>
+const imageInput = document.getElementById("imageInput");
+const uploadBtn = document.getElementById("uploadBtn");
+const annotateBtn = document.getElementById("annotateBtn");
+const exportBtn = document.getElementById("exportBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const saveBtn = document.getElementById("saveBtn");
+const canvas = document.getElementById("annotationCanvas");
+const ctx = canvas.getContext("2d");
+const annotationsOutput = document.getElementById("annotationsOutput");
+
+let img = new Image();
+let drawing = false;
+let startX = 0;
+let startY = 0;
+let userAnnotations = [];
+let backendAnnotations = [];
+let exportData = null;
+let uploadedFilename = null; // timestamped for backend
+let displayedName = null;    // original name for JSON export
+
+// Load image from input
+imageInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) { img.src = event.target.result; }
+  reader.readAsDataURL(file);
+});
+
+img.onload = () => {
+  canvas.width = img.width;
+  canvas.height = img.height;
+  redraw();
+};
+
+// Drawing rectangles
+canvas.addEventListener("mousedown", e => { drawing = true; startX = e.offsetX; startY = e.offsetY; });
+canvas.addEventListener("mousemove", e => {
+  if (!drawing) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  redraw();
+  ctx.strokeStyle = "red"; ctx.lineWidth = 2;
+  ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+});
+canvas.addEventListener("mouseup", e => {
+  if (!drawing) return;
+  drawing = false;
+  userAnnotations.push({x:startX, y:startY, width:e.offsetX-startX, height:e.offsetY-startY});
+  redraw();
+});
+
+function redraw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(img,0,0);
+  // User annotations (red)
+  ctx.strokeStyle="red"; ctx.lineWidth=2;
+  userAnnotations.forEach(r=>ctx.strokeRect(r.x,r.y,r.width,r.height));
+  // Backend annotations (blue)
+  ctx.strokeStyle="blue"; ctx.lineWidth=2;
+  backendAnnotations.forEach(d=>{
+    const [x1,y1,x2,y2]=d.box_coordinates;
+    ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+    if(d.extracted_text){
+      ctx.fillStyle="blue";
+      ctx.font="16px Arial";
+      ctx.fillText(d.extracted_text,x1+2,y1+16);
+    }
+  });
+}
+
+// Upload image
+uploadBtn.addEventListener("click", async ()=>{
+  const file = imageInput.files[0];
+  if(!file) return alert("Select an image first");
+  const formData = new FormData(); formData.append("image", file);
+
+  try{
+    const res = await fetch("http://127.0.0.1:5000/upload",{method:"POST",body:formData});
+    const data = await res.json();
+    if(!res.ok){ alert(data.error||"Upload failed"); return; }
+    uploadedFilename = data.filename;
+    displayedName = data.originalName;
+    if(data.annotations){ backendAnnotations = data.annotations.detections||[]; }
+    img.src = URL.createObjectURL(file);
+    img.onload=()=>{ canvas.width=img.width; canvas.height=img.height; redraw(); }
+  }catch(err){ console.error(err); alert("Error uploading image"); }
+});
+
+// Show backend annotations
+annotateBtn.addEventListener("click", ()=>{ if(backendAnnotations.length===0){alert("No backend annotations"); return;} redraw(); });
+
+// Export annotations
+exportBtn.addEventListener("click", ()=>{
+  if(!uploadedFilename) return alert("Upload image first");
+  exportData = {
+    filename: displayedName,
+    meta:{tool:"Khmer Data Annotation Tool",lang:"khm",timestamp:new Date().toISOString()},
+    userAnnotations,
+    backendAnnotations
+  };
+  annotationsOutput.textContent = JSON.stringify(exportData,null,2);
+  downloadBtn.style.display="inline-block";
+});
+
+// Download JSON
+downloadBtn.addEventListener("click", ()=>{
+  if(!exportData) return;
+  const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download="annotations.json"; a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Save ground truth
+saveBtn.addEventListener("click", async ()=>{
+  if(!uploadedFilename) return alert("Upload image first");
+  const payload = { filename:uploadedFilename, annotations:[...userAnnotations,...backendAnnotations], meta:{tool:"Khmer Data Annotation Tool",lang:"khm",timestamp:new Date().toISOString()}};
+  try{
+    const res = await fetch("http://127.0.0.1:5000/save-groundtruth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data = await res.json();
+    if(res.ok){ alert("Ground truth saved successfully"); }
+    else{ alert("Error saving ground truth: "+data.error); }
+  }catch(err){ console.error(err); alert("Error saving ground truth"); }
+});
+</script>
+</body>
+</html>
