@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -6,9 +5,12 @@ export default {
   ],
   theme: { 
     extend: {
-      color: {
+      colors: {
         'custom-blue': '#4db8ff',
       },
+      // fontFamily: {
+      //   cadt: ['CADTMonoDisplay-Regular', 'sans-serif']
+      // },
     } 
   },
   plugins: [],

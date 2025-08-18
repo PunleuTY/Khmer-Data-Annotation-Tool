@@ -3,14 +3,16 @@ import { FaGithub, FaTelegramPlane, FaFacebook } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#F5F5F5] text-gray-800 py-8 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+    <footer className="bg-[#ff3f34] text-white py-8 px-4">
+      <h1 className="flex justify-center text-5xl pb-16 font-cadt" >Stay Connect</h1>
+      <div className="max-w-6xl mx-auto flex justify-around md:grid-cols-3 gap-8 text-center md:text-left text-sm">
         
         {/* Left: Team Collaborate */}
         <div>
           <h4 className="font-semibold mb-2">Team Collaborate</h4>
           <ul className="space-y-1">
             <li><a href="#">GitHub</a></li>
+            <li><a href="#">Discord</a></li>
             <li><a href="#">Click Up</a></li>
             <li><a href="#">Telegram</a></li>
             <li><a href="#">Google Meet</a></li>
@@ -41,8 +43,8 @@ const Footer = () => {
       </div>
 
       {/* Bottom Line */}
-      <div className="text-center text-sm text-gray-500 mt-6">
-        ©2020 Khmer Data Validation Tool
+      <div className="text-center text-sm font-bold mt-12">
+        ©2025 Khmer Data Validation Tool
       </div>
     </footer>
   );

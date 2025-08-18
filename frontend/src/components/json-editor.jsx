@@ -179,55 +179,56 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
       {/* <CardHeader className="pb-3">
       </CardHeader> */}
       <CardContent className="space-y-4">
+        <CardTitle className="text-base flex items-center gap-2 mb-5">
+          <FileJson className="w-4 h-4 text-emerald-600" />
+          Json Editor
+        </CardTitle>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <Label className="text-xs text-gray-600">
-                {t("json.viewMode")}
-              </Label>
               <Select value={viewMode} onValueChange={setViewMode}>
-                <SelectTrigger className="w-40 mt-1">
+                <SelectTrigger className="w-40 mt-1 ">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="current">
-                    {t("json.currentImage")}{" "}
+                    {t("Current Image")}{" "}
                     {currentImage ? `(${currentImage.name})` : ""}
                   </SelectItem>
-                  <SelectItem value="all">{t("json.allImages")}</SelectItem>
+                  <SelectItem value="all">{t("All Images")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {viewMode === "current" && (
               <div className="text-sm text-gray-600">
-                {currentAnnotations.length} {t("json.annotations")}
+                {currentAnnotations.length} {t("Annotations")}
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
-            {hasChanges && (
-              <Badge
-                variant="secondary"
-                className="text-orange-700 bg-orange-100"
-              >
-                {t("json.unsavedChanges")}
-              </Badge>
-            )}
-            {!error && !hasChanges && (
-              <Badge
-                variant="secondary"
-                className="text-green-700 bg-green-100"
-              >
-                <CheckCircle2 className="w-3 h-3 mr-1" />
-                {t("json.valid")}
-              </Badge>
-            )}
-          </div>
+              {hasChanges && (
+                <Badge
+                  variant="secondary"
+                  className="text-orange-700 bg-orange-100"
+                >
+                  {t("Unsaved Changes")}
+                </Badge>
+              )}
+              {!error && !hasChanges && (
+                <Badge
+                  variant="secondary"
+                  className="text-green-700 bg-green-100"
+                >
+                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  {t("Valid")}
+                </Badge>
+              )}
+            </div>
             <Button variant="outline" size="sm" onClick={copyToClipboard}>
               <Copy className="w-4 h-4 mr-2" />
-              {t("json.copy")}
+              {t("Copy")}
             </Button>
             <Button
               variant="outline"
@@ -236,7 +237,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
               disabled={!hasChanges}
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              {t("json.reset")}
+              {t("Reset")}
             </Button>
             <Button
               onClick={validateAndApply}
@@ -244,7 +245,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Save className="w-4 h-4 mr-2" />
-              {t("json.apply")}
+              {t("Apply")}
             </Button>
           </div>
         </div>
@@ -261,10 +262,10 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
             value={jsonText}
             onChange={(e) => handleTextChange(e.target.value)}
             className="font-mono text-sm min-h-[400px] resize-y"
-            placeholder={t("json.placeholder")}
+            placeholder={t("Placeholder")}
           />
           <div className="absolute top-2 right-2 text-xs text-gray-400">
-            {jsonText.split("\n").length} {t("json.lines")}
+            {jsonText.split("\n").length} {t("Lines")}
           </div>
         </div>
 
