@@ -34,7 +34,7 @@ const Annotate = () => {
   const [currentId, setCurrentId] = React.useState(null);
   const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
   const [annotations, setAnnotations] = React.useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
-  const [activeTab, setActiveTab] = React.useState("detected");
+  const [activeTab, setActiveTab] = React.useState("annotation");
   const [lang, setLang] = React.useState("khm"); // OCR language
   const [exportOpen, setExportOpen] = React.useState(false);
 
