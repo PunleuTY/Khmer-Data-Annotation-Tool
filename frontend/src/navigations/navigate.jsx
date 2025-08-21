@@ -5,7 +5,6 @@ import { FaSortAmountUp } from "react-icons/fa";
 import { MdOutlineUploadFile } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { TbLogout2 } from "react-icons/tb";
-import { TbReport } from "react-icons/tb";
 import Logo from "../assets/profiles/Logo.png";
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -13,7 +12,6 @@ const Sidebar = () => {
   const handleLogout = () => {
     // Add your logout logic here
     console.log("Logging out...");
-
   };
 
   const navigationItems = [
@@ -29,7 +27,7 @@ const Sidebar = () => {
       {/* <div className="p-6 bg-[#ff3f34] bg-opacity-20  mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 bg-[#0099FFB3] rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-bold">BL</span>
             </div>
           </div>
@@ -42,15 +40,11 @@ const Sidebar = () => {
 
       {/* Logo Section */}
       <div className="p-6 bg-white bg-opacity-20 mb-6 flex items-center justify-center">
-        <img
-          src= {Logo}
-          alt="Logo"
-          className="object-contain"
-        />
+        <img src={Logo} alt="Logo" className="object-contain" />
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 space-y-3">
+      <nav className="flex-1 space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -58,10 +52,10 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-8 px-4 py-3 rounded-lg transition-all duration-200 ${
+                `flex items-center space-x-6 px-6 py-4 transition-all duration-200 font-cadt ${
                   isActive
-                    ? "bg-[#DFEFFA] bg-opacity-15 text-[#0099FFB3] shadow-lg"
-                    : "text-blue-100 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3]"
+                    ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
+                    : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
                 }`
               }
             >
