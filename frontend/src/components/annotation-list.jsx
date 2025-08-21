@@ -84,7 +84,7 @@ export function AnnotationList({
   };
 
   return (
-    <Card>
+    <Card className={"w-full h-full bg-white shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]"}>
       <CardHeader className="pb-3 flex flex-row items-center justify-between">
         <CardTitle className="text-base">Annotations</CardTitle>
         <div className="flex items-center gap-2">

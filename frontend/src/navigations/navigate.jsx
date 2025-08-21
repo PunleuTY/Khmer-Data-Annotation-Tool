@@ -19,13 +19,12 @@ const Sidebar = () => {
   const navigationItems = [
     { name: "Home", path: "/", icon: FaHome },
     { name: "Feature", path: "/feature", icon: FaWandMagicSparkles },
-    { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
-    { name: "Result", path: "/result", icon: FaSortAmountUp },
-    { name: "Report", path: "/report", icon: TbReport },
+    // { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
+    { name: "Annotate", path: "/project", icon: MdOutlineUploadFile },
     { name: "About", path: "/about", icon: RiErrorWarningLine },
   ];
   return (
-    <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen">
+    <div className={"w-56 text-white flex flex-col h-screen"}>
       {/* Logo Section */}
       {/* <div className="p-6 bg-[#ff3f34] bg-opacity-20  mb-6">
         <div className="flex items-center space-x-3">
@@ -74,14 +73,13 @@ const Sidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-black border-opacity-30">
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-3 w-full px-4 py-3 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3] rounded-lg"
-        >
-          <TbLogout2 className="w-6 h-6" />
-          <span className="font-medium text-[#12284c] font-cadt">Log Out</span>
-        </button>
+      <div className="m-4 border-t border-black border-opacity-30">
+        <div className="bg-red-300 flex justify-center rounded-3xl flex-col items-center p-2">
+          <h1 className="font-bold text-white">Help Center</h1>
+          <h2>Have a problem ?</h2>
+          <h2>How can we help you ?</h2>
+          <button className="bg-green-400">Message</button>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-import React from "react";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import Footer from "../components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUploader } from "@/components/image-uploader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,9 +16,9 @@ import {
   ScanText,
   SquareDashedMousePointer,
   PenTool,
-  Zap,
   FileJson,
   Download,
+  Undo,
 } from "lucide-react";
 
 import { JsonEditor } from "@/components/json-editor";
@@ -25,11 +26,11 @@ import { AnnotationList } from "@/components/annotation-list";
 import { AnnotationCanvas } from "@/components/annotation-canvas";
 import { levenshteinSimilarity } from "@/lib/levenshtein";
 import { OcrControls } from "@/components/ocr-controls";
-import { saveProject, loadProject, clearProject } from "@/lib/storage";
+import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
 
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Annotate = () => {
+<<<<<<< HEAD
   const [mode, setMode] = React.useState("box"); // 'box' | 'polygon'
   const [currentId, setCurrentId] = React.useState(null);
   const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
@@ -37,42 +38,33 @@ const Annotate = () => {
   const [activeTab, setActiveTab] = React.useState("annotation");
   const [lang, setLang] = React.useState("khm"); // OCR language
   const [exportOpen, setExportOpen] = React.useState(false);
+=======
+  const [mode, setMode] = useState("box"); // 'box' | 'polygon'
+  const [currentId, setCurrentId] = useState(null);
+  const [images, setImages] = useState([]); // [{id, name, url(dataURL), width, height}]
+  const [annotations, setAnnotations] = useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
+  const [activeTab, setActiveTab] = useState("annotation");
+  const [lang, setLang] = useState("khm"); // OCR language
+  const [exportOpen, setExportOpen] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [fullOcr, setFullOcr] = useState({ text: "", conf: null });
+>>>>>>> frontend
 
   const currentImage = images.find((i) => i.id === currentId);
-  const [batchInfo, setBatchInfo] = React.useState({
+  const [batchInfo, setBatchInfo] = useState({
     running: false,
     current: 0,
     total: 0,
     pct: 0,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Fetch annotations when the component mounts
     console.log(images);
   }, [annotations, currentId, images]);
 
-  // const fetchAnnotations = async () => {
-  //   const data = {
-  //     id: "a_1755156679281",
-  //     label: "cat",
-  //     image: "http://localhost:8080/uploads/cat.png",
-  //     rect: {
-  //       x: 10,
-  //       y: 20,
-  //       w: 100,
-  //       h: 80,
-  //     },
-  //     text: "hello ahh thork",
-  //   };
-
-  //   try {
-  //     const response = await annotationApi(data);
-  //     console.log("Fetched annotations:", response);
-  //   } catch (error) {
-  //     console.error("Failed to fetch annotations:", error);
-  //   }
-  // };
-  React.useEffect(() => {
+  useEffect(() => {
     saveProject({ images, annotations, currentId, lang });
   }, [images, annotations, currentId, lang]);
 
@@ -107,6 +99,8 @@ const Annotate = () => {
   };
 
   const addAnnotation = (ann) => {
+    saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
       list.push({
@@ -122,6 +116,8 @@ const Annotate = () => {
   };
 
   const updateAnnotation = (id, patch) => {
+    saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
       const idx = list.findIndex((a) => a.id === id);
@@ -148,6 +144,8 @@ const Annotate = () => {
   };
 
   const deleteAnnotation = (id) => {
+    saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId]
         ? prev[currentId].filter((a) => a.id !== id)
@@ -164,9 +162,39 @@ const Annotate = () => {
     updateAnnotation(id, { accuracy });
   };
 
+  const saveToHistory = useCallback(() => {
+    const currentState = {
+      annotations: { ...annotations },
+      textAnnotations: { ...fullOcr },
+      timestamp: Date.now(),
+    };
+
+    setHistory((prevHistory) => {
+      const newHistory = [...prevHistory, currentState];
+
+      if (newHistory.length > 50) {
+        newHistory.shift();
+        return newHistory;
+      }
+
+      return newHistory;
+    });
+
+    setHistoryIndex((prev) => prev + 1);
+  }, [annotations, fullOcr]);
+
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      const previousState = history[historyIndex - 1];
+      setAnnotations(previousState.annotations);
+      setFullOcr(previousState.textAnnotations);
+      setHistoryIndex((prev) => prev - 1);
+    }
+  }, [history, historyIndex]);
+
   return (
-    <div className="min-h-full bg-gray-50 m-6">
-      <h1 className="text-3xl font-bold">Annotate</h1>
+    <div className="min-h-full bg-gray-50 p-6">
+      <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
       <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
         <h4 className="text-sm font-semibold">Tip: Use keyboard shortcuts</h4>
       </div>
@@ -175,10 +203,14 @@ const Annotate = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Upload images to annotate them. You can use the following keyboard shortcuts: */}
         <div>
-          <Card>
+          <Card
+            className={
+              "bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]"
+            }
+          >
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <ImagePlus className="w-4 h-4 text-blue-500" />
+                <ImagePlus className="w-4 h-4" />
                 Upload Images
               </CardTitle>
             </CardHeader>
@@ -197,7 +229,7 @@ const Annotate = () => {
                       key={img.id}
                       className={`w-full text-left p-2 text-sm hover:bg-blue-50 ${
                         img.id === currentId
-                          ? "bg-blue-50 border-l-4 border-blue-500"
+                          ? "bg-blue-50 border-l-4 border-[#ff3f34]"
                           : ""
                       }`}
                       onClick={() => setCurrentId(img.id)}
@@ -255,7 +287,7 @@ const Annotate = () => {
         {/* Anotation Canvas */}
         {/* REVISED: This section now spans all columns on small screens, and fewer on larger screens */}
         <div className="col-span-1 md:col-span-1 lg:col-span-3">
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]">
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
               <div className="flex items-center gap-2">
@@ -265,10 +297,24 @@ const Annotate = () => {
                   image={currentImage}
                   onOcrResult={(res) => setFullOcr(res)}
                 />
+
+                {/* infromation history */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={undo}
+                  disabled={historyIndex <= 0}
+                  className="flex items-center gap-1 bg-transparent"
+                >
+                  <Undo className="h-4 w-4" />
+                  មិនធ្វើ / Undo
+                </Button>
                 <Button
                   variant={mode === "box" ? "default" : "outline"}
                   className={
-                    mode === "box" ? "bg-blue-500 hover:bg-blue-600" : ""
+                    mode === "box"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc] "
+                      : ""
                   }
                   onClick={() => setMode("box")}
                 >
@@ -278,7 +324,9 @@ const Annotate = () => {
                 <Button
                   variant={mode === "polygon" ? "default" : "outline"}
                   className={
-                    mode === "polygon" ? "bg-blue-500 hover:bg-blue-600" : ""
+                    mode === "polygon"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc]"
+                      : ""
                   }
                   onClick={() => setMode("polygon")}
                 >
@@ -288,7 +336,9 @@ const Annotate = () => {
                 <Button
                   variant={mode === "edit" ? "default" : "outline"}
                   className={
-                    mode === "edit" ? "bg-blue-500 hover:bg-blue-600" : ""
+                    mode === "edit"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc] "
+                      : ""
                   }
                   onClick={() => setMode("edit")}
                 >
@@ -307,11 +357,19 @@ const Annotate = () => {
                   <ScanText className="w-4 h-4 mr-2" />
                   OCR Entire
                 </Button>
-                <Button variant="outline" onClick={() => setExportOpen(true)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setExportOpen(true)}
+                  className={"bg-[#ff3f34] text-white hover:bg-[#ff3e34b2] "}
+                >
                   <Download className="w-4 h-4 mr-2" />
                   Export
                 </Button>
-                <Button variant="ghost" onClick={onClearAll}>
+                <Button
+                  variant="ghost"
+                  onClick={onClearAll}
+                  className={"bg-[#ff3f34] text-white hover:bg-[#ff3e34b2] "}
+                >
                   <Trash2 className="w-4 h-4 mr-2" />
                   ClearAll
                 </Button>
@@ -323,14 +381,7 @@ const Annotate = () => {
                   image={currentImage}
                   mode={mode}
                   annotations={annotations[currentId] || []}
-                  onAddAnnotation={(ann) => {
-                    setAnnotations((prev) => {
-                      const list = prev[currentId]
-                        ? [...prev[currentId], ann]
-                        : [ann];
-                      return { ...prev, [currentId]: list };
-                    });
-                  }}
+                  onAddAnnotation={addAnnotation} // Use the proper addAnnotation function instead of inline function
                   onUpdateAnnotation={updateAnnotation} // uses your patch logic
                 />
               ) : (
@@ -357,7 +408,7 @@ const Annotate = () => {
                 Json Editor
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="annotation" className="">
+            <TabsContent value="annotation">
               <AnnotationList
                 image={currentImage}
                 annotations={annotations[currentId] || []}
@@ -373,7 +424,10 @@ const Annotate = () => {
 
             <TabsContent value="detected" className="mt-4"></TabsContent>
 
-            <TabsContent value="json" className="mt-4">
+            <TabsContent
+              value="json"
+              className="mt-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]"
+            >
               <JsonEditor
                 images={images}
                 annotations={annotations}
@@ -384,7 +438,6 @@ const Annotate = () => {
           </Tabs>
         </div>
       </div>
-      <Footer/>
       <ExportDialog
         open={exportOpen}
         onOpenChange={setExportOpen}
@@ -392,6 +445,7 @@ const Annotate = () => {
         annotations={annotations}
         projectMeta={{ name: "Khmer Data Annotation Tool", lang }}
       />
+      <Footer />
     </div>
   );
 };
