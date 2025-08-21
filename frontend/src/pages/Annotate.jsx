@@ -185,9 +185,9 @@ const Annotate = () => {
   return (
     <div className="min-h-full bg-gray-50 p-6">
       <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
-      <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
+      {/* <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
         <h4 className="text-sm font-semibold">Tip: Use keyboard shortcuts</h4>
-      </div>
+      </div> */}
 
       {/* REVISED: This grid now adapts for different screen sizes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -281,12 +281,12 @@ const Annotate = () => {
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
               <div className="flex items-center gap-2">
-                <OcrControls
+                {/* <OcrControls
                   lang={lang}
                   setLang={setLang}
                   image={currentImage}
                   onOcrResult={(res) => setFullOcr(res)}
-                />
+                /> */}
 
                 {/* infromation history */}
                 <Button
@@ -297,7 +297,7 @@ const Annotate = () => {
                   className="flex items-center gap-1 bg-transparent"
                 >
                   <Undo className="h-4 w-4" />
-                  មិនធ្វើ / Undo
+                  Undo
                 </Button>
                 <Button
                   variant={mode === "box" ? "default" : "outline"}
