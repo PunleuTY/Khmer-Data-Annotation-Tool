@@ -1,5 +1,8 @@
 import Footer from "../components/Footer";
 import { NavLink, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
+export let MyProjects = false;
 const project = () => {
   return (
     <div className="min-h-full bg-gray-50 m-6">
@@ -17,9 +20,6 @@ const project = () => {
       >
         Click here Go to Annotation Page
       </NavLink>
-
-
-
       <Footer />
     </div>
   );
