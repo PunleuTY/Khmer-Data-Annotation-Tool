@@ -43,9 +43,10 @@ const { t } = useI18n()
           <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select OCR language" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="khm">khm (Khmer)</SelectItem>
-            <SelectItem value="eng">eng (English)</SelectItem>
+          <SelectContent className={"bg-white"}>
+            <SelectItem value="khm" className={"hover:bg-[#ff3e34dc]"}>khm (Khmer)</SelectItem>
+            <SelectItem value="eng" className={"hover:bg-[#ff3e34dc]"}>eng (English)</SelectItem>
+
           </SelectContent>
         </Select>
       </div>
