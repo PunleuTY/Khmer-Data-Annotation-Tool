@@ -78,6 +78,8 @@ func UploadImage(imageCollection *mongo.Collection) gin.HandlerFunc {
 			"filename":    image.Name,
 			"annotations": json.RawMessage(boxes),
 		})
+		// testing
+
 	}
 }
 
