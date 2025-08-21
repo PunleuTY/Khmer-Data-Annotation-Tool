@@ -30,15 +30,6 @@ import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
 
 const Annotate = () => {
-<<<<<<< HEAD
-  const [mode, setMode] = React.useState("box"); // 'box' | 'polygon'
-  const [currentId, setCurrentId] = React.useState(null);
-  const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
-  const [annotations, setAnnotations] = React.useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
-  const [activeTab, setActiveTab] = React.useState("annotation");
-  const [lang, setLang] = React.useState("khm"); // OCR language
-  const [exportOpen, setExportOpen] = React.useState(false);
-=======
   const [mode, setMode] = useState("box"); // 'box' | 'polygon'
   const [currentId, setCurrentId] = useState(null);
   const [images, setImages] = useState([]); // [{id, name, url(dataURL), width, height}]
@@ -49,7 +40,6 @@ const Annotate = () => {
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fullOcr, setFullOcr] = useState({ text: "", conf: null });
->>>>>>> frontend
 
   const currentImage = images.find((i) => i.id === currentId);
   const [batchInfo, setBatchInfo] = useState({
