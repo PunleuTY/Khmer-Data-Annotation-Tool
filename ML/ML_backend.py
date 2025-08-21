@@ -1,7 +1,6 @@
 # ----->>>>> *** Clean API server *** <<<<<-----
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import httpx
-import keras_ocr
 import uvicorn
 import pytesseract
 from YOLO_OCR import process_complete_image_pipeline
@@ -12,18 +11,19 @@ app = FastAPI(title="Khmer Data Annotation ML")
 
 # full url : http://127.0.0.1:8000/images/ (receive)
 @app.post("/images/")
-async def process_image_and_send_to_backend(image: UploadFile = File(...), ocr_engine: str = "keras_ocr"):
+async def process_image_and_send_to_backend(image: UploadFile = File(...), ocr_engine: str = "tesseract"):
     """
     API endpoint to receive an image, process it, and send results to backend.
     """
     # Read the uploaded file bytes
     image_bytes = await image.read()
 
-    if ocr_engine != "kerasocr":
-        raise HTTPException(status_code=400, detail="Invalid OCR engine. Use 'kerasocr'.")
-    
+    if ocr_engine != "tesseract":
+        raise HTTPException(status_code=400, detail="Invalid OCR engine. Use 'tesseract'.")
+
     try:
         # Call the complete processing pipeline from YOLO_OCR.py
+        # make sure process_complete_image_pipeline supports `ocr_engine` argument
         result = process_complete_image_pipeline(image_bytes, image.filename, ocr_engine=ocr_engine)
         
         # Send results to backend automatically
@@ -49,6 +49,7 @@ async def process_image_and_send_to_backend(image: UploadFile = File(...), ocr_e
         except httpx.RequestError:
             # If backend fails, still return processing results
             return {
+                "ocr_engine": ocr_engine,
                 "processing_result": result,
                 "backend_status": "failed",
                 "message": "Image processed successfully, but failed to send to backend"
