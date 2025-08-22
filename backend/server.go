@@ -85,7 +85,10 @@ func main() {
 
 	// ----- Add CORS middleware -----
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:3000"}, // frontend origin
+		AllowOrigins: []string{
+			"http://127.0.0.1:3000", // React/Vite frontend
+			"http://127.0.0.1:5500", // static HTML frontend
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: true,

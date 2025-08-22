@@ -1,4 +1,7 @@
 "use client";
+// This file is part of the Open-Source project:
+import axios from "axios";
+
 
 import { useState, useEffect, useCallback, use } from "react";
 import Footer from "../components/Footer";
@@ -19,6 +22,8 @@ import {
   FileJson,
   Download,
   Undo,
+  VectorSquare,
+  Redo,
 } from "lucide-react";
 
 import { JsonEditor } from "@/components/json-editor";
@@ -89,6 +94,9 @@ const Annotate = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fullOcr, setFullOcr] = useState({ text: "", conf: null });
 
+  // fatch axios for file upload
+  const [preview, setPreview] = useState(null);
+
   const currentImage = images.find((i) => i.id === currentId);
   const [batchInfo, setBatchInfo] = useState({
     running: false,
@@ -96,6 +104,32 @@ const Annotate = () => {
     total: 0,
     pct: 0,
   });
+
+  // Function to save the current state to history
+  const handleUpload = async () => {
+    if (!file) return alert("Please select an image first");
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("annotations", "[]"); // optional
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/upload-image",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Server response:", res.data);
+      setPreview(res.data);
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+  };
 
   useEffect(() => {
     // Initialize with default images if none are loaded
@@ -111,6 +145,26 @@ const Annotate = () => {
       );
     }
   });
+
+  // Add this useEffect to initialize history with the current state
+  useEffect(() => {
+    // Initialize history with the current state when component mounts
+    if (history.length === 0) {
+      const initialState = {
+        annotations: { ...annotations },
+        textAnnotations: { ...fullOcr },
+        timestamp: Date.now(),
+      };
+      setHistory([initialState]);
+      setHistoryIndex(0);
+    }
+  }, []); // Run only once on mount
+
+  // useEffect(() => {
+  //   // Update currentId when images change
+  //   console.log("Current annotations:", history);
+  //   console.log("Current history index:", historyIndex);
+  // }, [history, historyIndex]);
 
   useEffect(() => {
     // Fetch annotations when the component mounts
@@ -216,6 +270,7 @@ const Annotate = () => {
     updateAnnotation(id, { accuracy });
   };
 
+  // Updated saveToHistory function
   const saveToHistory = useCallback(() => {
     const currentState = {
       annotations: { ...annotations },
@@ -223,20 +278,27 @@ const Annotate = () => {
       timestamp: Date.now(),
     };
 
-    setHistory((prevHistory) => {
-      const newHistory = [...prevHistory, currentState];
+    // console.log("Current annotations:", annotations);
+    // console.log("Saving to history:", currentState);
+    // console.log("Current history index:", historyIndex);
 
+    setHistory((prevHistory) => {
+      // Remove any future history if we're not at the latest point
+      const newHistory = prevHistory.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+
+      // Keep only last 50 states
       if (newHistory.length > 50) {
         newHistory.shift();
+        setHistoryIndex(newHistory.length - 1);
         return newHistory;
       }
 
+      setHistoryIndex(newHistory.length - 1);
       return newHistory;
     });
-
-    setHistoryIndex((prev) => prev + 1);
-  }, [annotations, fullOcr]);
-
+  }, [annotations, fullOcr, historyIndex]);
+  // Updated undo function
   const undo = useCallback(() => {
     if (historyIndex > 0) {
       const previousState = history[historyIndex - 1];
@@ -246,13 +308,19 @@ const Annotate = () => {
     }
   }, [history, historyIndex]);
 
+  // Optional: Add redo functionality
+  const redo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const nextState = history[historyIndex + 1];
+      setAnnotations(nextState.annotations);
+      setFullOcr(nextState.textAnnotations);
+      setHistoryIndex((prev) => prev + 1);
+    }
+  }, [history, historyIndex]);
+
   return (
     <div className="min-h-full bg-gray-50 p-6">
       <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
-      <div className="bg-[#E5E9EC] px-2 py-1 my-3 rounded inline-block w-fit">
-        <h4 className="text-sm font-semibold">Tip: Use keyboard shortcuts</h4>
-      </div>
-
       {/* REVISED: This grid now adapts for different screen sizes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Upload images to annotate them. You can use the following keyboard shortcuts: */}
@@ -345,23 +413,32 @@ const Annotate = () => {
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
               <div className="flex items-center gap-2">
-                <OcrControls
+                {/* <OcrControls
                   lang={lang}
                   setLang={setLang}
                   image={currentImage}
                   onOcrResult={(res) => setFullOcr(res)}
-                />
-
+                /> */}
                 {/* infromation history */}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={undo}
-                  disabled={historyIndex <= 0}
+                  disabled={historyIndex <= 0 || history.length <= 1}
                   className="flex items-center gap-1 bg-transparent"
                 >
                   <Undo className="h-4 w-4" />
-                  មិនធ្វើ / Undo
+                  Undo
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={redo}
+                  disabled={historyIndex >= history.length - 1}
+                  className="flex items-center gap-1 bg-transparent"
+                >
+                  <Redo className="h-4 w-4" />
+                  Redo
                 </Button>
                 <Button
                   variant={mode === "box" ? "default" : "outline"}
@@ -384,7 +461,7 @@ const Annotate = () => {
                   }
                   onClick={() => setMode("polygon")}
                 >
-                  <PenTool className="w-4 h-4" />
+                  <VectorSquare className="w-4 h-4" />
                   {/* Polygon */}
                 </Button>
                 <Button

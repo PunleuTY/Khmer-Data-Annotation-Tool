@@ -36,6 +36,7 @@ export function AnnotationCanvas({
   const [temp, setTemp] = React.useState(null);
   const [scale, setScale] = React.useState({ sx: 1, sy: 1 });
   const [mousePos, setMousePos] = React.useState(null);
+  const [tempDragPosition, setTempDragPosition] = React.useState(null);
 
   /** Update scale on image resize */
   React.useEffect(() => {
@@ -71,9 +72,15 @@ export function AnnotationCanvas({
     if (!ctx) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    annotations.forEach((a) =>
-      drawAnnotation(ctx, a, scale, a.id === selectedId)
-    );
+    annotations.forEach((a) => {
+      // Show temp drag position if this annotation is being dragged
+      const annotationToShow =
+        dragging && a.id === selectedId && tempDragPosition
+          ? tempDragPosition
+          : a;
+      drawAnnotation(ctx, annotationToShow, scale, a.id === selectedId);
+    });
+
     if (temp) drawTempAnnotation(ctx, temp, mousePos);
   };
 
@@ -162,6 +169,8 @@ export function AnnotationCanvas({
           setSelectedId(hit.id);
           setDragging(true);
           setDragOffset({ startPos: pos, shape: hit });
+          // Initialize temp drag position with original shape
+          setTempDragPosition(hit);
           return;
         } else {
           setSelectedId(null);
@@ -198,14 +207,15 @@ export function AnnotationCanvas({
         setTemp((prev) => ({ ...prev, w: pos.x - prev.x, h: pos.y - prev.y }));
       }
 
-      if (dragging && selectedId) {
+      // CHANGED: Update temp position instead of actual annotation during drag
+      if (dragging && selectedId && dragOffset) {
         const dx = (pos.x - dragOffset.startPos.x) * scale.sx;
         const dy = (pos.y - dragOffset.startPos.y) * scale.sy;
-
         const shape = dragOffset.shape;
 
         if (shape.type === "box") {
-          onUpdateAnnotation(selectedId, {
+          setTempDragPosition({
+            ...shape,
             rect: {
               ...shape.rect,
               x: shape.rect.x + dx,
@@ -219,21 +229,14 @@ export function AnnotationCanvas({
             x: p.x + dx,
             y: p.y + dy,
           }));
-          onUpdateAnnotation(selectedId, { points: movedPoints });
+          setTempDragPosition({
+            ...shape,
+            points: movedPoints,
+          });
         }
       }
     },
-    [
-      drawing,
-      dragging,
-      temp,
-      selectedId,
-      scale,
-      image,
-      getPos,
-      dragOffset,
-      onUpdateAnnotation,
-    ]
+    [drawing, dragging, temp, selectedId, scale, image, getPos, dragOffset]
   );
 
   /** Mouse Up */
@@ -243,10 +246,35 @@ export function AnnotationCanvas({
       onAddAnnotation({ id: Date.now().toString(), type: "box", rect: norm });
       setTemp(null);
     }
+
+    // CHANGED: Only update annotation when drag is complete
+    if (dragging && selectedId && tempDragPosition) {
+      if (tempDragPosition.type === "box") {
+        onUpdateAnnotation(selectedId, {
+          rect: tempDragPosition.rect,
+        });
+      }
+      if (tempDragPosition.type === "polygon") {
+        onUpdateAnnotation(selectedId, {
+          points: tempDragPosition.points,
+        });
+      }
+      setTempDragPosition(null);
+    }
+
     setDrawing(false);
     setDragging(false);
     setDragOffset(null);
-  }, [temp, drawing, scale, onAddAnnotation]);
+  }, [
+    temp,
+    drawing,
+    scale,
+    onAddAnnotation,
+    dragging,
+    selectedId,
+    tempDragPosition,
+    onUpdateAnnotation,
+  ]);
 
   /** Double Click to finish polygon */
   const onDblClick = () => {

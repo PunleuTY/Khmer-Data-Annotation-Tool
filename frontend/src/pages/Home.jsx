@@ -234,7 +234,7 @@ export const Home = () => {
                 to="/annotate"
                 className="bg-[#12284c] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
               >
-                Get Started <FaArrowRightLong />
+                Start New Project <FaArrowRightLong />
               </NavLink>
 
               {/* Scroll Button */}
