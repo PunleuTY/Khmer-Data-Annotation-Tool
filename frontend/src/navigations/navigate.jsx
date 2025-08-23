@@ -44,6 +44,19 @@ const Sidebar = () => {
 
       {/* Navigation Menu */}
       <nav className="flex-1 space-y-2">
+        <NavLink
+          key="project"
+          to="/project"
+          className={({ isActive }) =>
+            `flex items-center space-x-6 justify-center border-2 m-2 rounded-xl px-6 py-4 transition-all duration-200 font-cadt ${
+              isActive
+                ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
+                : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
+            }`
+          }
+        >
+          <span className="font-medium text-center">My Project</span>
+        </NavLink>
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
