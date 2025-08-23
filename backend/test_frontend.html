@@ -173,159 +173,317 @@ saveBtn.addEventListener("click", async ()=>{
 </script>
 </body>
 </html> -->
+<!--  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Khmer Data Annotation Tool</title>
-<style>
-#canvasContainer { position: relative; border: 1px solid #ccc; display: inline-block; }
-canvas { border: 1px solid #333; }
-button { margin: 5px; }
-pre { max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Khmer Data Annotation Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f6f7f9; margin:0; padding:20px; }
+    h1 { margin:0 0 12px; color:#ff3f34; }
+    .row { display:flex; gap:16px; align-items:flex-start; }
+    .col { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .col.left { width:320px; }
+    .col.right { flex:1; }
+    .section-title { font-weight:600; margin:6px 0 8px; font-size:14px; }
+    .dataset, .project-list { max-height:220px; overflow:auto; border:1px solid #e5e7eb; border-radius:8px; }
+    .dataset button, .project-list button { display:block; width:100%; text-align:left; padding:8px; border:0; background:#fff; border-bottom:1px solid #eee; cursor:pointer; }
+    .dataset button.active, .project-list button.active { background:#eef6ff; border-left:4px solid #ff3f34; }
+    .dataset button:hover, .project-list button:hover { background:#f8fafc; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; }
+    button { cursor:pointer; border-radius:10px; border:1px solid #e5e7eb; background:#fff; padding:8px 10px; }
+    button.primary { background:#ff3f34; color:#fff; border-color:#ff3f34; }
+    button.warning { background:#fff0f0; color:#b91c1c; border-color:#fecaca; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    #canvasHolder { position:relative; display:inline-block; border:1px solid #d1d5db; border-radius:8px; overflow:hidden; background:#00000009; }
+    canvas { display:block; }
+    .list { margin-top:10px; border:1px solid #e5e7eb; border-radius:8px; max-height:220px; overflow:auto; }
+    .list-item { display:flex; gap:8px; align-items:flex-start; padding:8px; border-bottom:1px solid #eee; }
+    .list-item:last-child { border-bottom:0; }
+    .list-item input[type="text"] { width:160px; }
+    .tag { font-size:12px; color:#6b7280; }
+    .pill { display:inline-block; font-size:12px; background:#eef2ff; color:#3730a3; padding:2px 6px; border-radius:999px; }
+    .legend { display:flex; gap:12px; font-size:12px; color:#6b7280; align-items:center; margin:8px 0; }
+    .legend .box { width:12px; height:12px; border:2px solid; border-radius:2px; display:inline-block; margin-right:4px; }
+    .legend .red { border-color:#ef4444; }
+    .legend .blue { border-color:#3b82f6; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#d1e7ff; padding:10px; border-radius:8px; max-height:220px; overflow:auto; }
+  </style>
 </head>
 <body>
-<h1>Image Annotation Tool</h1>
+  <h1>Khmer Data Annotation Tool</h1>
 
-<input type="file" id="imageInput" accept="image/*"/>
-<button id="uploadBtn">Upload Image</button>
-<button id="annotateBtn">Show Backend Annotations</button>
-<button id="exportBtn">Export Annotations</button>
-<button id="downloadBtn" style="display:none;">Download JSON</button>
-<button id="saveBtn">Save Ground Truth</button>
+  <div class="row">
+    <!-- LEFT: Project + Upload & Dataset -->
+    <div class="col left">
+      <div class="section-title">Projects</div>
+      <input id="projectName" type="text" placeholder="New project name" />
+      <button id="btnCreateProject" class="primary">Create Project</button>
+      <div class="project-list" id="projectList"></div>
 
-<div id="canvasContainer">
-  <canvas id="annotationCanvas"></canvas>
-</div>
+      <div class="section-title">Upload Images</div>
+      <input id="fileInput" type="file" accept="image/*" multiple />
+      <div style="height:8px"></div>
+      <div class="controls">
+        <button id="btnUpload" class="primary">Send to Backend (/upload)</button>
+        <button id="btnClear" class="warning">Clear All</button>
+      </div>
 
-<pre id="annotationsOutput"></pre>
+      <div style="height:10px"></div>
+      <div class="section-title">Dataset</div>
+      <div id="dataset" class="dataset"></div>
+
+      <div style="height:10px"></div>
+      <div class="section-title">Legend</div>
+      <div class="legend">
+        <span><span class="box red"></span> User boxes</span>
+        <span><span class="box blue"></span> YOLO boxes</span>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="section-title">Debug</div>
+      <pre id="debug"></pre>
+    </div>
+
+    <!-- RIGHT: Canvas + Annotations -->
+    <div class="col right">
+      <div class="section-title">Canvas</div>
+      <div id="canvasHolder">
+        <canvas id="canvas" width="960" height="540"></canvas>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="controls">
+        <span class="pill">Draw mode: Drag to create a red box</span>
+        <button id="btnSaveGT" class="primary">Save Ground Truth (/save-ground-truth)</button>
+        <button id="btnExport">Export Combined JSON</button>
+      </div>
+
+      <div style="height:14px"></div>
+      <div class="section-title">Annotations</div>
+      <div class="list" id="annList"></div>
+    </div>
+  </div>
 
 <script>
-const imageInput = document.getElementById("imageInput");
-const uploadBtn = document.getElementById("uploadBtn");
-const annotateBtn = document.getElementById("annotateBtn");
-const exportBtn = document.getElementById("exportBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-const saveBtn = document.getElementById("saveBtn");
-const canvas = document.getElementById("annotationCanvas");
-const ctx = canvas.getContext("2d");
-const annotationsOutput = document.getElementById("annotationsOutput");
+  // ---------- CONFIG ----------
+  const BACKEND_PROJECT_URL = "http://127.0.0.1:5000/projects";
+  const BACKEND_UPLOAD_URL = "http://127.0.0.1:5000/images/upload";
+  const BACKEND_SAVE_GT_URL = "http://127.0.0.1:5000/images/save-groundtruth";
 
-let img = new Image();
-let drawing = false;
-let startX = 0;
-let startY = 0;
-let userAnnotations = [];
-let backendAnnotations = [];
-let exportData = null;
-let uploadedFilename = null; // timestamped for backend
-let displayedName = null;    // original name for JSON export
+  // ---------- STATE ----------
+  const projects = [];
+  let currentProjectId = null;
 
-// Load image from input
-imageInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(event) { img.src = event.target.result; }
-  reader.readAsDataURL(file);
-});
+  const images = [];
+  const annMap = {};
+  let currentKey = null;
+  let drawing = false, startX = 0, startY = 0;
 
-img.onload = () => {
-  canvas.width = img.width;
-  canvas.height = img.height;
-  redraw();
-};
+  // ---------- DOM ----------
+  const projectNameInput = document.getElementById("projectName");
+  const btnCreateProject = document.getElementById("btnCreateProject");
+  const projectListEl = document.getElementById("projectList");
+  const fileInput = document.getElementById("fileInput");
+  const btnUpload = document.getElementById("btnUpload");
+  const btnClear = document.getElementById("btnClear");
+  const dataset = document.getElementById("dataset");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const debugEl = document.getElementById("debug");
+  const annList = document.getElementById("annList");
+  const btnSaveGT = document.getElementById("btnSaveGT");
+  const btnExport = document.getElementById("btnExport");
 
-// Drawing rectangles
-canvas.addEventListener("mousedown", e => { drawing = true; startX = e.offsetX; startY = e.offsetY; });
-canvas.addEventListener("mousemove", e => {
-  if (!drawing) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  redraw();
-  ctx.strokeStyle = "red"; ctx.lineWidth = 2;
-  ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
-});
-canvas.addEventListener("mouseup", e => {
-  if (!drawing) return;
-  drawing = false;
-  userAnnotations.push({x:startX, y:startY, width:e.offsetX-startX, height:e.offsetY-startY});
-  redraw();
-});
+  let currentImg = new Image();
+  currentImg.onload = () => {
+    canvas.width = currentImg.naturalWidth;
+    canvas.height = currentImg.naturalHeight;
+    redraw();
+  };
 
-function redraw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(img,0,0);
-  // User annotations (red)
-  ctx.strokeStyle="red"; ctx.lineWidth=2;
-  userAnnotations.forEach(r=>ctx.strokeRect(r.x,r.y,r.width,r.height));
-  // Backend annotations (blue)
-  ctx.strokeStyle="blue"; ctx.lineWidth=2;
-  backendAnnotations.forEach(d=>{
-    const [x1,y1,x2,y2]=d.box_coordinates;
-    ctx.strokeRect(x1,y1,x2-x1,y2-y1);
-    if(d.extracted_text){
-      ctx.fillStyle="blue";
-      ctx.font="16px Arial";
-      ctx.fillText(d.extracted_text,x1+2,y1+16);
-    }
-  });
+  function log(obj) {
+    debugEl.textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
+  }
+
+  function resetAll() {
+    images.length = 0;
+    for (const k in annMap) delete annMap[k];
+    currentKey = null;
+    currentImg.src = "";
+    dataset.innerHTML = "";
+    annList.innerHTML = "";
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    log("cleared");
+  }
+
+  btnClear.addEventListener("click", resetAll);
+
+  // ---------- PROJECT HANDLERS ----------
+  async function loadProjects() {
+  try {
+    const res = await fetch(BACKEND_PROJECT_URL);
+    if (!res.ok) throw new Error(`Failed to fetch projects: ${res.status}`);
+    const data = await res.json();
+    projects.length = 0;
+    projects.push(...(data.projects || [])); // <-- fixed here
+    if (projects.length && !currentProjectId) currentProjectId = projects[0].id;
+    refreshProjects();
+  } catch (err) {
+    console.error(err);
+    log("Failed to load projects: " + err.message);
+  }
 }
 
-// Upload image
-uploadBtn.addEventListener("click", async ()=>{
-  const file = imageInput.files[0];
-  if(!file) return alert("Select an image first");
-  const formData = new FormData(); formData.append("image", file);
+  btnCreateProject.addEventListener("click", async () => {
+    const name = projectNameInput.value.trim();
+    if (!name) return alert("Enter project name");
+    try {
+      const res = await fetch(BACKEND_PROJECT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+      const data = await res.json();
+      if (!res.ok) throw data;
+      projects.push(data);
+      currentProjectId = data.id;
+      refreshProjects();
+      projectNameInput.value = "";
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create project");
+    }
+  });
 
-  try{
-    const res = await fetch("http://127.0.0.1:5000/upload",{method:"POST",body:formData});
-    const data = await res.json();
-    if(!res.ok){ alert(data.error||"Upload failed"); return; }
-    uploadedFilename = data.filename;
-    displayedName = data.originalName;
-    if(data.annotations){ backendAnnotations = data.annotations.detections||[]; }
-    img.src = URL.createObjectURL(file);
-    img.onload=()=>{ canvas.width=img.width; canvas.height=img.height; redraw(); }
-  }catch(err){ console.error(err); alert("Error uploading image"); }
-});
+  function refreshProjects() {
+    projectListEl.innerHTML = "";
+    projects.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = p.id === currentProjectId ? "active" : "";
+      btn.textContent = p.name;
+      btn.addEventListener("click", () => {
+        currentProjectId = p.id;
+        refreshProjects();
+      });
+      projectListEl.appendChild(btn);
+    });
+  }
 
-// Show backend annotations
-annotateBtn.addEventListener("click", ()=>{ if(backendAnnotations.length===0){alert("No backend annotations"); return;} redraw(); });
+  // ---------- IMAGE UPLOAD ----------
+  fileInput.addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const f of files) {
+      const dataUrl = await readAsDataURL(f);
+      images.push({ localName: f.name, localDataUrl: dataUrl, serverId: null, serverFileName: null });
+    }
+    refreshDataset();
+    if (!currentKey && images.length) currentImg.src = images[0].localDataUrl;
+  });
 
-// Export annotations
-exportBtn.addEventListener("click", ()=>{
-  if(!uploadedFilename) return alert("Upload image first");
-  exportData = {
-    filename: displayedName,
-    meta:{tool:"Khmer Data Annotation Tool",lang:"khm",timestamp:new Date().toISOString()},
-    userAnnotations,
-    backendAnnotations
-  };
-  annotationsOutput.textContent = JSON.stringify(exportData,null,2);
-  downloadBtn.style.display="inline-block";
-});
+  btnUpload.addEventListener("click", async () => {
+    if (!images.length) return alert("Select images first.");
+    if (!currentProjectId) return alert("Select a project first.");
 
-// Download JSON
-downloadBtn.addEventListener("click", ()=>{
-  if(!exportData) return;
-  const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download="annotations.json"; a.click();
-  URL.revokeObjectURL(url);
-});
+    const fd = new FormData();
+    const fileInputEl = fileInput;
+    if (!fileInputEl.files || !fileInputEl.files.length) return alert("Select files again.");
 
-// Save ground truth
-saveBtn.addEventListener("click", async ()=>{
-  if(!uploadedFilename) return alert("Upload image first");
-  const payload = { filename:uploadedFilename, annotations:[...userAnnotations,...backendAnnotations], meta:{tool:"Khmer Data Annotation Tool",lang:"khm",timestamp:new Date().toISOString()}};
-  try{
-    const res = await fetch("http://127.0.0.1:5000/save-groundtruth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    const data = await res.json();
-    if(res.ok){ alert("Ground truth saved successfully"); }
-    else{ alert("Error saving ground truth: "+data.error); }
-  }catch(err){ console.error(err); alert("Error saving ground truth"); }
-});
+    for (const f of fileInputEl.files) fd.append("images", f, f.name);
+    fd.append("project_id", currentProjectId);
+
+    try {
+      const res = await fetch(BACKEND_UPLOAD_URL, { method: "POST", body: fd });
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      const data = await res.json();
+      log(data);
+
+      const serverImages = data.images || [];
+      const serverAnnotations = data.annotations || {};
+
+      for (let i = 0; i < serverImages.length; i++) {
+        const s = serverImages[i];
+        const client = images[i];
+        if (!client) continue;
+
+        client.serverId = s.id || s.file_name;
+        client.serverFileName = s.file_name || s.id;
+
+        const key = client.serverId || client.serverFileName;
+        if (!annMap[key]) annMap[key] = { user: [], yolo: [] };
+        const raw = serverAnnotations[key];
+        const yoloBoxes = extractDetectionsArray(raw);
+        annMap[key].yolo = yoloBoxes.map((d, idx) => {
+          const [x1, y1, x2, y2] = d.box_coordinates || d.box || [0,0,0,0];
+          return { id: `y_${idx}_${Date.now()}`, rect: { x: x1, y: y1, w: x2-x1, h: y2-y1 }, text: d.extracted_text || "", gt: "", src: "yolo" };
+        });
+      }
+
+      refreshDataset();
+      const first = images.find(img => img.serverId || img.serverFileName) || images[0];
+      if (first) { currentKey = first.serverId || first.serverFileName || first.localName; currentImg.src = first.localDataUrl; }
+      redraw(); renderList();
+    } catch(err) { console.error(err); alert("Error uploading images"); }
+  });
+
+  function refreshDataset() {
+    dataset.innerHTML = "";
+    images.forEach((img, idx) => {
+      const key = img.serverId || img.serverFileName || img.localName;
+      const btn = document.createElement("button");
+      btn.className = key === currentKey ? "active" : "";
+      btn.innerHTML = `<div><strong>${img.localName}</strong></div><div class="tag">${img.serverFileName || "(not saved)"} · #${idx+1}</div>`;
+      btn.addEventListener("click", () => { currentKey = key; currentImg.src = img.localDataUrl; redraw(); renderList(); refreshDataset(); });
+      dataset.appendChild(btn);
+    });
+  }
+
+  // ---------- DRAWING & RENDER ----------
+  canvas.addEventListener("mousedown", e => { if (!currentKey) return; drawing=true; const r=canvas.getBoundingClientRect(); startX=Math.round(e.clientX-r.left); startY=Math.round(e.clientY-r.top); });
+  canvas.addEventListener("mousemove", e => { if (!drawing) return; redraw(); const r=canvas.getBoundingClientRect(); const x=Math.round(e.clientX-r.left); const y=Math.round(e.clientY-r.top); ctx.save(); ctx.strokeStyle="#ef4444"; ctx.lineWidth=2; ctx.strokeRect(startX,startY,x-startX,y-startY); ctx.restore(); });
+  canvas.addEventListener("mouseup", e => {
+    if (!drawing || !currentKey) return; drawing=false; const r=canvas.getBoundingClientRect(); const endX=Math.round(e.clientX-r.left); const endY=Math.round(e.clientY-r.top);
+    const x=Math.min(startX,endX), y=Math.min(startY,endY), w=Math.abs(endX-startX), h=Math.abs(endY-startY); if(w<3||h<3) return;
+    if(!annMap[currentKey]) annMap[currentKey]={user:[],yolo:[]};
+    annMap[currentKey].user.push({id:`u_${Date.now()}_${Math.random().toString(36).slice(2,6)}`, rect:{x,y,w,h}, text:"", gt:"", src:"user"});
+    redraw(); renderList();
+  });
+
+  function redraw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height); if(currentImg.src) ctx.drawImage(currentImg,0,0);
+    if(!currentKey||!annMap[currentKey]) return;
+
+    ctx.save(); ctx.lineWidth=2; ctx.strokeStyle="#3b82f6"; ctx.fillStyle="#3b82f6"; ctx.font="14px Arial";
+    for(const a of annMap[currentKey].yolo){const r=a.rect;ctx.strokeRect(r.x,r.y,r.w,r.h); if(a.text) ctx.fillText(a.text,r.x+2,r.y+14);} ctx.restore();
+    ctx.save(); ctx.lineWidth=2; ctx.strokeStyle="#ef4444"; for(const a of annMap[currentKey].user){const r=a.rect; ctx.strokeRect(r.x,r.y,r.w,r.h);} ctx.restore();
+  }
+
+  function renderList() {
+    annList.innerHTML=""; if(!currentKey||!annMap[currentKey]) return;
+    const combined=[...(annMap[currentKey].yolo||[]),...(annMap[currentKey].user||[])];
+    combined.forEach(a=>{
+      const row=document.createElement("div"); row.className="list-item"; row.innerHTML=`<div class="tag">${a.src==="yolo"?"YOLO":"USER"}</div><div>(${a.rect.x},${a.rect.y},${a.rect.w},${a.rect.h})</div><input type="text" placeholder="extracted text" value="${escapeHtml(a.text||"")}" /><input type="text" placeholder="GT" value="${escapeHtml(a.gt||"")}" /><button data-id="${a.id}" class="danger">Delete</button>`;
+      const [,, inputText, inputGT, delBtn]=row.children;
+      inputText.addEventListener("input", ev=>a.text=ev.target.value);
+      inputGT.addEventListener("input", ev=>a.gt=ev.target.value);
+      delBtn.addEventListener("click", ()=>{ const arr=a.src==="yolo"?annMap[currentKey].yolo:annMap[currentKey].user; const ix=arr.findIndex(z=>z.id===a.id); if(ix>=0) arr.splice(ix,1); renderList(); redraw(); });
+      annList.appendChild(row);
+    });
+  }
+
+  // ---------- SAVE GT ----------
+  
+
+  btnExport.addEventListener("click", ()=>{ const all={}; for(const k in annMap) all[k]=annMap[k]; const blob=new Blob([JSON.stringify(all,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="annotations.json"; a.click(); });
+
+  function readAsDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+  function escapeHtml(text){return text.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
+  function extractDetectionsArray(raw){if(!raw) return []; if(Array.isArray(raw)) return raw; if(typeof raw==="object") return Object.values(raw); return [];}
+
+  // ---------- INIT ----------
+  window.addEventListener("DOMContentLoaded", ()=>{ loadProjects(); });
 </script>
 </body>
 </html>
