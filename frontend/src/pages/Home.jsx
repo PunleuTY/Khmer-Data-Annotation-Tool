@@ -3,6 +3,7 @@ import { FcApproval } from "react-icons/fc";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import home from "../assets/home.png";
+import homepage from "../assets/homepage.jpg";
 import Nav2 from "../assets/Nav2.png";
 import {
   FaUpload,
@@ -172,7 +173,7 @@ export const Home = () => {
   return (
     <div className="home-container">
       {/* Welcome Banner */}
-      <div className="flex justify-between items-center h-55 bg-blue-100 p-6 m-4 rounded-lg mt-8 mb-4">
+      {/* <div className="flex justify-between items-center h-55 bg-blue-100 p-6 m-4 rounded-lg mt-8 mb-4">
         <div>
           <h1 className="text-4xl font-bold text-blue-500">
             WELCOME TO HOME PAGE
@@ -188,63 +189,67 @@ export const Home = () => {
             className="rounded-md max-h-90 object-contain items-center"
           />
         </div>
+      </div> */}
+      <div className="bg-white m-4 pt-12 rounded-lg">
+        <h2 className="text-2xl font-bold ml-8 text-[#12284c] mb-2 text-start ">
+          Welcome To
+        </h2>
+        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] mb-4 text-start" >Khmer Data</h2>
+        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] text-start" >Annotation Tool</h2>
+        {/* Tool Section */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-8">
+          {/* Left Content */}
+          <div>
+            <p className="text-[#12284c] font-semibold max-w-2xl mb-">
+              Upload images, annotate text regions, extract Khmer/English text
+              with OCR, and validate against ground truth to build high-quality
+              datasets.
+            </p>
+
+            <ul className="text-[#12284c] font-bold mt-10 space-y-2">
+              <li className="flex items-center">
+                <FcApproval className="mr-3" /> Bounding box and polygon
+                annotations
+              </li>
+              <li className="flex items-center">
+                <FcApproval className="mr-3" /> Khmer and English OCR extraction
+              </li>
+              <li className="flex items-center">
+                <FcApproval className="mr-3" /> Validation with accuracy metrics
+              </li>
+            </ul>
+            <div className="flex gap-4 mt-12">
+              {/* Upload Button */}
+              <a
+                href="/annotate"
+                className="bg-[#12284c] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
+              >
+                {" "}
+                Get Started <FaArrowRightLong />{" "}
+              </a>
+
+              {/* Scroll Button */}
+              <a
+                href="#instructions"
+                className="bg-[#76bc21] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
+              >
+                {" "}
+                Instruction <MdOutlineArrowDropDown />{" "}
+              </a>
+            </div>
+          </div>
+          {/* Right Image Panel */}
+          <div className="flex justify-end items-center">
+            <div className="bg-white">
+              <img
+                src={homepage}
+                alt="Annotated Document"
+                className="rounded-md max-h-100 object-contain"
+              />
+            </div>
+          </div>
+        </section>
       </div>
-      <h2 className="text-3xl font-bold text-gray-600 mb-8 text-center ">
-        Khmer Data Annotation Tool
-      </h2>
-      {/* Tool Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start px-6">
-        {/* Left Content */}
-        <div>
-          <p className="text-gray-600 max-w-2xl mb-6">
-            Upload images, annotate text regions, extract Khmer/English text
-            with OCR, and validate against ground truth to build high-quality
-            datasets.
-          </p>
-
-          <ul className="text-gray-600 mt-10 space-y-2">
-            <li className="flex items-center">
-              <FcApproval className="mr-3" /> Bounding box and polygon
-              annotations
-            </li>
-            <li className="flex items-center">
-              <FcApproval className="mr-3" /> Khmer and English OCR extraction
-            </li>
-            <li className="flex items-center">
-              <FcApproval className="mr-3" /> Validation with accuracy metrics
-            </li>
-          </ul>
-          <div className="flex gap-4 mt-20">
-            {/* Upload Button */}
-            <a
-              href="/annotate"
-              className="bg-[#ff3f34] text-white px-10 py-2 rounded flex items-center gap-2"
-            >
-              {" "}
-              Get Started <FaArrowRightLong />{" "}
-            </a>
-
-            {/* Scroll Button */}
-            <a
-              href="#instructions"
-              className="border border-gray-300 px-10 py-2 bg-blue-100 rounded flex items-center gap-2"
-            >
-              {" "}
-              View Instruction <MdOutlineArrowDropDown />{" "}
-            </a>
-          </div>
-        </div>
-        {/* Right Image Panel */}
-        <div className="flex justify-center">
-          <div className="bg-white shadow-md rounded-lg p-2 border border-gray-200">
-            <img
-              src={home}
-              alt="Annotated Document"
-              className="rounded-md max-h-90 object-contain"
-            />
-          </div>
-        </div>
-      </section>
       {/* Instructions Section */}
       <section
         id="instructions"
@@ -305,13 +310,12 @@ export const Home = () => {
               {/* Dot with icon */}
               <span
                 className={`flex items-center justify-center w-12 h-12 rounded-full shadow-md text-white mb-4
-            ${
-              index % 2 === 0
-                ? "bg-blue-400"
-                : index % 2 === 1
-                ? "bg-blue-400"
-                : "bg-blue-300"
-            }
+            ${index % 2 === 0
+                    ? "bg-blue-400"
+                    : index % 2 === 1
+                      ? "bg-blue-400"
+                      : "bg-blue-300"
+                  }
           `}
               >
                 {step.icon}

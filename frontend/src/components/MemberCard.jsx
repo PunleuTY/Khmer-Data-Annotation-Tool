@@ -22,10 +22,13 @@ const MemberCard = ({ image, name, title, description, contact}) => {
         <p className="mt-3 text-sm text-gray-400 leading-relaxed">
           {description}
         </p>
-        <p className="mt-3 text-sm text-gray-400 leading-relaxed">
-          {contact}
-        </p>
-        <button className="bg-[#12284c] font-bold text-white px-4 py-2 rounded-xl hover:bg-[#ff3f34] hover:shadow-lg transition duration-300">Contact Me {contact}</button>
+        {/* Contact Button */}
+        <a
+          href={`mailto:${contact}?subject=Hello ${name}&body=Hi ${name},`}
+          className="inline-block mt-3 bg-[#12284c] font-bold text-white px-4 py-2 rounded-xl hover:bg-[#ff3f34] hover:shadow-lg transition duration-300"
+        >
+          Connect
+        </a>
       </div>
     </div>
   );

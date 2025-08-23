@@ -5,6 +5,7 @@ import Annotate from "./pages/Annotate";
 import Result from "./pages/Result";
 import Feature  from "./pages/Feature";
 import About from "./pages/About";
+import Project from "./pages/Project"
 import "./App.css";
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="result" element={<Result />} />
           <Route path="feature" element={<Feature />} />
           <Route path="about" element={<About />} />
+          <Route path="project" element={<Project />} />
         </Route>
       </Routes>
     </Router>
