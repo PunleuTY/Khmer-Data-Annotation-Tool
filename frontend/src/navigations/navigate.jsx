@@ -79,14 +79,14 @@ const Sidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="m-4 border-t border-black border-opacity-30">
+      {/* <div className="m-4 border-t border-black border-opacity-30">
         <div className="bg-red-300 flex justify-center rounded-3xl flex-col items-center p-2">
           <h1 className="font-bold text-white">Help Center</h1>
           <h2>Have a problem ?</h2>
           <h2>How can we help you ?</h2>
           <button className="bg-green-400">Message</button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
