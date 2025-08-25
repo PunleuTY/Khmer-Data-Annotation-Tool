@@ -69,14 +69,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import uvicorn
 import pytesseract
-<<<<<<< HEAD
-from Yolo_OCR import process_image_with_gemini
-=======
 import os
 import asyncio
 from Yolo_OCR import process_image_with_gemini as process_complete_image_pipeline
 from datetime import datetime
->>>>>>> 81abda4a8b52c5572c53fe51a614f3e7242d8b5a
+
 
 # ----> Setup Tesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -98,13 +95,7 @@ async def process_image_and_send_to_backend(image: UploadFile = File(...)):
     filename = image.filename  
 
     try:
-<<<<<<< HEAD
-        # Call the complete processing pipeline from YOLO_OCR.py
-        # make sure process_image_with_gemini supports `ocr_engine` argument
-        result = process_image_with_gemini(image_bytes, image.filename, ocr_engine=ocr_engine)
-        
-        # Send results to backend automatically
-=======
+
         # Run YOLO + OCR in thread executor (non-blocking)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(None, process_complete_image_pipeline, image_bytes, filename)
@@ -139,14 +130,13 @@ async def process_image_and_send_to_backend(image: UploadFile = File(...)):
         backend_status = "skipped"
         backend_message = "Backend call skipped or failed"
 
->>>>>>> 81abda4a8b52c5572c53fe51a614f3e7242d8b5a
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     backend_url,
                     json=structured_result,
                     headers={"Content-Type": "application/json"},
-                    timeout=30.0
+                    timeout=40.0
                 )
                 response.raise_for_status()
                 backend_status = "success"

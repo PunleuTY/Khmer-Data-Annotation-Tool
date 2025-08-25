@@ -48,13 +48,10 @@ import os
 from PIL import Image
 
 # configure tesseract path
-<<<<<<< HEAD
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Update this path if necessary
-=======
+
 # pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
->>>>>>> 81abda4a8b52c5572c53fe51a614f3e7242d8b5a
 
 def gemini_ocr(pil_image: Image.Image) -> str:
     """
