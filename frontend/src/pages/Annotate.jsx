@@ -63,6 +63,7 @@ const Annotate = () => {
   }
 
   const handleFiles = async (items) => {
+    console.log("item",items)
     const updated = [...images, ...items];
     console.log("Updated images:", updated);
     uploadedImage(updated[updated.length - 1]);

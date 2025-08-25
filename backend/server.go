@@ -5,9 +5,10 @@ import (
 	"log"
 	"time"
 
+	"backend/controllers"
 	"backend/routes"
 
-	"github.com/gin-contrib/cors" // <-- add this
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,7 +36,9 @@ func main() {
 
 	db := client.Database("image_db")
 	imageCollection := db.Collection("images")
+	projectCollection := db.Collection("projects")
 
+	// Initialize Gin
 	router := gin.Default()
 	router.Static("/uploads", "./uploads")
 
@@ -45,10 +48,20 @@ func main() {
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router, imageCollection)
-	// routes.SetupResultRoutes(router, imageCollection)
+	// ----- Setup Routes -----
+	// Image routes
+	imageGroup := router.Group("/images")
+	{
+		imageGroup.POST("/upload", controllers.UploadImages(imageCollection))
+		imageGroup.POST("/save-groundtruth", controllers.SaveGroundTruth(imageCollection))
+	}
 
+	// Project routes
+	routes.ProjectRoutes(router, projectCollection)
+
+	// Start server
 	router.Run(":5000")
 }

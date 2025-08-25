@@ -8,6 +8,6 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, imageCollection *mongo.Collection) {
-	router.POST("/upload", controllers.UploadImage(imageCollection))
+	router.POST("/upload", controllers.UploadImages(imageCollection))
 	router.POST("/save-groundtruth", controllers.SaveGroundTruth(imageCollection))
 }

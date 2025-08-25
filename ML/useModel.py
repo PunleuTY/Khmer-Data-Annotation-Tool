@@ -12,7 +12,9 @@ best_path = 'best.pt'
 # image_path = os.path.join(ROOT_DIR, "TeacherHongly/pri.jpg")
 image_path = r"scanDoc.png"
 # --- Configure pytesseract ---
-pytesseract.pytesseract.tesseract_cmd =r'/opt/homebrew/bin/tesseract'
+# pytesseract.pytesseract.tesseract_cmd =r'/opt/homebrew/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
 
 # --- Load trained YOLOv8 model ---
 model = YOLO(best_path)

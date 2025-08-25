@@ -12,6 +12,10 @@ import { Play, Trash2 } from "lucide-react";
 import { useI18n } from "./translator-provider";
 import { Progress } from "@/components/ui/progress";
 
+// // API
+// import { sendImagesToBackend } from "../server/sendImageAPI";
+
+
 export function AnnotationList({
   image,
   annotations,
@@ -47,10 +51,18 @@ export function AnnotationList({
   //     }
   //   }
 
+
   const runOcrAll = async () => {
     if (!annotations.length || !image) return;
     setBusy(true);
     cancelRef.current.cancel = false;
+
+    // Send the image and annotations to backend
+    await sendImagesToBackend({
+      image: image.url,
+      annotations: annotations,
+    });
+
     onBatchStart && onBatchStart(annotations.length);
     for (let i = 0; i < annotations.length; i++) {
       if (cancelRef.current.cancel) break;

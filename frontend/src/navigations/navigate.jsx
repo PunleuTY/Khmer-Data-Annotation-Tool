@@ -12,7 +12,6 @@ const Sidebar = () => {
   const handleLogout = () => {
     // Add your logout logic here
     console.log("Logging out...");
-
   };
 
   const navigationItems = [
@@ -41,11 +40,7 @@ const Sidebar = () => {
 
       {/* Logo Section */}
       <div className="p-6 bg-white bg-opacity-20 mb-6 flex items-center justify-center">
-        <img
-          src= {Logo}
-          alt="Logo"
-          className="object-contain"
-        />
+        <img src={Logo} alt="Logo" className="object-contain" />
       </div>
 
       {/* Navigation Menu */}
@@ -57,9 +52,10 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-6 px-6 py-4 transition-all duration-200 font-cadt ${isActive
-                  ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
-                  : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
+                `flex items-center space-x-6 px-6 py-4 transition-all duration-200 font-cadt ${
+                  isActive
+                    ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
+                    : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
                 }`
               }
             >
