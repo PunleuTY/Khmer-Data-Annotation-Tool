@@ -135,8 +135,14 @@ const Annotate = () => {
     saveProject({ images, annotations, currentId, lang });
   }, [images, annotations, currentId, lang]);
 
+  function uploadedImage(file) {
+    
+  }
+
   const handleFiles = async (items) => {
     const updated = [...images, ...items];
+    console.log("Updated images:", updated);
+    uploadedImage(updated[updated.length - 1]);
     setImages(updated);
     if (!currentId && updated.length > 0) {
       setCurrentId(updated[0].id);

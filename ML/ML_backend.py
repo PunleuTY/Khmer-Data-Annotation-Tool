@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 import httpx
 import uvicorn
 import pytesseract
-from YOLO_OCR import process_complete_image_pipeline
+from Yolo_OCR import process_image_with_gemini
 
 
 app = FastAPI(title="Khmer Data Annotation ML") 
@@ -23,8 +23,8 @@ async def process_image_and_send_to_backend(image: UploadFile = File(...), ocr_e
 
     try:
         # Call the complete processing pipeline from YOLO_OCR.py
-        # make sure process_complete_image_pipeline supports `ocr_engine` argument
-        result = process_complete_image_pipeline(image_bytes, image.filename, ocr_engine=ocr_engine)
+        # make sure process_image_with_gemini supports `ocr_engine` argument
+        result = process_image_with_gemini(image_bytes, image.filename, ocr_engine=ocr_engine)
         
         # Send results to backend automatically
         try:

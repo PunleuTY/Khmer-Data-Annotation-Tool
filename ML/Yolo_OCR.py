@@ -1,143 +1,120 @@
 import io
-from PIL import Image
-import numpy as np
-from ultralytics import YOLO
-import cv2
-import pytesseract
+import os
 import base64
 import re
 from fastapi import HTTPException
+from PIL import Image
+import numpy as np
+from ultralytics import YOLO
+import google.generativeai as genai
+import pytesseract
+from dotenv import load_dotenv
 
-# Configure Tesseract executable path
-# IMPORTANT: Make sure this path is correct for your system.
-pytesseract.pytesseract.tesseract_cmd = r'D:\Pytesseract\tesseract.exe'
+# --- SETUP ---
 
-# Load the YOLO model once when the module is imported
-import os
+# 1. Load environment variables from the .env file
+load_dotenv()
 
-# Get the directory where this script is located
+# 2. Configure the Gemini API
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY not found. Please create a .env file and add your key.")
+genai.configure(api_key=api_key)
+
+# 3. Load the Gemini Model
+try:
+    gemini_model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    print("✅ Successfully loaded Gemini 1.5 Flash model.")
+except Exception as e:
+    print(f"❌ Error loading Gemini model: {e}")
+    gemini_model = None
+
+# 4. Load the YOLO model
 script_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(script_dir, "best.pt")
-
-print(f"Script directory: {script_dir}")
-print(f"Looking for model at: {model_path}")
-print(f"Model exists: {os.path.exists(model_path)}")
-
 try:
-    model = YOLO(model_path)
-    print(f"Successfully loaded custom model: {model_path}")
-except FileNotFoundError as e:
-    print(f"Error: Model file not found at {model_path}")
-    print(f"Files in script directory: {os.listdir(script_dir)}")
+    yolo_model = YOLO(model_path)
+    print(f"✅ Successfully loaded custom YOLO model: {model_path}")
 except Exception as e:
-    print(f"Error loading model: {type(e).__name__}: {e}")
-    
-def _preprocess_for_ocr(pil_image: Image.Image) -> Image.Image:
-    """
-    Preprocesses a PIL image for better OCR performance.
-    Converts to grayscale, denoises, and applies thresholding.
-    """
-    open_cv_image = np.array(pil_image.convert('L'))
-    denoised = cv2.fastNlMeansDenoising(open_cv_image, h=10, templateWindowSize=7, searchWindowSize=21)
-    _, thresh = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    return Image.fromarray(thresh)
+    raise RuntimeError(f"Failed to load YOLO model at {model_path}: {e}")
 
-def process_complete_image_pipeline(image_bytes: bytes, filename: str = "uploaded_image"):
+# --- PROCESSING FUNCTION ---
+
+def process_image_with_gemini(image_bytes: bytes, filename: str = "uploaded_image", ocr_engine: str = "gemini"):
     """
-    Complete pipeline: Takes image bytes, converts to PIL, runs YOLO detection, 
-    performs OCR, and returns the final results.
+    Pipeline using YOLO for detection and OCR (Gemini or Tesseract).
+    ocr_engine: "gemini" (default) | "tesseract"
     """
-    # Convert bytes to PIL Image
     try:
         pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     except Exception:
-        raise ValueError("Invalid image file")
+        raise ValueError("Invalid image file provided.")
 
-    # Convert to numpy array for YOLO
     np_image = np.array(pil_image)
-    
+
     # Run YOLO detection
-    results = model(np_image)
+    results = yolo_model(np_image)
     boxes = results[0].boxes
 
     detections = []
 
-    # Check if YOLO detected any bounding boxes and if boxes.xyxy is accessible
-    if len(boxes) > 0:
-        # Process each detected bounding box
-        for box in boxes.xyxy:
-            # Get coordinates and convert to integers
-            x1, y1, x2, y2 = map(int, box)
-            
-            # Crop the image using PIL
-            cropped_pil_image = pil_image.crop((x1, y1, x2, y2))
-            
-            # Preprocess the cropped image for better OCR results
-            preprocessed_image = _preprocess_for_ocr(cropped_pil_image)
+    def run_ocr(crop_img: Image.Image) -> str:
+        """Run OCR using selected engine."""
+        if ocr_engine == "gemini":
+            if not gemini_model:
+                raise HTTPException(status_code=500, detail="Gemini model not available.")
+            prompt = "Extract the Khmer text from this image."
+            response = gemini_model.generate_content([prompt, crop_img], stream=False)
+            return re.sub(r'\s+', ' ', response.text).strip() or "No text found"
+        elif ocr_engine == "tesseract":
+            return pytesseract.image_to_string(crop_img, lang="khm").strip() or "No text found"
+        else:
+            raise HTTPException(status_code=400, detail=f"OCR engine '{ocr_engine}' not supported.")
 
-            # *** NEW: Extract Khmer text using pytesseract ***
-            # The 'lang' parameter is set to 'khm' for Khmer.
+    if len(boxes) > 0:
+        # Loop through each box detected by YOLO
+        for box in boxes.xyxy:
+            x1, y1, x2, y2 = map(int, box)
+
+            cropped_pil_image = pil_image.crop((x1, y1, x2, y2))
+
             try:
-                raw = pytesseract.image_to_string(preprocessed_image, lang='khm')
-                extracted_text = re.sub(r'\s+', ' ', raw).strip()
-            except pytesseract.TesseractNotFoundError:
-                 raise HTTPException(status_code=500, detail="Tesseract is not installed or not in your PATH.")
+                extracted_text = run_ocr(cropped_pil_image)
             except Exception as e:
-                # Handle other potential pytesseract errors, e.g., language data not found
+                print(f"OCR error: {e}")
                 extracted_text = f"OCR Error: {e}"
 
-
-            # Convert preprocessed PIL image to bytes for JSON response
+            # Convert cropped image to Base64
             buffered = io.BytesIO()
-            preprocessed_image.save(buffered, format="PNG")
-            img_bytes = buffered.getvalue()
-            
-            # Encode bytes to Base64 string
-            img_base64 = base64.b64encode(img_bytes).decode("utf-8")
-            
-            # Append all information for this detection
+            cropped_pil_image.save(buffered, format="PNG")
+            img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
             detections.append({
                 "box_coordinates": [x1, y1, x2, y2],
-                "extracted_text": extracted_text.strip(),
+                "extracted_text": extracted_text,
                 "cropped_image_base64": img_base64
             })
-    
     else:
-        # If no boxes are detected, take the whole image as a single crop
-        # Preprocess the whole image for OCR
-        preprocessed_image = _preprocess_for_ocr(pil_image)
-
-        # Run OCR on the preprocessed full image
+        # Fallback: run OCR on full image
+        print("⚠️ No boxes detected by YOLO. Running OCR on the full image.")
         try:
-            raw = pytesseract.image_to_string(preprocessed_image, lang='khm')
-            extracted_text = re.sub(r'\s+', ' ', raw).strip()
-        except pytesseract.TesseractNotFoundError:
-             raise HTTPException(status_code=500, detail="Tesseract is not installed or not in your PATH.")
+            extracted_text = run_ocr(pil_image)
         except Exception as e:
             extracted_text = f"OCR Error: {e}"
 
-        # Convert preprocessed PIL image to bytes for JSON response
         buffered = io.BytesIO()
-        preprocessed_image.save(buffered, format="PNG")
-        img_bytes = buffered.getvalue()
-        
-        # Encode bytes to Base64 string
-        img_base64 = base64.b64encode(img_bytes).decode("utf-8")
-        
-        # Get image dimensions for the "box"
+        pil_image.save(buffered, format="PNG")
+        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
         width, height = pil_image.size
-        
-        # Append the result for the whole image
         detections.append({
             "box_coordinates": [0, 0, width, height],
-            "extracted_text": extracted_text.strip(),
+            "extracted_text": extracted_text,
             "cropped_image_base64": img_base64
         })
 
-
-    # Return basic metadata and the list of detections
     return {
         "filename": filename,
-        "size": pil_image.size,  # (width, height)
+        "size": pil_image.size,
         "detections": detections
     }
