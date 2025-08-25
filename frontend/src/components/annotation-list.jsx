@@ -12,8 +12,8 @@ import { Play, Trash2 } from "lucide-react";
 import { useI18n } from "./translator-provider";
 import { Progress } from "@/components/ui/progress";
 
-// API
-import { sendImagesToBackend } from "../server/sendImageAPI";
+// // API
+// import { sendImagesToBackend } from "../server/sendImageAPI";
 
 
 export function AnnotationList({

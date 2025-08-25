@@ -44,10 +44,13 @@
 #     print(f"An error occurred: {e}")
 # useAPI.py
 import pytesseract
+import os
 from PIL import Image
 
 # configure tesseract path
-pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
+# pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
 
 def gemini_ocr(pil_image: Image.Image) -> str:
     """

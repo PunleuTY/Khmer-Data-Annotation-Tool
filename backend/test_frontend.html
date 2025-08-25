@@ -354,7 +354,9 @@ function refreshProjects() {
 // ---------- IMAGE UPLOAD ----------
 fileInput.addEventListener("change", async e=>{
   const files = Array.from(e.target.files||[]);
+  // console.log(files)
   for(const f of files){
+    console.log(f)
     const dataUrl = await readAsDataURL(f);
     images.push({ localName:f.name, localDataUrl:dataUrl, serverId:null, serverFileName:null });
   }
