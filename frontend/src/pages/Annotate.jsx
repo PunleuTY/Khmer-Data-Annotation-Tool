@@ -34,8 +34,11 @@ import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
 
 import { MyProjects } from "./Home";
-import { CurrentProjectContext, ProjectContext } from "./Myproject";
 import { NavLink } from "react-router-dom";
+
+// API
+import { CurrentProjectContext, ProjectContext } from "./Myproject";
+import { uploadImages } from "@/server/sendImageAPI";
 
 const Annotate = () => {
   const [mode, setMode] = useState("box"); // 'box' | 'polygon'
@@ -135,49 +138,67 @@ const Annotate = () => {
     saveProject({ images, annotations, currentId, lang });
   }, [images, annotations, currentId, lang]);
 
-  function uploadedImage(file) {}
+  // function uploadedImage(file) {}
+  const loadFiles = async (items) => {
+    const updated = [...images, ...items];
+    setImages(updated);
+    if (!currentId && updated.length > 0) {
+      setCurrentId(updated[0].id);
+    }
+  };
 
-  const handleFiles = async (files) => {
-    if (!files || files.length === 0) return;
-
-    const formData = new FormData();
-    formData.append("project_id", CurrentProjectContext); // must exist!
-
-    files.forEach((file) => {
-      formData.append("images", file); // matches Go's form.File["images"]
-    });
+  const handleFiles = async (items) => {
+    if (!items || items.length === 0) return;
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/images/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const filePromises = items.map(
+        (item) =>
+          new Promise((resolve, reject) => {
+            const f = item.file || item; // support both cases
 
-      if (!res.ok) {
-        throw new Error("Failed to upload images");
-      }
+            if (!(f instanceof Blob)) {
+              console.error("Not a File/Blob:", f);
+              return reject(new Error("Invalid file object"));
+            }
 
-      const data = await res.json();
-      console.log("Backend response:", data);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              resolve({
+                localName: f.name,
+                localDataUrl: e.target.result,
+                serverId: null,
+                serverFileName: null,
+                name: f.name,
+                url: e.target.result,
+                width: 726,
 
-      // Convert response into frontend state
-      const newImages = data.images.map((img) => ({
-        id: img.id,
-        name: img.file_name,
-        annotations: data.annotations[img.id] || [],
+              });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(f);
+          })
+      );
+
+      const localImages = await Promise.all(filePromises);
+      setImages((prev) => [...prev, ...localImages]);
+
+      // send only File objects to backend
+      const data = await uploadImages(
+        CurrentProjectContext,
+        items.map((i) => i.file || i)
+      );
+
+      const updatedImages = localImages.map((img, index) => ({
+        ...img,
+        serverId: data.images[index]?.id || null,
+        serverFileName: data.images[index]?.file_name || null,
+        annotations: data.annotations[data.images[index]?.id] || [],
       }));
 
-      // Update your state
-      setImages((prev) => [...prev, ...newImages]);
-
-      if (!currentId && newImages.length > 0) {
-        setCurrentId(newImages[0].id);
-      }
-
-      // Call your existing helper
-      if (newImages.length > 0) {
-        uploadedImage(newImages[newImages.length - 1]);
-      }
+      setImages((prev) => [
+        ...prev.slice(0, prev.length - localImages.length),
+        ...updatedImages,
+      ]);
     } catch (err) {
       console.error("Upload error:", err);
     }
@@ -351,7 +372,11 @@ const Annotate = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ImageUploader onFiles={handleFiles} />
+              <input
+                type="file"
+                multiple
+                onChange={(e) => handleFiles(Array.from(e.target.files))}
+              />
               <div className="mt-4">
                 <Label className="text-xs text-gray-600">Dataset</Label>
                 <div className="mt-2 max-h-56 overflow-auto border rounded-md divide-y">
