@@ -130,8 +130,9 @@ const Annotate = () => {
 
   useEffect(() => {
     // Fetch annotations when the component mounts
-    console.log(images);
-    console.log(annotations);
+    console.log("Image", images);
+    console.log("annotation", annotations);
+    console.log("Id", currentId);
   }, [annotations, currentId, images]);
 
   useEffect(() => {
@@ -146,6 +147,46 @@ const Annotate = () => {
       setCurrentId(updated[0].id);
     }
   };
+
+  function transformData(data) {
+    let result = {};
+    let counter = 1;
+
+    const arr = Array.isArray(data) ? data : [data];
+
+    arr.forEach((item) => {
+      if (!item.annotations || !item.annotations.images) return;
+      const aid = item.id;
+
+      item.annotations.images.forEach((img) => {
+        const key = img.id || `img_${String(counter).padStart(3, "0")}`;
+
+        result[aid] = (img.annotations || []).map((ann, idx) => {
+          const coords = ann.box_coordinates ?? [0, 0, 0, 0];
+          const [x1, y1, x2, y2] = coords.length === 4 ? coords : [0, 0, 0, 0];
+
+          return {
+            id: `a_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+            label: ann.label || "",
+            rect: {
+              x: x1,
+              y: y1,
+              w: Math.max(0, x2 - x1),
+              h: Math.max(0, y2 - y1),
+            },
+            type: "box",
+            text: ann.extracted_text || "",
+            gt: "",
+            accuracy: ann.accuracy ?? null,
+          };
+        });
+
+        counter++;
+      });
+    });
+
+    return result;
+  }
 
   const handleFiles = async (items) => {
     if (!items || items.length === 0) return;
@@ -171,7 +212,7 @@ const Annotate = () => {
                 name: f.name,
                 url: e.target.result,
                 width: 726,
-
+                height: 158,
               });
             };
             reader.onerror = reject;
@@ -191,7 +232,7 @@ const Annotate = () => {
       const updatedImages = localImages.map((img, index) => ({
         ...img,
         serverId: data.images[index]?.id || null,
-        serverFileName: data.images[index]?.file_name || null,
+        id: data.images[index]?.file_name || null,
         annotations: data.annotations[data.images[index]?.id] || [],
       }));
 
@@ -199,6 +240,12 @@ const Annotate = () => {
         ...prev.slice(0, prev.length - localImages.length),
         ...updatedImages,
       ]);
+
+      let iadata = [...updatedImages];
+      console.log(iadata);
+      const formatted = transformData(iadata);
+      console.log(formatted);
+      setAnnotations(formatted);
     } catch (err) {
       console.error("Upload error:", err);
     }
