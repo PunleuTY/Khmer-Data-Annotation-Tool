@@ -5,7 +5,7 @@ import Annotate from "./pages/Annotate";
 import Result from "./pages/Result";
 import Feature  from "./pages/Feature";
 import About from "./pages/About";
-import Project from "./pages/Project"
+import Project from "./pages/Myproject"
 import "./App.css";
 function App() {
   return (

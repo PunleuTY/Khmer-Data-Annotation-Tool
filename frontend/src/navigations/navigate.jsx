@@ -17,8 +17,7 @@ const Sidebar = () => {
   const navigationItems = [
     { name: "Home", path: "/", icon: FaHome },
     { name: "Feature", path: "/feature", icon: FaWandMagicSparkles },
-    // { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
-    { name: "Annotate", path: "/project", icon: MdOutlineUploadFile },
+    { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
     { name: "About", path: "/about", icon: RiErrorWarningLine },
   ];
   return (
@@ -45,6 +44,19 @@ const Sidebar = () => {
 
       {/* Navigation Menu */}
       <nav className="flex-1 space-y-2">
+        <NavLink
+          key="project"
+          to="/project"
+          className={({ isActive }) =>
+            `flex items-center space-x-6 justify-center border-2 m-2 rounded-xl px-6 py-4 transition-all duration-200 font-cadt ${
+              isActive
+                ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
+                : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
+            }`
+          }
+        >
+          <span className="font-medium text-center">My Project</span>
+        </NavLink>
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -67,14 +79,14 @@ const Sidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="m-4 border-t border-black border-opacity-30">
+      {/* <div className="m-4 border-t border-black border-opacity-30">
         <div className="bg-red-300 flex justify-center rounded-3xl flex-col items-center p-2">
           <h1 className="font-bold text-white">Help Center</h1>
           <h2>Have a problem ?</h2>
           <h2>How can we help you ?</h2>
           <button className="bg-green-400">Message</button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

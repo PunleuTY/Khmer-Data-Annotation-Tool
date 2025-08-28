@@ -15,6 +15,9 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import { TbTextScan2 } from "react-icons/tb";
+import { NavLink, useNavigate } from "react-router-dom";
+
+export let MyProjects = false;
 
 const workflowSteps = [
   {
@@ -194,8 +197,12 @@ export const Home = () => {
         <h2 className="text-2xl font-bold ml-8 text-[#12284c] mb-2 text-start ">
           Welcome To
         </h2>
-        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] mb-4 text-start" >Khmer Data</h2>
-        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] text-start" >Annotation Tool</h2>
+        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] mb-4 text-start">
+          Khmer Data
+        </h2>
+        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] text-start">
+          Annotation Tool
+        </h2>
         {/* Tool Section */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-8">
           {/* Left Content */}
@@ -220,22 +227,27 @@ export const Home = () => {
             </ul>
             <div className="flex gap-4 mt-12">
               {/* Upload Button */}
-              <a
-                href="/annotate"
+              <NavLink
+                onClick={() => {
+                  MyProjects = false;
+                }}
+                to="/annotate"
                 className="bg-[#12284c] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
               >
-                {" "}
-                Get Started <FaArrowRightLong />{" "}
-              </a>
+                Start New Project <FaArrowRightLong />
+              </NavLink>
 
               {/* Scroll Button */}
-              <a
-                href="#instructions"
+              <NavLink
+                onClick={() => {
+                  MyProjects = true;
+                }}
+                to="/annotate"
                 className="bg-[#76bc21] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
               >
-                {" "}
-                Instruction <MdOutlineArrowDropDown />{" "}
-              </a>
+                {/* {" "} */}
+                My Project <MdOutlineArrowDropDown />
+              </NavLink>
             </div>
           </div>
           {/* Right Image Panel */}
@@ -310,12 +322,13 @@ export const Home = () => {
               {/* Dot with icon */}
               <span
                 className={`flex items-center justify-center w-12 h-12 rounded-full shadow-md text-white mb-4
-            ${index % 2 === 0
-                    ? "bg-blue-400"
-                    : index % 2 === 1
-                      ? "bg-blue-400"
-                      : "bg-blue-300"
-                  }
+            ${
+              index % 2 === 0
+                ? "bg-blue-400"
+                : index % 2 === 1
+                ? "bg-blue-400"
+                : "bg-blue-300"
+            }
           `}
               >
                 {step.icon}
