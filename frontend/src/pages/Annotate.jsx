@@ -94,6 +94,11 @@ const Annotate = () => {
 
   const currentImage = images.find((i) => i.id === currentId);
 
+  // --- image formate if Exists ---
+  useEffect(() => {
+    console.log("image", images);
+  }, [images]);
+
   // --- Load Project if Exists ---
   useEffect(() => {
     if (images.length === 0) {
@@ -130,6 +135,10 @@ const Annotate = () => {
   useEffect(() => {
     saveProject({ images, annotations, currentId, lang });
   }, [images, annotations, currentId, lang]);
+
+  useEffect(() => {
+    console.log("annotation", annotations);
+  }, [annotations]);
 
   // --- Upload Handler ---
   const handleFiles = async (items) => {
@@ -171,6 +180,8 @@ const Annotate = () => {
         id: data.images[i]?.file_name || img.localName,
         annotations: data.annotations[data.images[i]?.id] || [],
       }));
+
+      
 
       setImages((prev) => [...prev, ...updatedImages]);
       setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
