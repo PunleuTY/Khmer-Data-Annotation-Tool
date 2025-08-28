@@ -148,3 +148,34 @@ func DeleteProject(projectCollection *mongo.Collection) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"message": "Project deleted successfully"})
 	}
 }
+
+// added new get images by project
+func GetImagesByProject(imageCollection *mongo.Collection) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("id")
+
+		objID, err := primitive.ObjectIDFromHex(projectID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
+			return
+		}
+
+		// use project_id (snake_case) because that’s what your docs have
+		filter := bson.M{"project_id": objID}
+
+		cursor, err := imageCollection.Find(context.Background(), filter)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})
+			return
+		}
+		defer cursor.Close(context.Background())
+
+		var images []models.Image
+		if err := cursor.All(context.Background(), &images); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode images"})
+			return
+		}
+
+		c.JSON(http.StatusOK, images)
+	}
+}

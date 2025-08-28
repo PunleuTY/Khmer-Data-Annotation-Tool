@@ -45,6 +45,16 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 			return
 		}
 
+		// Coordinate annotations from user added new
+		annotationsStr := c.PostForm("annotations")
+		var annotations []models.Annotation
+		if annotationsStr != "" {
+			if err := json.Unmarshal([]byte(annotationsStr), &annotations); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid annotations JSON"})
+				return
+			}
+		}
+
 		tempDir := "uploads/temp/"
 		os.MkdirAll(tempDir, os.ModePerm)
 
@@ -64,13 +74,14 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 					return
 				}
 
-				// Save image metadata with ProjectID
+				// Save image metadata with ProjectID + annotations
 				imageDoc := models.Image{
-					ProjectID:   projectID,
-					Name:        filepath.Base(tempPath),
-					Path:        tempPath,
-					Status:      "pending",
-					Annotations: []models.Annotation{},
+					ProjectID: projectID,
+					Name:      filepath.Base(tempPath),
+					Path:      tempPath,
+					Status:    "pending",
+					// Annotations: []models.Annotation{},
+					Annotations: annotations,
 				}
 				res, err := imageCollection.InsertOne(context.Background(), imageDoc)
 				if err != nil {
@@ -90,7 +101,9 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 				defer f.Close()
 				fileWriter, _ := writer.CreateFormFile("image", filepath.Base(tempPath))
 				io.Copy(fileWriter, f)
-				writer.WriteField("annotations", "[]")
+				// writer.WriteField("annotations", "[]")
+				annotationsJSON, _ := json.Marshal(annotations)
+				writer.WriteField("annotations", string(annotationsJSON))
 				writer.Close()
 
 				client := &http.Client{Timeout: 60 * time.Second}
