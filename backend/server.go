@@ -94,5 +94,5 @@ func main() {
 	routes.SetupRoutes(router, imageCollection)
 	routes.SetupResultRoutes(router, imageCollection)
 
-	router.Run(":5000")
+	router.Run(":3000")
 }
