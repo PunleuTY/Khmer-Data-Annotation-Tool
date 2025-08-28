@@ -1,0 +1,69 @@
+GEMINI KHMER TEXT EXTRACTION RESULTS
+==================================================
+
+Image: ./image_testing/MPTC2.jpg
+JSON: /Users/typunleu/Documents/ACADEMIC/CADT/NEXT_GEN_BATCH_II/NGB PROJECT/Project_Repo/Khmer-Data-Annotation-Tool/ML/ML_V3/../detected_khmer_text_model_coordinates.json
+Total detections: 29
+
+COORDINATE REFERENCE:
+- Detection 0: (797, 1241) to (967, 1292)
+- Detection 1: (131, 1233) to (407, 1302)
+- Detection 2: (423, 83) to (754, 146)
+- Detection 3: (131, 1073) to (266, 1127)
+- Detection 4: (895, 1186) to (1049, 1231)
+- Detection 5: (130, 806) to (244, 851)
+- Detection 6: (459, 1073) to (612, 1133)
+- Detection 7: (176, 665) to (1057, 757)
+- Detection 8: (127, 862) to (276, 906)
+- Detection 9: (243, 1182) to (442, 1239)
+- Detection 10: (440, 1183) to (573, 1234)
+- Detection 11: (181, 684) to (1069, 767)
+- Detection 12: (125, 909) to (317, 966)
+- Detection 13: (464, 485) to (712, 538)
+- Detection 14: (129, 959) to (478, 1020)
+- Detection 15: (180, 246) to (370, 293)
+- Detection 16: (299, 289) to (690, 353)
+- Detection 17: (910, 1021) to (1049, 1074)
+- Detection 18: (155, 570) to (1068, 652)
+- Detection 19: (126, 293) to (303, 341)
+- Detection 20: (908, 914) to (1051, 964)
+- Detection 21: (581, 145) to (776, 194)
+- Detection 22: (123, 1401) to (602, 1466)
+- Detection 23: (552, 536) to (628, 583)
+- Detection 24: (347, 807) to (433, 852)
+- Detection 25: (85, 1120) to (943, 1184)
+- Detection 26: (456, 143) to (777, 194)
+- Detection 27: (137, 960) to (668, 1023)
+- Detection 28: (128, 920) to (296, 968)
+
+EXTRACTED TEXT:
+------------------------------
+Detection 0: នៃសេវាកម្ម
+Detection 1: ក្រសួងមហាផ្ទៃ
+Detection 2: ព្រះរាជាណាចក្រកម្ពុជា
+Detection 3: សេដ្ឋកិច្ច
+Detection 4: និងអិនធឺណែត
+Detection 5: សង្គម
+Detection 6: និងការប្រើ
+Detection 7: ឱ្យមានសន្ទុះកើនឡើងគួរកត់សម្គាល់។
+Detection 8: សំដៅលើកកម្ពស់
+Detection 9: ក្រសួងប្រៃសណីយ៍
+Detection 10: ការធ្វើអាជីវកម្ម
+Detection 11: តាមបទពិសោធន៍ ក្នុងការស្រាវជ្រាវបង្ក្រាបបទល្មើសនានាកន្លងមក បានបង្ហាញ
+Detection 12: និងជីវភាពរស់នៅ
+Detection 13: ថែរក្សាសន្តិសុខជាតិ
+Detection 14: សម្រាប់ការប្រើប្រាស់សេវាកម្ម
+Detection 15: ជាតិ សាសនា
+Detection 16: និងទូរគមនាគមន៍
+Detection 17: ឱ្យកាន់តែ
+Detection 18: សុវត្ថិភាព សណ្តាប់ធ្នាប់សាធារណៈឱ្យកាន់តែ
+Detection 19: ក្រសួងប្រៃសណីយ៍
+Detection 20: ល្អប្រសើរឡើង។
+Detection 21: ព្រះមហាក្សត្រ
+Detection 22: របស់ជាតិ និងសីលធម៌ស្អាតស្អំរបស់សង្គម។
+Detection 23: បទល្មើស
+Detection 24: ការទូត
+Detection 25: សារាចរអន្តរក្រសួង
+Detection 26: ព្រះមហាក្សត្រ
+Detection 27: សម្រាប់ការប្រើប្រាស់សេវាកម្ម
+Detection 28: និងជីវភាពរស់នៅ

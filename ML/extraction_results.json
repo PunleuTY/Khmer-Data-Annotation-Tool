@@ -1,0 +1,416 @@
+{
+  "source_image": "./image_testing/MPTC2.jpg",
+  "source_json": "/Users/typunleu/Documents/ACADEMIC/CADT/NEXT_GEN_BATCH_II/NGB PROJECT/Project_Repo/Khmer-Data-Annotation-Tool/ML/ML_V3/../detected_khmer_text_model_coordinates.json",
+  "model_used": "gemini-2.0-flash-exp",
+  "prompt": "Extract Khmer text only inside these bounding boxes:\n\n- Detection 0: (797, 1241) to (967, 1292)\n- Detection 1: (131, 1233) to (407, 1302)\n- Detection 2: (423, 83) to (754, 146)\n- Detection 3: (131, 1073) to (266, 1127)\n- Detection 4: (895, 1186) to (1049, 1231)\n- Detection 5: (130, 806) to (244, 851)\n- Detection 6: (459, 1073) to (612, 1133)\n- Detection 7: (176, 665) to (1057, 757)\n- Detection 8: (127, 862) to (276, 906)\n- Detection 9: (243, 1182) to (442, 1239)\n- Detection 10: (440, 1183) to (573, 1234)\n- Detection 11: (181, 684) to (1069, 767)\n- Detection 12: (125, 909) to (317, 966)\n- Detection 13: (464, 485) to (712, 538)\n- Detection 14: (129, 959) to (478, 1020)\n- Detection 15: (180, 246) to (370, 293)\n- Detection 16: (299, 289) to (690, 353)\n- Detection 17: (910, 1021) to (1049, 1074)\n- Detection 18: (155, 570) to (1068, 652)\n- Detection 19: (126, 293) to (303, 341)\n- Detection 20: (908, 914) to (1051, 964)\n- Detection 21: (581, 145) to (776, 194)\n- Detection 22: (123, 1401) to (602, 1466)\n- Detection 23: (552, 536) to (628, 583)\n- Detection 24: (347, 807) to (433, 852)\n- Detection 25: (85, 1120) to (943, 1184)\n- Detection 26: (456, 143) to (777, 194)\n- Detection 27: (137, 960) to (668, 1023)\n- Detection 28: (128, 920) to (296, 968)\n\n\nReturn results as:\nDetection 0: [text]\nDetection 1: [text]\n...",
+  "extracted_text": "Detection 0: នៃសេវាកម្ម\nDetection 1: ក្រសួងមហាផ្ទៃ\nDetection 2: ព្រះរាជាណាចក្រកម្ពុជា\nDetection 3: សេដ្ឋកិច្ច\nDetection 4: និងអិនធឺណែត\nDetection 5: សង្គម\nDetection 6: និងការប្រើ\nDetection 7: ឱ្យមានសន្ទុះកើនឡើងគួរកត់សម្គាល់។\nDetection 8: សំដៅលើកកម្ពស់\nDetection 9: ក្រសួងប្រៃសណីយ៍\nDetection 10: ការធ្វើអាជីវកម្ម\nDetection 11: តាមបទពិសោធន៍ ក្នុងការស្រាវជ្រាវបង្ក្រាបបទល្មើសនានាកន្លងមក បានបង្ហាញ\nDetection 12: និងជីវភាពរស់នៅ\nDetection 13: ថែរក្សាសន្តិសុខជាតិ\nDetection 14: សម្រាប់ការប្រើប្រាស់សេវាកម្ម\nDetection 15: ជាតិ សាសនា\nDetection 16: និងទូរគមនាគមន៍\nDetection 17: ឱ្យកាន់តែ\nDetection 18: សុវត្ថិភាព សណ្តាប់ធ្នាប់សាធារណៈឱ្យកាន់តែ\nDetection 19: ក្រសួងប្រៃសណីយ៍\nDetection 20: ល្អប្រសើរឡើង។\nDetection 21: ព្រះមហាក្សត្រ\nDetection 22: របស់ជាតិ និងសីលធម៌ស្អាតស្អំរបស់សង្គម។\nDetection 23: បទល្មើស\nDetection 24: ការទូត\nDetection 25: សារាចរអន្តរក្រសួង\nDetection 26: ព្រះមហាក្សត្រ\nDetection 27: សម្រាប់ការប្រើប្រាស់សេវាកម្ម\nDetection 28: និងជីវភាពរស់នៅ",
+  "detections_processed": 29,
+  "coordinate_reference": [
+    {
+      "detection_id": 0,
+      "bounding_box": {
+        "x1": 797,
+        "y1": 1241,
+        "x2": 967,
+        "y2": 1292,
+        "width": 170,
+        "height": 51
+      },
+      "confidence": 0.663730263710022,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 1,
+      "bounding_box": {
+        "x1": 131,
+        "y1": 1233,
+        "x2": 407,
+        "y2": 1302,
+        "width": 276,
+        "height": 69
+      },
+      "confidence": 0.6606907248497009,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 2,
+      "bounding_box": {
+        "x1": 423,
+        "y1": 83,
+        "x2": 754,
+        "y2": 146,
+        "width": 331,
+        "height": 63
+      },
+      "confidence": 0.6222399473190308,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 3,
+      "bounding_box": {
+        "x1": 131,
+        "y1": 1073,
+        "x2": 266,
+        "y2": 1127,
+        "width": 135,
+        "height": 54
+      },
+      "confidence": 0.5562762022018433,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 4,
+      "bounding_box": {
+        "x1": 895,
+        "y1": 1186,
+        "x2": 1049,
+        "y2": 1231,
+        "width": 154,
+        "height": 45
+      },
+      "confidence": 0.4646599292755127,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 5,
+      "bounding_box": {
+        "x1": 130,
+        "y1": 806,
+        "x2": 244,
+        "y2": 851,
+        "width": 114,
+        "height": 45
+      },
+      "confidence": 0.45996809005737305,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 6,
+      "bounding_box": {
+        "x1": 459,
+        "y1": 1073,
+        "x2": 612,
+        "y2": 1133,
+        "width": 153,
+        "height": 60
+      },
+      "confidence": 0.4542139172554016,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 7,
+      "bounding_box": {
+        "x1": 176,
+        "y1": 665,
+        "x2": 1057,
+        "y2": 757,
+        "width": 881,
+        "height": 92
+      },
+      "confidence": 0.4216463565826416,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 8,
+      "bounding_box": {
+        "x1": 127,
+        "y1": 862,
+        "x2": 276,
+        "y2": 906,
+        "width": 149,
+        "height": 44
+      },
+      "confidence": 0.413581520318985,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 9,
+      "bounding_box": {
+        "x1": 243,
+        "y1": 1182,
+        "x2": 442,
+        "y2": 1239,
+        "width": 199,
+        "height": 57
+      },
+      "confidence": 0.40107449889183044,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 10,
+      "bounding_box": {
+        "x1": 440,
+        "y1": 1183,
+        "x2": 573,
+        "y2": 1234,
+        "width": 133,
+        "height": 51
+      },
+      "confidence": 0.3920607268810272,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 11,
+      "bounding_box": {
+        "x1": 181,
+        "y1": 684,
+        "x2": 1069,
+        "y2": 767,
+        "width": 888,
+        "height": 83
+      },
+      "confidence": 0.3848501741886139,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 12,
+      "bounding_box": {
+        "x1": 125,
+        "y1": 909,
+        "x2": 317,
+        "y2": 966,
+        "width": 192,
+        "height": 57
+      },
+      "confidence": 0.3631575107574463,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 13,
+      "bounding_box": {
+        "x1": 464,
+        "y1": 485,
+        "x2": 712,
+        "y2": 538,
+        "width": 248,
+        "height": 53
+      },
+      "confidence": 0.3541542589664459,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 14,
+      "bounding_box": {
+        "x1": 129,
+        "y1": 959,
+        "x2": 478,
+        "y2": 1020,
+        "width": 349,
+        "height": 61
+      },
+      "confidence": 0.3433753550052643,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 15,
+      "bounding_box": {
+        "x1": 180,
+        "y1": 246,
+        "x2": 370,
+        "y2": 293,
+        "width": 190,
+        "height": 47
+      },
+      "confidence": 0.3388582170009613,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 16,
+      "bounding_box": {
+        "x1": 299,
+        "y1": 289,
+        "x2": 690,
+        "y2": 353,
+        "width": 391,
+        "height": 64
+      },
+      "confidence": 0.3349616825580597,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 17,
+      "bounding_box": {
+        "x1": 910,
+        "y1": 1021,
+        "x2": 1049,
+        "y2": 1074,
+        "width": 139,
+        "height": 53
+      },
+      "confidence": 0.33033114671707153,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 18,
+      "bounding_box": {
+        "x1": 155,
+        "y1": 570,
+        "x2": 1068,
+        "y2": 652,
+        "width": 913,
+        "height": 82
+      },
+      "confidence": 0.32955610752105713,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 19,
+      "bounding_box": {
+        "x1": 126,
+        "y1": 293,
+        "x2": 303,
+        "y2": 341,
+        "width": 177,
+        "height": 48
+      },
+      "confidence": 0.3193805515766144,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 20,
+      "bounding_box": {
+        "x1": 908,
+        "y1": 914,
+        "x2": 1051,
+        "y2": 964,
+        "width": 143,
+        "height": 50
+      },
+      "confidence": 0.31568434834480286,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 21,
+      "bounding_box": {
+        "x1": 581,
+        "y1": 145,
+        "x2": 776,
+        "y2": 194,
+        "width": 195,
+        "height": 49
+      },
+      "confidence": 0.31373798847198486,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 22,
+      "bounding_box": {
+        "x1": 123,
+        "y1": 1401,
+        "x2": 602,
+        "y2": 1466,
+        "width": 479,
+        "height": 65
+      },
+      "confidence": 0.3093537986278534,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 23,
+      "bounding_box": {
+        "x1": 552,
+        "y1": 536,
+        "x2": 628,
+        "y2": 583,
+        "width": 76,
+        "height": 47
+      },
+      "confidence": 0.29803577065467834,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 24,
+      "bounding_box": {
+        "x1": 347,
+        "y1": 807,
+        "x2": 433,
+        "y2": 852,
+        "width": 86,
+        "height": 45
+      },
+      "confidence": 0.2953276038169861,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 25,
+      "bounding_box": {
+        "x1": 85,
+        "y1": 1120,
+        "x2": 943,
+        "y2": 1184,
+        "width": 858,
+        "height": 64
+      },
+      "confidence": 0.27230140566825867,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 26,
+      "bounding_box": {
+        "x1": 456,
+        "y1": 143,
+        "x2": 777,
+        "y2": 194,
+        "width": 321,
+        "height": 51
+      },
+      "confidence": 0.2664136290550232,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 27,
+      "bounding_box": {
+        "x1": 137,
+        "y1": 960,
+        "x2": 668,
+        "y2": 1023,
+        "width": 531,
+        "height": 63
+      },
+      "confidence": 0.25295916199684143,
+      "class_id": 0,
+      "class_name": "Khst"
+    },
+    {
+      "detection_id": 28,
+      "bounding_box": {
+        "x1": 128,
+        "y1": 920,
+        "x2": 296,
+        "y2": 968,
+        "width": 168,
+        "height": 48
+      },
+      "confidence": 0.2504509389400482,
+      "class_id": 0,
+      "class_name": "Khst"
+    }
+  ]
+}

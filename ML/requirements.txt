@@ -8,3 +8,5 @@ uvicorn
 python-multipart
 httpx
 tesseract
+google-generativeai
+python-dotenv
