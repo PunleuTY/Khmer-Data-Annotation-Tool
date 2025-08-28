@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func ProjectRoutes(router *gin.Engine, projectCollection *mongo.Collection) {
+func ProjectRoutes(router *gin.Engine, projectCollection, imageCollection *mongo.Collection) {
 	projectGroup := router.Group("/projects")
 	{
 		projectGroup.POST("", controllers.CreateProject(projectCollection))
@@ -15,5 +15,8 @@ func ProjectRoutes(router *gin.Engine, projectCollection *mongo.Collection) {
 		projectGroup.GET("/:id", controllers.GetProjectByID(projectCollection))
 		projectGroup.PUT("/:id", controllers.UpdateProject(projectCollection))
 		projectGroup.DELETE("/:id", controllers.DeleteProject(projectCollection))
+		//get image by project
+		projectGroup.GET("/:id/images", controllers.GetImagesByProject(imageCollection))
+
 	}
 }

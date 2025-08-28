@@ -60,7 +60,7 @@ func main() {
 	}
 
 	// Project routes
-	routes.ProjectRoutes(router, projectCollection)
+	routes.ProjectRoutes(router, projectCollection, imageCollection)
 
 	// Start server
 	router.Run(":5000")
