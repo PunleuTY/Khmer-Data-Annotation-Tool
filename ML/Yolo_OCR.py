@@ -60,42 +60,96 @@ def process_image_with_gemini(image_bytes: bytes, filename: str = "uploaded_imag
     results = yolo_model(np_image)
     boxes = results[0].boxes
 
+    # detections = []
+
+    # if len(boxes) > 0:
+    #     # Loop through each box detected by YOLO
+    #     for box in boxes.xyxy:
+    #         x1, y1, x2, y2 = map(int, box)
+            
+    #         # Crop the original image using PIL. No preprocessing needed for Gemini.
+    #         cropped_pil_image = pil_image.crop((x1, y1, x2, y2))
+            
+    #         # --- GEMINI OCR ---
+    #         extracted_text = "OCR failed" # Default text
+    #         try:
+    #             # The prompt is simple and direct.
+    #             # prompt = "Extract the Khmer text from this image."
+    #             # Enhanced prompt with coordinate information
+    #             prompt = f"""Extract Khmer from this image which are in the CORDINATES DIRECTION.
+
+    #             DETECTION COORDINATES:
+
+    #             1. Match each extracted text to its corresponding detection ID
+    #             2. Return the results in a structured format like:
+    #             Detection 0: [extracted text]
+    #             Detection 1: [extracted text]
+    #             etc.
+
+    #             Focus only on the text within the COORDINATES of this  image."""
+    #             response = gemini_model.generate_content([prompt, cropped_pil_image], stream=False)
+                
+    #             # Clean up the response text
+    #             cleaned_text = re.sub(r'\s+', ' ', response.text).strip()
+    #             extracted_text = cleaned_text if cleaned_text else "No text found"
+
+    #         except Exception as e:
+    #             print(f"Error calling Gemini API for a crop: {e}")
+    #             extracted_text = f"API Error: {e}"
+    #         # --- END GEMINI OCR ---
+
+    #         # Convert the ORIGINAL cropped image to Base64 to send back to the frontend
+    #         buffered = io.BytesIO()
+    #         cropped_pil_image.save(buffered, format="PNG")
+    #         img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+            
+    #         detections.append({
+    #             "box_coordinates": [x1, y1, x2, y2],
+    #             "extracted_text": extracted_text,
+    #             "cropped_image_base64": img_base64
+    #         })
     detections = []
 
     if len(boxes) > 0:
-        # Loop through each box detected by YOLO
-        for box in boxes.xyxy:
+        for idx, box in enumerate(boxes.xyxy):
             x1, y1, x2, y2 = map(int, box)
-            
-            # Crop the original image using PIL. No preprocessing needed for Gemini.
-            cropped_pil_image = pil_image.crop((x1, y1, x2, y2))
-            
-            # --- GEMINI OCR ---
-            extracted_text = "OCR failed" # Default text
-            try:
-                # The prompt is simple and direct.
-                prompt = "Extract the Khmer text from this image."
-                response = gemini_model.generate_content([prompt, cropped_pil_image], stream=False)
-                
-                # Clean up the response text
-                cleaned_text = re.sub(r'\s+', ' ', response.text).strip()
-                extracted_text = cleaned_text if cleaned_text else "No text found"
+            detection_info = {
+                "detection_id": idx,
+                "bounding_box": {
+                    "x1": x1, "y1": y1, "x2": x2, "y2": y2,
+                    "width": x2 - x1, "height": y2 - y1
+                }
+        }
 
-            except Exception as e:
-                print(f"Error calling Gemini API for a crop: {e}")
-                extracted_text = f"API Error: {e}"
-            # --- END GEMINI OCR ---
+        cropped_pil_image = pil_image.crop((x1, y1, x2, y2))
 
-            # Convert the ORIGINAL cropped image to Base64 to send back to the frontend
-            buffered = io.BytesIO()
-            cropped_pil_image.save(buffered, format="PNG")
-            img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-            
-            detections.append({
-                "box_coordinates": [x1, y1, x2, y2],
-                "extracted_text": extracted_text,
-                "cropped_image_base64": img_base64
-            })
+        prompt = f"""
+        Extract Khmer text from this cropped image.
+
+        DETECTION INFO:
+        {detection_info}
+
+        Return only the extracted text for detection_id={idx}.
+        """
+
+        try:
+            response = gemini_model.generate_content([prompt, cropped_pil_image])
+            extracted_text = re.sub(r'\s+', ' ', response.text).strip()
+        except Exception as e:
+            extracted_text = f"OCR Error: {e}"
+
+        # Base64 encode cropped image for frontend
+        buffered = io.BytesIO()
+        cropped_pil_image.save(buffered, format="PNG")
+        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        detections.append({
+            "detection_id": idx,
+            "bounding_box": detection_info["bounding_box"],
+            "extracted_text": extracted_text,
+            "cropped_image_base64": img_base64
+        })
+
     else:
         # Fallback: If YOLO finds no boxes, run Gemini on the whole image
         print("No boxes detected by YOLO. Running Gemini on the full image.")
