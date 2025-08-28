@@ -39,6 +39,7 @@ type Image struct {
 	ProjectID   primitive.ObjectID `bson:"project_id" json:"project_id"`
 	Name        string             `bson:"name" json:"name"`
 	Path        string             `bson:"path" json:"path"`
+	Base64      string             `bson:"base64,omitempty" json:"base64"`
 	URL         string             `bson:"url,omitempty" json:"url,omitempty"`
 	Width       int                `bson:"width" json:"width"`
 	Height      int                `bson:"height" json:"height"`

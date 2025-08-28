@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,6 +63,7 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 			ImageID     primitive.ObjectID
 			FileName    string
 			Annotations json.RawMessage
+			Base64      string
 		}
 		doneChan := make(chan Result, len(files))
 
@@ -73,12 +75,20 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 					doneChan <- Result{FileName: file.Filename, Annotations: json.RawMessage("[]")}
 					return
 				}
+				// Convert to Base64
+				data, err := os.ReadFile(tempPath)
+				if err != nil {
+					doneChan <- Result{FileName: file.Filename, Annotations: json.RawMessage("[]")}
+					return
+				}
+				base64Str := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(data)
 
 				// Save image metadata with ProjectID + annotations
 				imageDoc := models.Image{
 					ProjectID: projectID,
 					Name:      filepath.Base(tempPath),
 					Path:      tempPath,
+					Base64:    base64Str,
 					Status:    "pending",
 					// Annotations: []models.Annotation{},
 					Annotations: annotations,
@@ -149,6 +159,7 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 			imagesList = append(imagesList, map[string]interface{}{
 				"id":        imageIDStr,
 				"file_name": r.FileName,
+				"base64":    r.Base64,
 			})
 			annotationsMap[imageIDStr] = r.Annotations
 		}
@@ -200,12 +211,16 @@ func SaveGroundTruth(imageCollection *mongo.Collection) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to move file", "details": err.Error()})
 			return
 		}
+		// Regenerate Base64
+		data, _ := os.ReadFile(finalPath)
+		base64Str := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(data)
 
 		update := bson.M{
 			"$set": bson.M{
 				"annotations": req.Annotations,
 				"status":      "final",
 				"path":        finalPath,
+				"base64":      base64Str,
 				"meta":        req.Meta, // make sure Image struct has Meta if needed
 			},
 		}
