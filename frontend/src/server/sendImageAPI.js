@@ -44,29 +44,7 @@ const BACKEND_UPLOAD_URL = "http://127.0.0.1:5000/images/upload";
 //     }
 // };
 
-export const uploadImages = async (projectId, files) => {
-  if (!files || files.length === 0) return null;
-
-  const formData = new FormData();
-  formData.append("project_id", projectId);
-
-  files.forEach((file) => {
-    formData.append("images", file);
-    console.log(file)
-  });
-  const res = await fetch(BACKEND_UPLOAD_URL, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to upload images");
-  }
-
-  return await res.json();
-};
-
-// export const uploadImages = async (projectId, files, annotations = []) => {
+// export const uploadImages = async (projectId, files) => {
 //   if (!files || files.length === 0) return null;
 
 //   const formData = new FormData();
@@ -74,11 +52,8 @@ export const uploadImages = async (projectId, files) => {
 
 //   files.forEach((file) => {
 //     formData.append("images", file);
+//     console.log(file)
 //   });
-
-//   // ✅ Add annotation points (convert array/object → JSON string)
-//   formData.append("annotations", JSON.stringify(annotations));
-
 //   const res = await fetch(BACKEND_UPLOAD_URL, {
 //     method: "POST",
 //     body: formData,
@@ -91,3 +66,27 @@ export const uploadImages = async (projectId, files) => {
 //   return await res.json();
 // };
 
+export const uploadImages = async (projectId, files, annotations = []) => {
+  if (!files || files.length === 0) return null;
+
+  const formData = new FormData();
+  formData.append("project_id", projectId);
+
+  files.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  // ✅ Add annotation points (convert array/object → JSON string)
+  formData.append("annotations", JSON.stringify(annotations));
+
+  const res = await fetch(BACKEND_UPLOAD_URL, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to upload images");
+  }
+
+  return await res.json();
+};

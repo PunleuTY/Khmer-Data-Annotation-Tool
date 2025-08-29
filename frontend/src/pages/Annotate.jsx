@@ -1,11 +1,10 @@
-"use client";
-// This file is part of the Open-Source project:
-import axios from "axios";
-import { useState, useEffect, useCallback } from "react";
+import React from "react";
 import Footer from "../components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { ImageUploader } from "@/components/image-uploader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ImagePlus,
@@ -16,10 +15,10 @@ import {
   ScanText,
   SquareDashedMousePointer,
   PenTool,
+  Zap,
   FileJson,
   Download,
   Undo,
-  VectorSquare,
   Redo,
 } from "lucide-react";
 
@@ -27,10 +26,11 @@ import { JsonEditor } from "@/components/json-editor";
 import { AnnotationList } from "@/components/annotation-list";
 import { AnnotationCanvas } from "@/components/annotation-canvas";
 import { levenshteinSimilarity } from "@/lib/levenshtein";
-import { saveProject, clearProject } from "@/lib/storage";
+import { OcrControls } from "@/components/ocr-controls";
+import { saveProject, loadProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
-import { CurrentProjectContext, ProjectContext } from "./Myproject";
 import { uploadImages } from "@/server/sendImageAPI";
+import { CurrentProjectContext } from "./Myproject";
 
 // --- CONSTANTS ---
 const HISTORY_LIMIT = 50;
@@ -74,52 +74,53 @@ function transformData(data) {
   return result;
 }
 
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Annotate = () => {
-  const [mode, setMode] = useState("box"); // 'box' | 'polygon' | 'edit'
-  const [currentId, setCurrentId] = useState(null);
-  const [images, setImages] = useState([]);
-  const [annotations, setAnnotations] = useState({});
-  const [activeTab, setActiveTab] = useState("annotation");
-  const [lang, setLang] = useState("khm");
-  const [exportOpen, setExportOpen] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [fullOcr, setFullOcr] = useState({ text: "", conf: null });
-  const [batchInfo, setBatchInfo] = useState({
+  const [mode, setMode] = React.useState("box"); // 'box' | 'polygon'
+  const [currentId, setCurrentId] = React.useState(null);
+  const [images, setImages] = React.useState([]); // [{id, name, url(dataURL), width, height}]
+  const [annotations, setAnnotations] = React.useState({}); // { imageId: [ {id, type, points|rect, text, gt, accuracy, label} ] }
+  const [activeTab, setActiveTab] = React.useState("annotation");
+  const [lang, setLang] = React.useState("khm"); // OCR language
+  const [exportOpen, setExportOpen] = React.useState(false);
+  const [history, setHistory] = React.useState([]);
+  const [historyIndex, setHistoryIndex] = React.useState(-1);
+  const [fullOcr, setFullOcr] = React.useState({ text: "", conf: null });
+
+  const currentImage = images.find((i) => i.id === currentId);
+  const [batchInfo, setBatchInfo] = React.useState({
     running: false,
     current: 0,
     total: 0,
     pct: 0,
   });
 
-  const currentImage = images.find((i) => i.id === currentId);
+  const [selectedFiles, setSelectedFiles] = React.useState([]);
 
-  // --- image formate if Exists ---
-  useEffect(() => {
-    console.log("image", images);
-  }, [images]);
+  React.useEffect(() => {
+    // Fetch annotations when the component mounts
+    console.log(images);
+  }, [annotations, currentId, images]);
 
-  // --- Load Project if Exists ---
-  useEffect(() => {
-    if (images.length === 0) {
-      const project = ProjectContext.find(
-        (p) => p.id === CurrentProjectContext
-      );
-      if (!project) return;
-      setImages(project.ImagesData);
-      setCurrentId(project.ImagesData[0]?.id || null);
-      setAnnotations(
-        project.AnnotationData.reduce((acc, item) => {
-          const imgId = Object.keys(item)[0];
-          acc[imgId] = item[imgId];
-          return acc;
-        }, {})
-      );
-    }
-  }, [CurrentProjectContext, images.length]);
+  const runOcr = async () => {
+    // const data = await uploadImages(
+    //   CurrentProjectContext,
+    //   selectedFiles.map((i) => i.file || i),
+    //   annotations
+    // );
+
+    console.log("DATA", data);
+  };
+
+  React.useEffect(() => {
+    // Fetch annotations when the component mounts
+    console.log("images", images);
+    console.log("annotations", annotations);
+    console.log("select image", selectedFiles);
+  }, [annotations, currentId, images, selectedFiles]);
 
   // --- Init History ---
-  useEffect(() => {
+  React.useEffect(() => {
     if (history.length === 0) {
       const initialState = {
         annotations: { ...annotations },
@@ -131,80 +132,20 @@ const Annotate = () => {
     }
   }, []);
 
-  // --- Autosave ---
-  useEffect(() => {
+  React.useEffect(() => {
     saveProject({ images, annotations, currentId, lang });
   }, [images, annotations, currentId, lang]);
 
-  useEffect(() => {
-    console.log("annotation", annotations);
-  }, [annotations]);
-
-  // --- Upload Handler ---
   const handleFiles = async (items) => {
-    if (!items?.length) return;
-
-    try {
-      const filePromises = items.map(
-        (item) =>
-          new Promise((resolve, reject) => {
-            const f = item.file || item;
-            if (!(f instanceof Blob))
-              return reject(new Error("Invalid file object"));
-
-            const reader = new FileReader();
-            reader.onload = (e) =>
-              resolve({
-                localName: f.name,
-                name: f.name,
-                url: e.target.result,
-                // Todo: do it for make the position was work
-                width: 726,
-                height: 158,
-              });
-            reader.onerror = reject;
-            reader.readAsDataURL(f);
-          })
-      );
-
-      const localImages = await Promise.all(filePromises);
-
-      const data = await uploadImages(
-        CurrentProjectContext,
-        items.map((i) => i.file || i)
-      );
-
-      const updatedImages = localImages.map((img, i) => ({
-        ...img,
-        serverId: data.images[i]?.id || null,
-        id: data.images[i]?.file_name || img.localName,
-        annotations: data.annotations[data.images[i]?.id] || [],
-      }));
-
-      
-
-      setImages((prev) => [...prev, ...updatedImages]);
-      setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
-    } catch (err) {
-      console.error("Upload error:", err);
+    const updated = [...images, ...items];
+    setImages(updated);
+    if (!currentId && updated.length > 0) {
+      setCurrentId(updated[0].id);
     }
+
+    setSelectedFiles(items);
   };
 
-  // --- Navigation ---
-  const prevImage = () => {
-    if (!images.length || !currentId) return;
-    const idx = images.findIndex((i) => i.id === currentId);
-    const prev = (idx - 1 + images.length) % images.length;
-    setCurrentId(images[prev].id);
-  };
-  const nextImage = () => {
-    if (!images.length || !currentId) return;
-    const idx = images.findIndex((i) => i.id === currentId);
-    const next = (idx + 1) % images.length;
-    setCurrentId(images[next].id);
-  };
-
-  // --- Clear Project ---
   const onClearAll = () => {
     setImages([]);
     setAnnotations({});
@@ -213,9 +154,23 @@ const Annotate = () => {
     clearProject();
   };
 
-  // --- Annotations ---
+  const prevImage = () => {
+    if (!images.length || currentId == null) return;
+    const idx = images.findIndex((i) => i.id === currentId);
+    const prev = (idx - 1 + images.length) % images.length;
+    setCurrentId(images[prev].id);
+  };
+
+  const nextImage = () => {
+    if (!images.length || currentId == null) return;
+    const idx = images.findIndex((i) => i.id === currentId);
+    const next = (idx + 1) % images.length;
+    setCurrentId(images[next].id);
+  };
+
   const addAnnotation = (ann) => {
     saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
       list.push({
@@ -232,18 +187,37 @@ const Annotate = () => {
 
   const updateAnnotation = (id, patch) => {
     saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
       const idx = list.findIndex((a) => a.id === id);
-      if (idx >= 0) list[idx] = { ...list[idx], ...patch };
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...patch };
+      }
       return { ...prev, [currentId]: list };
     });
   };
 
+  const onBatchStart = (total) =>
+    setBatchInfo({ running: true, total, current: 0, pct: 0 });
+  const onBatchStep = (current) =>
+    setBatchInfo((b) => ({
+      ...b,
+      current,
+      pct: b.total ? Math.round((current / b.total) * 100) : 0,
+    }));
+  const onBatchEnd = () =>
+    setBatchInfo({ running: false, total: 0, current: 0, pct: 0 });
+
+  const handleJsonUpdate = (newAnnotations) => {
+    setAnnotations(newAnnotations);
+  };
+
   const deleteAnnotation = (id) => {
-    saveToHistory();
     setAnnotations((prev) => {
-      const list = prev[currentId]?.filter((a) => a.id !== id) || [];
+      const list = prev[currentId]
+        ? prev[currentId].filter((a) => a.id !== id)
+        : [];
       return { ...prev, [currentId]: list };
     });
   };
@@ -256,23 +230,35 @@ const Annotate = () => {
     updateAnnotation(id, { accuracy });
   };
 
-  // --- Undo/Redo ---
-  const saveToHistory = useCallback(() => {
+  const saveToHistory = React.useCallback(() => {
     const currentState = {
       annotations: { ...annotations },
       textAnnotations: { ...fullOcr },
       timestamp: Date.now(),
     };
+
+    // console.log("Current annotations:", annotations);
+    // console.log("Saving to history:", currentState);
+    // console.log("Current history index:", historyIndex);
+
     setHistory((prevHistory) => {
+      // Remove any future history if we're not at the latest point
       const newHistory = prevHistory.slice(0, historyIndex + 1);
       newHistory.push(currentState);
-      if (newHistory.length > HISTORY_LIMIT) newHistory.shift();
+
+      // Keep only last 50 states
+      if (newHistory.length > 50) {
+        newHistory.shift();
+        setHistoryIndex(newHistory.length - 1);
+        return newHistory;
+      }
+
       setHistoryIndex(newHistory.length - 1);
       return newHistory;
     });
   }, [annotations, fullOcr, historyIndex]);
-
-  const undo = useCallback(() => {
+  // Updated undo function
+  const undo = React.useCallback(() => {
     if (historyIndex > 0) {
       const previousState = history[historyIndex - 1];
       setAnnotations(previousState.annotations);
@@ -281,7 +267,8 @@ const Annotate = () => {
     }
   }, [history, historyIndex]);
 
-  const redo = useCallback(() => {
+  // Optional: Add redo functionality
+  const redo = React.useCallback(() => {
     if (historyIndex < history.length - 1) {
       const nextState = history[historyIndex + 1];
       setAnnotations(nextState.annotations);
@@ -291,16 +278,18 @@ const Annotate = () => {
   }, [history, historyIndex]);
 
   return (
-    <div className="min-h-full bg-gray-50 p-6">
-      <div className="flex justify-between">
-        <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
-      </div>
+    <div className="min-h-full bg-white p-6">
+      <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
 
-      {/* Layout */}
+      {/* REVISED: This grid now adapts for different screen sizes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {/* Upload + Dataset */}
+        {/* Upload images to annotate them. You can use the following keyboard shortcuts: */}
         <div>
-          <Card className="bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]">
+          <Card
+            className={
+              "bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#12284c]"
+            }
+          >
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <ImagePlus className="w-4 h-4" />
@@ -308,17 +297,13 @@ const Annotate = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <input
-                type="file"
-                multiple
-                onChange={(e) => handleFiles(Array.from(e.target.files))}
-              />
+              <ImageUploader onFiles={handleFiles} />
               <div className="mt-4">
                 <Label className="text-xs text-gray-600">Dataset</Label>
                 <div className="mt-2 max-h-56 overflow-auto border rounded-md divide-y">
                   {images.length === 0 && (
                     <p className="text-sm text-gray-500 p-3">
-                      no images uploaded yet
+                      No images uploaded yet
                     </p>
                   )}
                   {images.map((img, idx) => (
@@ -349,8 +334,10 @@ const Annotate = () => {
                       !images.length ||
                       images.findIndex((i) => i.id === currentId) === 0
                     }
+                    aria-label="Previous Image"
                   >
-                    <ChevronLeft className="w-4 h-4" /> Prev
+                    <ChevronLeft className="w-4 h-4" />
+                    Prev
                   </Button>
                   <span className="text-xs text-gray-600">
                     {images.length > 0
@@ -368,8 +355,10 @@ const Annotate = () => {
                       images.findIndex((i) => i.id === currentId) ===
                         images.length - 1
                     }
+                    aria-label="Next Image"
                   >
-                    Next <ChevronRight className="w-4 h-4" />
+                    Next
+                    <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
@@ -377,68 +366,101 @@ const Annotate = () => {
           </Card>
         </div>
 
-        {/* Annotation Canvas */}
+        {/* Anotation Canvas */}
+        {/* REVISED: This section now spans all columns on small screens, and fewer on larger screens */}
         <div className="col-span-1 md:col-span-1 lg:col-span-3">
-          <Card className="overflow-hidden bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]">
+          <Card className="overflow-hidden bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#12284c]">
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
               <div className="flex items-center gap-2">
+                {/* <OcrControls
+                  lang={lang}
+                  setLang={setLang}
+                  image={currentImage}
+                  onOcrResult={(res) => setFullOcr(res)}
+                /> */}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={undo}
-                  disabled={historyIndex <= 0}
+                  disabled={historyIndex <= 0 || history.length <= 1}
+                  className="flex items-center gap-1 bg-transparent"
                 >
-                  <Undo className="h-4 w-4" /> Undo
+                  <Undo className="h-4 w-4" />
+                  Undo
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={redo}
                   disabled={historyIndex >= history.length - 1}
+                  className="flex items-center gap-1 bg-transparent"
                 >
-                  <Redo className="h-4 w-4" /> Redo
+                  <Redo className="h-4 w-4" />
+                  Redo
                 </Button>
                 <Button
                   variant={mode === "box" ? "default" : "outline"}
+                  className={
+                    mode === "box"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc] "
+                      : ""
+                  }
                   onClick={() => setMode("box")}
-                  className={mode === "box" ? "bg-[#ff3f34] text-white" : ""}
                 >
                   <SquareDashedMousePointer className="w-4 h-4" />
+                  {/* Box */}
                 </Button>
                 <Button
                   variant={mode === "polygon" ? "default" : "outline"}
-                  onClick={() => setMode("polygon")}
                   className={
-                    mode === "polygon" ? "bg-[#ff3f34] text-white" : ""
+                    mode === "polygon"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc]"
+                      : ""
                   }
+                  onClick={() => setMode("polygon")}
                 >
-                  <VectorSquare className="w-4 h-4" />
+                  <PenTool className="w-4 h-4" />
+                  {/* Polygon */}
                 </Button>
                 <Button
                   variant={mode === "edit" ? "default" : "outline"}
+                  className={
+                    mode === "edit"
+                      ? "bg-[#ff3f34] text-white hover:bg-[#ff3e34dc] "
+                      : ""
+                  }
                   onClick={() => setMode("edit")}
-                  className={mode === "edit" ? "bg-[#ff3f34] text-white" : ""}
                 >
-                  <PenTool className="w-4 h-4" /> Edit
+                  <PenTool className="w-4 h-4" />
+                  Edit
                 </Button>
-                <Button variant="outline" size="sm">
-                  <ScanText className="w-4 h-4 mr-2" /> OCR Entire
+                <Button
+                  id="btn-ocr-entire"
+                  variant="outline"
+                  size="sm"
+                  onClick={runOcr}
+                >
+                  <ScanText className="w-4 h-4 mr-2" />
+                  OCR Entire
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setExportOpen(true)}
-                  className="bg-[#ff3f34] text-white"
+                  className={
+                    "bg-white text-black hover:text-white hover:bg-[#76bc21] "
+                  }
                 >
-                  <Download className="w-4 h-4 mr-2" /> Export
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
                 </Button>
                 <Button
                   variant="ghost"
                   onClick={onClearAll}
-                  disabled={!images.length}
-                  className="bg-[#ff3f34] text-white"
+                  className={"bg-[#ff3f34] text-white hover:bg-[#ff3e34b2] "}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" /> ClearAll
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  ClearAll
                 </Button>
               </div>
             </CardHeader>
@@ -448,27 +470,31 @@ const Annotate = () => {
                   image={currentImage}
                   mode={mode}
                   annotations={annotations[currentId] || []}
-                  onAddAnnotation={addAnnotation}
-                  onUpdateAnnotation={updateAnnotation}
+                  onAddAnnotation={addAnnotation} // Use the proper addAnnotation function instead of inline function
+                  onUpdateAnnotation={updateAnnotation} // uses your patch logic
                 />
               ) : (
                 <div className="h-[500px] flex items-center justify-center text-gray-500">
-                  canvasEmpty
+                  Canvas Empty
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
-
-        {/* Tabs */}
+        {/* REVISED: This section now spans all columns on all screen sizes to take up full width */}
         <div className="col-span-1 md:col-span-2 lg:col-span-4">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="annotation">
-                <Settings className="w-4 h-4" /> Visual Editor
+              <TabsTrigger
+                value="annotation"
+                className="flex items-center gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Visual Editor
               </TabsTrigger>
-              <TabsTrigger value="json">
-                <FileJson className="w-4 h-4" /> Json Editor
+              <TabsTrigger value="json" className="flex items-center gap-2">
+                <FileJson className="w-4 h-4" />
+                Json Editor
               </TabsTrigger>
             </TabsList>
             <TabsContent value="annotation">
@@ -479,43 +505,35 @@ const Annotate = () => {
                 onDelete={deleteAnnotation}
                 onUpdate={updateAnnotation}
                 lang={lang}
-                onBatchStart={(total) =>
-                  setBatchInfo({ running: true, total, current: 0, pct: 0 })
-                }
-                onBatchStep={(current) =>
-                  setBatchInfo((b) => ({
-                    ...b,
-                    current,
-                    pct: b.total ? Math.round((current / b.total) * 100) : 0,
-                  }))
-                }
-                onBatchEnd={() =>
-                  setBatchInfo({ running: false, total: 0, current: 0, pct: 0 })
-                }
+                onBatchStart={onBatchStart}
+                onBatchStep={onBatchStep}
+                onBatchEnd={onBatchEnd}
               />
             </TabsContent>
+
+            <TabsContent value="detected" className="mt-4"></TabsContent>
+
             <TabsContent
               value="json"
-              className="mt-4 bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]"
+              className="mt-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]"
             >
               <JsonEditor
                 images={images}
                 annotations={annotations}
                 currentId={currentId}
-                onUpdate={setAnnotations}
+                onUpdate={handleJsonUpdate}
               />
             </TabsContent>
           </Tabs>
         </div>
+        <ExportDialog
+          open={exportOpen}
+          onOpenChange={setExportOpen}
+          images={images}
+          annotations={annotations}
+          projectMeta={{ name: "Khmer Data Annotation Tool", lang }}
+        />
       </div>
-
-      <ExportDialog
-        open={exportOpen}
-        onOpenChange={setExportOpen}
-        images={images}
-        annotations={annotations}
-        projectMeta={{ name: "Khmer Data Annotation Tool", lang }}
-      />
       <Footer />
     </div>
   );
