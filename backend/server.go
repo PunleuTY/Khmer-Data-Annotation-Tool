@@ -59,13 +59,9 @@ func main() {
 		imageGroup.POST("/save-groundtruth", controllers.SaveGroundTruth(imageCollection))
 	}
 
-<<<<<<< HEAD
 	// Project routes
 	routes.ProjectRoutes(router, projectCollection, imageCollection)
 
 	// Start server
 	router.Run(":5000")
-=======
-	router.Run(":3000")
->>>>>>> develop
 }

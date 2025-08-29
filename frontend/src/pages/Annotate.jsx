@@ -31,6 +31,7 @@ import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
 import { CurrentProjectContext, ProjectContext } from "./Myproject";
 import { uploadImages } from "@/server/sendImageAPI";
+import { ImageUploader } from "@/components/image-uploader";
 
 // --- CONSTANTS ---
 const HISTORY_LIMIT = 50;
@@ -126,6 +127,80 @@ const Annotate = () => {
     }
   }, []);
 
+  const runOcr = async () => {
+    const anns = annotations[currentId];
+    console.log(anns)
+    try {
+      const data = await uploadImages(
+        CurrentProjectContext,
+        images.map((i) => i.file || i), // raw files extracted in handleFilesChange
+        [
+          {
+            id: "a1",
+            type: "box",
+            rect: { x: 10, y: 20, w: 100, h: 80 },
+            text: "character",
+            gt: "ក",
+          },
+        ]
+      );
+      console.log("DATA", data);
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+  };
+  //   const runOcr = async () => {
+  //     const fd = new FormData();
+
+  //     // required: project ID
+  //     fd.append("project_id", currentProjectId);
+
+  //     // stringify before appending
+  //     fd.append("annotations", JSON.stringify(annotations));
+
+  //     // add images
+  //     Array.from(fileInput.files).forEach((f) => {
+  //       fd.append("images", f, f.name);
+  //     });const handleFiles = (files) => {
+  //   // Convert FileList → Array
+  //   const arr = Array.from(files);
+
+  //   const newItems = arr.map((file) => {
+  //     if (!(file instanceof File || file instanceof Blob)) {
+  //       console.warn("Skipping invalid item:", file);
+  //       return null;
+  //     }
+
+  //     return {
+  //       id: crypto.randomUUID(),
+  //       name: file.name,
+  //       file,
+  //       url: URL.createObjectURL(file),
+  //       width: 0,
+  //       height: 0,
+  //     };
+  //   }).filter(Boolean); // remove nulls
+
+  //   const updated = [...images, ...newItems];
+  //   setImages(updated);
+
+  //   if (!currentId && updated.length > 0) {
+  //     setCurrentId(updated[0].id);
+  //   }
+
+  //   setSelectedFiles((prev) => [...prev, ...arr]);
+  // };
+
+  //   // send request
+  //   fetch("http://localhost:5000/images/upload", {
+  //     method: "POST",
+  //     body: fd,
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => console.log("Upload result:", data))
+  //     .catch((err) => console.error("Upload error:", err));
+  // };
+
   // --- Autosave ---
   useEffect(() => {
     saveProject({ images, annotations, currentId, lang });
@@ -138,53 +213,84 @@ const Annotate = () => {
   }, [annotations, currentId, images]);
 
   // --- Upload Handler ---
+  // const handleFiles = async (event) => {
+  //   const files = Array.from(event.target.files || []); // convert FileList → Array<File>
+
+  //   // Wrap files with metadata for UI (id, preview URL, etc.)
+  //   const newItems = files.map((file) => ({
+  //     id: crypto.randomUUID(), // generate unique id
+  //     file, // keep reference to original File
+  //     preview: URL.createObjectURL(file), // for image preview
+  //   }));
+
+  //   // Update state
+  //   const updated = [...images, ...newItems];
+  //   setImages(updated);
+
+  //   // Set first file as current if not set
+  //   if (!currentId && updated.length > 0) {
+  //     setCurrentId(updated[0].id);
+  //   }
+
+  //   // Keep raw files for upload
+  //   setSelectedFiles(newItems.map((i) => i.file));
+  // };
   const handleFiles = async (items) => {
-    if (!items?.length) return;
-
-    try {
-      const filePromises = items.map(
-        (item) =>
-          new Promise((resolve, reject) => {
-            const f = item.file || item;
-            if (!(f instanceof Blob))
-              return reject(new Error("Invalid file object"));
-
-            const reader = new FileReader();
-            reader.onload = (e) =>
-              resolve({
-                localName: f.name,
-                name: f.name,
-                url: e.target.result,
-                width: 726,
-                height: 158,
-              });
-            reader.onerror = reject;
-            reader.readAsDataURL(f);
-          })
-      );
-
-      const localImages = await Promise.all(filePromises);
-
-      console.log(items);
-
-      const data = await uploadImages(
-        CurrentProjectContext,
-        items.map((i) => i.file || i)
-      );
-
-      const updatedImages = localImages.map((img, i) => ({
-        ...img,
-        serverId: data.images[i]?.id || null,
-        id: data.images[i]?.file_name || img.localName,
-        annotations: data.annotations[data.images[i]?.id] || [],
-      }));
-
-      setImages((prev) => [...prev, ...updatedImages]);
-      setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
-    } catch (err) {
-      console.error("Upload error:", err);
+    const updated = [...images, ...items];
+    setImages(updated);
+    if (!currentId && updated.length > 0) {
+      setCurrentId(updated[0].id);
     }
+    // setSelectedFiles(items);
   };
+
+  // const handleFiles = async (items) => {
+  //   if (!items?.length) return;
+
+  //   try {
+  //     const filePromises = items.map(
+  //       (item) =>
+  //         new Promise((resolve, reject) => {
+  //           const f = item.file || item;
+  //           if (!(f instanceof Blob))
+  //             return reject(new Error("Invalid file object"));
+
+  //           const reader = new FileReader();
+  //           reader.onload = (e) =>
+  //             resolve({
+  //               localName: f.name,
+  //               name: f.name,
+  //               url: e.target.result,
+  //               width: 726,
+  //               height: 158,
+  //             });
+  //           reader.onerror = reject;
+  //           reader.readAsDataURL(f);
+  //         })
+  //     );
+
+  //     const localImages = await Promise.all(filePromises);
+
+  //     console.log(items);
+
+  //     const data = await uploadImages(
+  //       CurrentProjectContext,
+  //       items.map((i) => i.file || i)
+  //     );
+
+  //     const updatedImages = localImages.map((img, i) => ({
+  //       ...img,
+  //       serverId: data.images[i]?.id || null,
+  //       id: data.images[i]?.file_name || img.localName,
+  //       annotations: data.annotations[data.images[i]?.id] || [],
+  //     }));
+
+  //     setImages((prev) => [...prev, ...updatedImages]);
+  //     setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
+  //   } catch (err) {
+  //     console.error("Upload error:", err);
+  //   }
+  // };
 
   // --- Navigation ---
   const prevImage = () => {
@@ -304,11 +410,13 @@ const Annotate = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <input
+              {/* <input
                 type="file"
                 multiple
-                onChange={(e) => handleFiles(Array.from(e.target.files))}
-              />
+                // onChange={(e) => handleFiles(Array.from(e.target.files))}
+                onChange={handleFiles}
+              /> */}
+              <ImageUploader onFiles={handleFiles} />
               <div className="mt-4">
                 <Label className="text-xs text-gray-600">Dataset</Label>
                 <div className="mt-2 max-h-56 overflow-auto border rounded-md divide-y">
@@ -418,7 +526,7 @@ const Annotate = () => {
                 >
                   <PenTool className="w-4 h-4" /> Edit
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={runOcr}>
                   <ScanText className="w-4 h-4 mr-2" /> OCR Entire
                 </Button>
                 <Button
