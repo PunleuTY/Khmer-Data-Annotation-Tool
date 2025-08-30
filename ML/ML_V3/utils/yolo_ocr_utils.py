@@ -9,7 +9,7 @@ from ultralytics import YOLO
 
 # Load YOLO model once
 script_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(script_dir, "../best.pt")
+model_path = os.path.join(script_dir, "./best.pt")
 try:
     yolo_model = YOLO(model_path)
     print(f"[YOLO] Successfully loaded model: {model_path}")
