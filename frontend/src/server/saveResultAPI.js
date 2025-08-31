@@ -6,11 +6,14 @@ const BACKEND_PROJECT_URL = "http://127.0.0.1:5000/projects";
 export const loadProjectAPI = async () => {
   try {
     const res = await fetch(BACKEND_PROJECT_URL);
-    // if (!res.ok) throw new Error(res.status);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
     const data = await res.json();
-    return data.projects;
+    return data.projects || data; // Handle both {projects: [...]} and direct array responses
   } catch (e) {
-    log(e.message);
+    console.error("Failed to load projects:", e.message);
+    throw e; // Re-throw to let calling component handle it
   }
 };
 
@@ -22,14 +25,13 @@ export const createProjectAPI = async (name) => {
       body: JSON.stringify({ name }),
     });
     const data = await res.json();
-    if (!res.ok) throw data;
-    projects.push(data);
-    currentProjectId = data.id;
-    refreshProjects();
-    projectNameInput.value = "";
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}: ${res.statusText}`);
+    }
+    return data; // Return the created project
   } catch (e) {
-    alert("Failed to create project");
-    log(e);
+    console.error("createProjectAPI error:", e);
+    throw e; // Re-throw so the calling component can handle the error
   }
 };
 
