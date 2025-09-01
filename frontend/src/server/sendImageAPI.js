@@ -1,7 +1,7 @@
 // import axios from 'axios';
 
 // const API_BASE_URL = "http://localhost:3001/api";
-const BACKEND_UPLOAD_URL = "http://127.0.0.1:5000/images/upload";
+const BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/images/";
 
 // export const sendImagesToBackend = async (images, endpoint = '/upload-images', additionalData = {}) => {
 //     try {
@@ -44,42 +44,64 @@ const BACKEND_UPLOAD_URL = "http://127.0.0.1:5000/images/upload";
 //     }
 // };
 
-// export const uploadImages = async (projectId, files) => {
-//   if (!files || files.length === 0) return null;
+// src/api/uploadAPI.js
 
+// export const uploadFormData = async (url, payload = {}) => {
 //   const formData = new FormData();
-//   formData.append("project_id", projectId);
 
-//   files.forEach((file) => {
-//     formData.append("images", file);
-//     console.log(file)
+//   Object.entries(payload).forEach(([key, value]) => {
+//     if (Array.isArray(value)) {
+//       value.forEach((item) => {
+//         formData.append(
+//           key,
+//           item instanceof Blob ? item : JSON.stringify(item)
+//         );
+//       });
+//     } else if (value instanceof Blob) {
+//       formData.append(key, value);
+//     } else if (typeof value === "object") {
+//       formData.append(key, JSON.stringify(value));
+//     } else if (value !== undefined && value !== null) {
+//       formData.append(key, value);
+//     }
 //   });
-//   const res = await fetch(BACKEND_UPLOAD_URL, {
+
+//   const res = await fetch(url, {
 //     method: "POST",
 //     body: formData,
 //   });
 
 //   if (!res.ok) {
-//     throw new Error("Failed to upload images");
+//     throw new Error(`Request failed: ${res.statusText}`);
 //   }
 
 //   return await res.json();
 // };
 
-export const uploadImages = async (projectId, files, annotations = []) => {
+// // Specialized for images + annotations
+// export const uploadImages = async (projectId, files, annotations = []) => {
+//   return await uploadFormData(BACKEND_UPLOAD_URL, {
+//     project_id: projectId,
+//     images: files,
+//     annotations: annotations,
+//   });
+// };
+
+export const uploadImages = async (projectId, files, annotations) => {
   if (!files || files.length === 0) return null;
 
   const formData = new FormData();
   formData.append("project_id", projectId);
 
-  files.forEach((file) => {
-    formData.append("images", file);
-  });
+  console.log("upload to project", files, projectId);
+
+  formData.append("image", files[0]);
 
   // ✅ Add annotation points (convert array/object → JSON string)
   formData.append("annotations", JSON.stringify(annotations));
+  console.log("data annotation go to", annotations);
 
-  const res = await fetch(BACKEND_UPLOAD_URL, {
+  const res = await fetch("http://127.0.0.1:8000/images/", {
     method: "POST",
     body: formData,
   });

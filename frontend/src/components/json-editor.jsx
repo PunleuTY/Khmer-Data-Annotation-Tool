@@ -21,16 +21,32 @@ import {
   AlertTriangle,
   CheckCircle2,
   Copy,
+  Play,
 } from "lucide-react";
 import { useI18n } from "./translator-provider";
 import { levenshteinSimilarity } from "/src/lib/levenshtein.js";
 
-export function JsonEditor({ images, annotations, currentId, onUpdate }) {
+export function JsonEditor({
+  images,
+  annotations,
+  currentId,
+  onUpdate,
+  runOcr,
+}) {
   const { t } = useI18n();
   const [viewMode, setViewMode] = React.useState("current"); // "current" | "all"
   const [jsonText, setJsonText] = React.useState("");
   const [error, setError] = React.useState(null);
   const [hasChanges, setHasChanges] = React.useState(false);
+  const [busy, setBusy] = React.useState(true);
+
+  React.useEffect(() => {
+    if (Object.keys(annotations).length === 0) {
+      setBusy(true);
+    } else {
+      setBusy(false);
+    }
+  }, [annotations]);
 
   // Update JSON text when data changes
   React.useEffect(() => {
@@ -226,6 +242,15 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
                 </Badge>
               )}
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={runOcr}
+              disabled={busy}
+            >
+              <Play className="w-4 h-4 mr-2" />
+              {t("Run Ocr")}
+            </Button>
             <Button variant="outline" size="sm" onClick={copyToClipboard}>
               <Copy className="w-4 h-4 mr-2" />
               {t("Copy")}
@@ -245,7 +270,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Save className="w-4 h-4 mr-2" />
-              {t("Apply")}
+              {t("Save")}
             </Button>
           </div>
         </div>

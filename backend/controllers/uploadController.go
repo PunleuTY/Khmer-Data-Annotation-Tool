@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"image"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -14,6 +15,9 @@ import (
 	"time"
 
 	"backend/models"
+
+	_ "image/jpeg"
+	_ "image/png"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -76,23 +80,36 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 					return
 				}
 				// Convert to Base64
+				// Read file
 				data, err := os.ReadFile(tempPath)
 				if err != nil {
 					doneChan <- Result{FileName: file.Filename, Annotations: json.RawMessage("[]")}
 					return
 				}
+
+				// Decode image to get dimensions
+				imgConfig, _, err := image.DecodeConfig(bytes.NewReader(data))
+				if err != nil {
+					fmt.Println("Failed to decode image:", err)
+					imgConfig.Width = 0
+					imgConfig.Height = 0
+				}
+
+				// Convert to Base64
 				base64Str := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(data)
 
 				// Save image metadata with ProjectID + annotations
 				imageDoc := models.Image{
-					ProjectID: projectID,
-					Name:      filepath.Base(tempPath),
-					Path:      tempPath,
-					Base64:    base64Str,
-					Status:    "pending",
-					// Annotations: []models.Annotation{},
+					ProjectID:   projectID,
+					Name:        filepath.Base(tempPath),
+					Path:        tempPath,
+					Base64:      base64Str,
+					Status:      "pending",
+					Width:       imgConfig.Width,
+					Height:      imgConfig.Height,
 					Annotations: annotations,
 				}
+
 				res, err := imageCollection.InsertOne(context.Background(), imageDoc)
 				if err != nil {
 					doneChan <- Result{FileName: file.Filename, Annotations: json.RawMessage("[]")}
@@ -119,7 +136,6 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 				client := &http.Client{Timeout: 60 * time.Second}
 
 				//FAST API HERE
-
 				req, _ := http.NewRequest("POST", "http://127.0.0.1:8000/images/", body)
 				req.Header.Set("Content-Type", writer.FormDataContentType())
 

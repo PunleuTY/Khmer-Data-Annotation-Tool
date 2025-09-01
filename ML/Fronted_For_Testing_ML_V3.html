@@ -156,6 +156,9 @@ btnSend.addEventListener('click', async ()=>{
     if(!currentImg.src || userBoxes.length===0) return alert('Select image and draw boxes first');
     if(!currentProjectId) return alert('Select a project first');
     const file=fileInput.files[0];
+    console.log('Sending to FastAPI OCR with boxes:', userBoxes);
+    console.log('Current Project ID:', currentProjectId);
+    console.log('File:', file);
     const formData=new FormData();
     formData.append('image',file);
     formData.append('annotations',JSON.stringify(userBoxes));
