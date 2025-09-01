@@ -148,7 +148,7 @@ export function project() {
 
   return (
     <div className="min-h-full m-6">
-      <h1 className="text-center text-5xl text-[#ff3f34] font-cadt mb-4">
+      <h1 className="text-center text-5xl text-[#ff3f34] font-cadt mb-10">
         Project Page
       </h1>
       <main>

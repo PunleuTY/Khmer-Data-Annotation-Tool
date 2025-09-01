@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRegEdit } from "react-icons/fa";
-import { MdDeleteSweep } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import { MdCreateNewFolder } from "react-icons/md";
 import { CreateProjectModal } from "./createModal";
 import { deleteProjectAPI } from "@/server/deleteAPI";
@@ -95,8 +95,8 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
   // Function to truncate description
   const truncateDescription = (description) => {
     if (!description) return "";
-    return description.length > 50
-      ? description.substring(0, 50) + "..."
+    return description.length > 20
+      ? description.substring(0, 20) + "..."
       : description;
   };
 
@@ -163,25 +163,23 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
       <div className="overflow-x-auto shadow-lg rounded-lg">
         <table className="min-w-full bg-white border border-gray-200 table-fixed">
           {/* Table Header */}
-          <thead className="bg-gray-300">
+          <thead className="bg-red-500">
             <tr>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-20">
+              <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
                 Image
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-10">
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-10">
                 Title
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-80">
+              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-80">
                 Description
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-40">
-                Last Edit
+              <th className="px-6 py-3 text-left  text-xs font-medium text-white uppercase tracking-wider w-40">
+                Last Edit 
               </th>
-              <th className="px-1 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-16">
-                Edit
+              <th className="px-1 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-16">
               </th>
-              <th className="px-1 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-16">
-                Delete
+              <th className="px-1 py-3 text-center text-xs font-medium text-white not-first-of-type:uppercase tracking-wider w-16">
               </th>
             </tr>
           </thead>
@@ -194,10 +192,11 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
               >
                 {/* Image Column */}
-                <td className="px-3 py-4 whitespace-nowrap w-20">
-                  <div className="flex-shrink-0 h-12 w-12">
+                <td className="px-5 py-2 whitespace-nowrap w-20 ">
+                  {/* make image in the center of row */}
+                  <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
                     <img
-                      className="h-12 w-12 rounded-lg object-cover border"
+                      className="h-14 w-14 rounded-lg object-cover border border-gray-300"
                       src={nav2}
                       alt={item.title || "Image"}
                     />
@@ -205,15 +204,15 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                 </td>
 
                 {/* Title Column */}
-                <td className="px-6 py-4 w-30">
+                <td className="px-3 py-4 w-10">
                   <div className="text-sm font-medium text-gray-900 truncate">
                     {item.name || "No title"}
                   </div>
                 </td>
 
                 {/* Description Column */}
-                <td className="px-6 py-4 w-100">
-                  <div className="text-sm text-gray-900 flex items-center">
+                <td className="w-80">
+                  <div className="text-sm text-gray-900 px-5 ">
                     <span className="mr-2 truncate">
                       {truncateDescription(item.description)}
                     </span>
@@ -230,26 +229,26 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
                 {/* Last Edit Column */}
                 <td className="px-6 py-4 whitespace-nowrap w-40">
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-gray-900 ">
                     {formatLastEdit(item.updated_at)}
                   </div>
                 </td>
 
                 {/* Actions Column */}
-                <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-center w-16">
+                <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-end w-16">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="text-white px-1 py-1 rounded text-xs font-medium transition-colors duration-200"
+                    className="text-white rounded text-xs font-medium transition-colors duration-200"
                   >
-                    <FaRegEdit className="h-5 w-5 text-blue-500 hover:text-blue-700" />
+                    <MdEdit className="-mr-5 h-5 w-5 text-black" />
                   </button>
                 </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-center w-16">
+                <td className="whitespace-nowrap text-sm font-medium text-right w-16">
                   <button
                     onClick={() => handleDelete(item)}
-                    className="text-white px-1 py-1 rounded text-xs font-medium transition-colors duration-200"
+                    className="text-white rounded text-xs font-medium transition-colors duration-200t"
                   >
-                    <MdDeleteSweep className="h-6 w-6 text-red-500 hover:text-red-700" />
+                    <MdDelete className=" mr-8 h-6 w-6 text-red-500 hover:text-red-700" />
                   </button>
                 </td>
               </tr>

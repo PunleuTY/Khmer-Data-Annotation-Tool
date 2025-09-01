@@ -66,16 +66,11 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
       />
 
       <div className="relative z-10 bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
+        <div className="flex  mb-8 bg-yellow-500">
+          <h2 className="text-center text-xl font-semibold text-gray-800">
             Create New Project
           </h2>
-          <button
-            onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-          >
-            ×
-          </button>
+          
         </div>
 
         <div className="space-y-4">
@@ -118,16 +113,23 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
         </div>
 
         {/* Create Project Button */}
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-6 gap-2 ">
           <button
+            onClick={handleClose}
+            className="bg-gray-300 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200"
+          >
+            Cancel
+          </button>
+          <button 
             onClick={createProject}
             disabled={loading}
-            className={`bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
+            className={`bg-red-500 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? "Creating..." : "Create Project"}
+            {loading ? "Creating..." : "Create"}
           </button>
+          
         </div>
       </div>
     </div>
