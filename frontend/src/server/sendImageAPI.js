@@ -1,5 +1,7 @@
 // import axios from 'axios';
 
+import { file } from "jszip";
+
 // const API_BASE_URL = "http://localhost:3001/api";
 const BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/images/";
 
