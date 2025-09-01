@@ -22,7 +22,6 @@ export function AnnotationList({
   onSetGT,
   onDelete,
   onUpdate,
-  lang,
   onBatchStart,
   onBatchStep,
   onBatchEnd,

@@ -32,6 +32,7 @@ import { ExportDialog } from "@/components/export-dialog";
 import { CurrentProjectContext, ProjectContext } from "./Myproject";
 import { uploadImages } from "@/server/sendImageAPI";
 import { ImageUploader } from "@/components/image-uploader";
+import { getImageByProjectAPI } from "@/server/saveResultAPI";
 
 // --- CONSTANTS ---
 const HISTORY_LIMIT = 50;
@@ -97,22 +98,22 @@ const Annotate = () => {
 
   // --- Load Project if Exists ---
   useEffect(() => {
-    if (images.length === 0) {
-      const project = ProjectContext.find(
-        (p) => p.id === CurrentProjectContext
-      );
-      if (!project) return;
-      setImages(project.ImagesData);
-      setCurrentId(project.ImagesData[0]?.id || null);
-      setAnnotations(
-        project.AnnotationData.reduce((acc, item) => {
-          const imgId = Object.keys(item)[0];
-          acc[imgId] = item[imgId];
-          return acc;
-        }, {})
-      );
+    const fetchImages = async () => {
+      try {
+        const data = await getImageByProjectAPI(CurrentProjectContext);
+        if (data) {
+          setImages(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch images in useEffect:", error);
+      }
+    };
+
+    if (CurrentProjectContext) {
+      // Prevents the API from being called on initial render if context is null
+      fetchImages();
     }
-  }, [CurrentProjectContext, images.length]);
+  }, [CurrentProjectContext]);
 
   // --- Init History ---
   useEffect(() => {
@@ -128,78 +129,59 @@ const Annotate = () => {
   }, []);
 
   const runOcr = async () => {
-    const anns = annotations[currentId];
-    console.log(anns)
+    if (!currentId) return;
+    const anns = annotations[currentId] || [];
+    if (!anns.length) return;
+
+    const currentImage = images.find((i) => i.id === currentId);
+    if (!currentImage) return;
+
     try {
+      // Convert bounding boxes
+      const boxes = anns.map((ann) => [
+        ann.rect.x,
+        ann.rect.y,
+        ann.rect.x + ann.rect.w,
+        ann.rect.y + ann.rect.h,
+      ]);
+
+      // Ensure we have a File object
+      let fileToSend;
+      if (currentImage.file) {
+        fileToSend = currentImage.file;
+      } else if (currentImage.url) {
+        const resp = await fetch(currentImage.url);
+        const blob = await resp.blob();
+        fileToSend = new File([blob], currentImage.name);
+      } else {
+        console.error("No file or URL found for image", currentImage);
+        return;
+      }
+
       const data = await uploadImages(
         CurrentProjectContext,
-        images.map((i) => i.file || i), // raw files extracted in handleFilesChange
-        [
-          {
-            id: "a1",
-            type: "box",
-            rect: { x: 10, y: 20, w: 100, h: 80 },
-            text: "character",
-            gt: "ក",
-          },
-        ]
+        [fileToSend],
+        boxes
       );
-      console.log("DATA", data);
+
+      console.log("OCR result:", data);
+
+      // Update annotations for current image
+      const updatedAnns = anns.map((ann, idx) => {
+        const text =
+          data.processing_result?.[idx]?.extracted_text?.trim() || "";
+        const accuracy = ann.gt ? levenshteinSimilarity(text, ann.gt) : null;
+        return { ...ann, text, accuracy };
+      });
+
+      setAnnotations((prev) => ({
+        ...prev,
+        [currentId]: updatedAnns,
+      }));
     } catch (err) {
-      console.error("Upload failed:", err);
+      console.error("OCR failed:", err);
     }
   };
-  //   const runOcr = async () => {
-  //     const fd = new FormData();
-
-  //     // required: project ID
-  //     fd.append("project_id", currentProjectId);
-
-  //     // stringify before appending
-  //     fd.append("annotations", JSON.stringify(annotations));
-
-  //     // add images
-  //     Array.from(fileInput.files).forEach((f) => {
-  //       fd.append("images", f, f.name);
-  //     });const handleFiles = (files) => {
-  //   // Convert FileList → Array
-  //   const arr = Array.from(files);
-
-  //   const newItems = arr.map((file) => {
-  //     if (!(file instanceof File || file instanceof Blob)) {
-  //       console.warn("Skipping invalid item:", file);
-  //       return null;
-  //     }
-
-  //     return {
-  //       id: crypto.randomUUID(),
-  //       name: file.name,
-  //       file,
-  //       url: URL.createObjectURL(file),
-  //       width: 0,
-  //       height: 0,
-  //     };
-  //   }).filter(Boolean); // remove nulls
-
-  //   const updated = [...images, ...newItems];
-  //   setImages(updated);
-
-  //   if (!currentId && updated.length > 0) {
-  //     setCurrentId(updated[0].id);
-  //   }
-
-  //   setSelectedFiles((prev) => [...prev, ...arr]);
-  // };
-
-  //   // send request
-  //   fetch("http://localhost:5000/images/upload", {
-  //     method: "POST",
-  //     body: fd,
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => console.log("Upload result:", data))
-  //     .catch((err) => console.error("Upload error:", err));
-  // };
 
   // --- Autosave ---
   useEffect(() => {
@@ -212,29 +194,6 @@ const Annotate = () => {
     console.log("annotation", annotations);
   }, [annotations, currentId, images]);
 
-  // --- Upload Handler ---
-  // const handleFiles = async (event) => {
-  //   const files = Array.from(event.target.files || []); // convert FileList → Array<File>
-
-  //   // Wrap files with metadata for UI (id, preview URL, etc.)
-  //   const newItems = files.map((file) => ({
-  //     id: crypto.randomUUID(), // generate unique id
-  //     file, // keep reference to original File
-  //     preview: URL.createObjectURL(file), // for image preview
-  //   }));
-
-  //   // Update state
-  //   const updated = [...images, ...newItems];
-  //   setImages(updated);
-
-  //   // Set first file as current if not set
-  //   if (!currentId && updated.length > 0) {
-  //     setCurrentId(updated[0].id);
-  //   }
-
-  //   // Keep raw files for upload
-  //   setSelectedFiles(newItems.map((i) => i.file));
-  // };
   const handleFiles = async (items) => {
     const updated = [...images, ...items];
     setImages(updated);
@@ -243,54 +202,6 @@ const Annotate = () => {
     }
     // setSelectedFiles(items);
   };
-
-  // const handleFiles = async (items) => {
-  //   if (!items?.length) return;
-
-  //   try {
-  //     const filePromises = items.map(
-  //       (item) =>
-  //         new Promise((resolve, reject) => {
-  //           const f = item.file || item;
-  //           if (!(f instanceof Blob))
-  //             return reject(new Error("Invalid file object"));
-
-  //           const reader = new FileReader();
-  //           reader.onload = (e) =>
-  //             resolve({
-  //               localName: f.name,
-  //               name: f.name,
-  //               url: e.target.result,
-  //               width: 726,
-  //               height: 158,
-  //             });
-  //           reader.onerror = reject;
-  //           reader.readAsDataURL(f);
-  //         })
-  //     );
-
-  //     const localImages = await Promise.all(filePromises);
-
-  //     console.log(items);
-
-  //     const data = await uploadImages(
-  //       CurrentProjectContext,
-  //       items.map((i) => i.file || i)
-  //     );
-
-  //     const updatedImages = localImages.map((img, i) => ({
-  //       ...img,
-  //       serverId: data.images[i]?.id || null,
-  //       id: data.images[i]?.file_name || img.localName,
-  //       annotations: data.annotations[data.images[i]?.id] || [],
-  //     }));
-
-  //     setImages((prev) => [...prev, ...updatedImages]);
-  //     setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
-  //   } catch (err) {
-  //     console.error("Upload error:", err);
-  //   }
-  // };
 
   // --- Navigation ---
   const prevImage = () => {
@@ -626,3 +537,74 @@ const Annotate = () => {
 };
 
 export default Annotate;
+// --- Upload Handler ---
+// const handleFiles = async (event) => {
+//   const files = Array.from(event.target.files || []); // convert FileList → Array<File>
+
+//   // Wrap files with metadata for UI (id, preview URL, etc.)
+//   const newItems = files.map((file) => ({
+//     id: crypto.randomUUID(), // generate unique id
+//     file, // keep reference to original File
+//     preview: URL.createObjectURL(file), // for image preview
+//   }));
+
+//   // Update state
+//   const updated = [...images, ...newItems];
+//   setImages(updated);
+
+//   // Set first file as current if not set
+//   if (!currentId && updated.length > 0) {
+//     setCurrentId(updated[0].id);
+//   }
+
+//   // Keep raw files for upload
+//   setSelectedFiles(newItems.map((i) => i.file));
+// };
+
+// const handleFiles = async (items) => {
+//   if (!items?.length) return;
+
+//   try {
+//     const filePromises = items.map(
+//       (item) =>
+//         new Promise((resolve, reject) => {
+//           const f = item.file || item;
+//           if (!(f instanceof Blob))
+//             return reject(new Error("Invalid file object"));
+
+//           const reader = new FileReader();
+//           reader.onload = (e) =>
+//             resolve({
+//               localName: f.name,
+//               name: f.name,
+//               url: e.target.result,
+//               width: 726,
+//               height: 158,
+//             });
+//           reader.onerror = reject;
+//           reader.readAsDataURL(f);
+//         })
+//     );
+
+//     const localImages = await Promise.all(filePromises);
+
+//     console.log(items);
+
+//     const data = await uploadImages(
+//       CurrentProjectContext,
+//       items.map((i) => i.file || i)
+//     );
+
+//     const updatedImages = localImages.map((img, i) => ({
+//       ...img,
+//       serverId: data.images[i]?.id || null,
+//       id: data.images[i]?.file_name || img.localName,
+//       annotations: data.annotations[data.images[i]?.id] || [],
+//     }));
+
+//     setImages((prev) => [...prev, ...updatedImages]);
+//     setAnnotations((prev) => ({ ...prev, ...transformData(updatedImages) }));
+//   } catch (err) {
+//     console.error("Upload error:", err);
+//   }
+// };

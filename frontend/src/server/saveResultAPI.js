@@ -33,6 +33,25 @@ export const createProjectAPI = async (name) => {
   }
 };
 
+export const getImageByProjectAPI = async (id) => {
+  try {
+    const res = await fetch(`http://127.0.0.1:5000/projects/${id}/images`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error("Failed to fetch project images:", e.message);
+    return null; // Return null or an empty array to indicate an error
+  }
+};
+
 export const saveResultAPI = async (resultData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/results`, {

@@ -245,7 +245,7 @@ export function JsonEditor({ images, annotations, currentId, onUpdate }) {
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Save className="w-4 h-4 mr-2" />
-              {t("Apply")}
+              {t("Save")}
             </Button>
           </div>
         </div>
