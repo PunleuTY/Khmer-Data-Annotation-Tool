@@ -2,7 +2,7 @@ GEMINI KHMER TEXT EXTRACTION RESULTS
 ==================================================
 
 Image: ./image_testing/MPTC2.jpg
-JSON: /Users/typunleu/Documents/ACADEMIC/CADT/NEXT_GEN_BATCH_II/NGB PROJECT/Project_Repo/Khmer-Data-Annotation-Tool/ML/ML_V3/../detected_khmer_text_model_coordinates.json
+JSON: D:\NGB_II_Project\Khmer-Data-Annotation-Tool\ML\ML_V3\../detected_khmer_text_model_coordinates.json
 Total detections: 29
 
 COORDINATE REFERENCE:
@@ -38,32 +38,32 @@ COORDINATE REFERENCE:
 
 EXTRACTED TEXT:
 ------------------------------
-Detection 0: នៃសេវាកម្ម
-Detection 1: ក្រសួងមហាផ្ទៃ
-Detection 2: ព្រះរាជាណាចក្រកម្ពុជា
-Detection 3: សេដ្ឋកិច្ច
-Detection 4: និងអិនធឺណែត
-Detection 5: សង្គម
-Detection 6: និងការប្រើ
-Detection 7: ឱ្យមានសន្ទុះកើនឡើងគួរកត់សម្គាល់។
-Detection 8: សំដៅលើកកម្ពស់
-Detection 9: ក្រសួងប្រៃសណីយ៍
-Detection 10: ការធ្វើអាជីវកម្ម
-Detection 11: តាមបទពិសោធន៍ ក្នុងការស្រាវជ្រាវបង្ក្រាបបទល្មើសនានាកន្លងមក បានបង្ហាញ
-Detection 12: និងជីវភាពរស់នៅ
-Detection 13: ថែរក្សាសន្តិសុខជាតិ
-Detection 14: សម្រាប់ការប្រើប្រាស់សេវាកម្ម
-Detection 15: ជាតិ សាសនា
-Detection 16: និងទូរគមនាគមន៍
-Detection 17: ឱ្យកាន់តែ
-Detection 18: សុវត្ថិភាព សណ្តាប់ធ្នាប់សាធារណៈឱ្យកាន់តែ
-Detection 19: ក្រសួងប្រៃសណីយ៍
-Detection 20: ល្អប្រសើរឡើង។
-Detection 21: ព្រះមហាក្សត្រ
-Detection 22: របស់ជាតិ និងសីលធម៌ស្អាតស្អំរបស់សង្គម។
-Detection 23: បទល្មើស
-Detection 24: ការទូត
-Detection 25: សារាចរអន្តរក្រសួង
-Detection 26: ព្រះមហាក្សត្រ
-Detection 27: សម្រាប់ការប្រើប្រាស់សេវាកម្ម
-Detection 28: និងជីវភាពរស់នៅ
+Detection 0: ផ្តល់សេវាកម្ម
+Detection 1: ការធានារ៉ាប់
+Detection 2: រាជរដ្ឋាភិបាល
+Detection 3: សកល
+Detection 4: លទ្ធភាព
+Detection 5: ទីផ្សារ
+Detection 6: សេវាកម្ម
+Detection 7: ដើម្បីឱ្យកិច្ចខិតខំប្រឹងប្រែងទាំងអស់ទាំងនេះមានប្រសិទ្ធភាពខ្ពស់និងស្ថិតស្ថេរ
+Detection 8: កម្មវិធី
+Detection 9: និងមានន័យ
+Detection 10: ហិរញ្ញវត្ថុ
+Detection 11: ដើម្បីឱ្យកិច្ចខិតខំប្រឹងប្រែងទាំងអស់ទាំងនេះមានប្រសិទ្ធភាពខ្ពស់និងស្ថិតស្ថេរ
+Detection 12: លក្ខណៈ
+Detection 13: ឱកាសធុរកិច្ច
+Detection 14: ធានានូវសេវាកម្ម
+Detection 15: និងជំនួយ
+Detection 16: សម្រាប់ភាពជោគជ័យ
+Detection 17: អាសន្ន
+Detection 18: យើងបានប្តេជ្ញាផ្តល់ជូននូវសេវាកម្មឱ្យបានគ្រប់ជ្រុងជ្រោយ
+Detection 19: ធ្វើឱ្យការ
+Detection 20: ហិរញ្ញវត្ថុ
+Detection 21: នៅទូទាំងពិភពលោក
+Detection 22: បច្ចេកវិទ្យាថ្មីនិង
+Detection 23: តាមដាន
+Detection 24: ការធ្វើ
+Detection 25: ហេតុដូច្នេះហើយយើងប្តេជ្ញាជួយអ្នកក្នុងការទទួលបាននូវ
+Detection 26: ទូទាំងពិភពលោក
+Detection 27: ធានានូវសេវាកម្ម
+Detection 28: យុទ្ធសាស្ត្រ

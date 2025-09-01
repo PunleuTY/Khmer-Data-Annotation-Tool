@@ -1,9 +1,9 @@
 {
   "source_image": "./image_testing/MPTC2.jpg",
-  "source_json": "/Users/typunleu/Documents/ACADEMIC/CADT/NEXT_GEN_BATCH_II/NGB PROJECT/Project_Repo/Khmer-Data-Annotation-Tool/ML/ML_V3/../detected_khmer_text_model_coordinates.json",
+  "source_json": "D:\\NGB_II_Project\\Khmer-Data-Annotation-Tool\\ML\\ML_V3\\../detected_khmer_text_model_coordinates.json",
   "model_used": "gemini-2.0-flash-exp",
   "prompt": "Extract Khmer text only inside these bounding boxes:\n\n- Detection 0: (797, 1241) to (967, 1292)\n- Detection 1: (131, 1233) to (407, 1302)\n- Detection 2: (423, 83) to (754, 146)\n- Detection 3: (131, 1073) to (266, 1127)\n- Detection 4: (895, 1186) to (1049, 1231)\n- Detection 5: (130, 806) to (244, 851)\n- Detection 6: (459, 1073) to (612, 1133)\n- Detection 7: (176, 665) to (1057, 757)\n- Detection 8: (127, 862) to (276, 906)\n- Detection 9: (243, 1182) to (442, 1239)\n- Detection 10: (440, 1183) to (573, 1234)\n- Detection 11: (181, 684) to (1069, 767)\n- Detection 12: (125, 909) to (317, 966)\n- Detection 13: (464, 485) to (712, 538)\n- Detection 14: (129, 959) to (478, 1020)\n- Detection 15: (180, 246) to (370, 293)\n- Detection 16: (299, 289) to (690, 353)\n- Detection 17: (910, 1021) to (1049, 1074)\n- Detection 18: (155, 570) to (1068, 652)\n- Detection 19: (126, 293) to (303, 341)\n- Detection 20: (908, 914) to (1051, 964)\n- Detection 21: (581, 145) to (776, 194)\n- Detection 22: (123, 1401) to (602, 1466)\n- Detection 23: (552, 536) to (628, 583)\n- Detection 24: (347, 807) to (433, 852)\n- Detection 25: (85, 1120) to (943, 1184)\n- Detection 26: (456, 143) to (777, 194)\n- Detection 27: (137, 960) to (668, 1023)\n- Detection 28: (128, 920) to (296, 968)\n\n\nReturn results as:\nDetection 0: [text]\nDetection 1: [text]\n...",
-  "extracted_text": "Detection 0: នៃសេវាកម្ម\nDetection 1: ក្រសួងមហាផ្ទៃ\nDetection 2: ព្រះរាជាណាចក្រកម្ពុជា\nDetection 3: សេដ្ឋកិច្ច\nDetection 4: និងអិនធឺណែត\nDetection 5: សង្គម\nDetection 6: និងការប្រើ\nDetection 7: ឱ្យមានសន្ទុះកើនឡើងគួរកត់សម្គាល់។\nDetection 8: សំដៅលើកកម្ពស់\nDetection 9: ក្រសួងប្រៃសណីយ៍\nDetection 10: ការធ្វើអាជីវកម្ម\nDetection 11: តាមបទពិសោធន៍ ក្នុងការស្រាវជ្រាវបង្ក្រាបបទល្មើសនានាកន្លងមក បានបង្ហាញ\nDetection 12: និងជីវភាពរស់នៅ\nDetection 13: ថែរក្សាសន្តិសុខជាតិ\nDetection 14: សម្រាប់ការប្រើប្រាស់សេវាកម្ម\nDetection 15: ជាតិ សាសនា\nDetection 16: និងទូរគមនាគមន៍\nDetection 17: ឱ្យកាន់តែ\nDetection 18: សុវត្ថិភាព សណ្តាប់ធ្នាប់សាធារណៈឱ្យកាន់តែ\nDetection 19: ក្រសួងប្រៃសណីយ៍\nDetection 20: ល្អប្រសើរឡើង។\nDetection 21: ព្រះមហាក្សត្រ\nDetection 22: របស់ជាតិ និងសីលធម៌ស្អាតស្អំរបស់សង្គម។\nDetection 23: បទល្មើស\nDetection 24: ការទូត\nDetection 25: សារាចរអន្តរក្រសួង\nDetection 26: ព្រះមហាក្សត្រ\nDetection 27: សម្រាប់ការប្រើប្រាស់សេវាកម្ម\nDetection 28: និងជីវភាពរស់នៅ",
+  "extracted_text": "Detection 0: ផ្តល់សេវាកម្ម\nDetection 1: ការធានារ៉ាប់\nDetection 2: រាជរដ្ឋាភិបាល\nDetection 3: សកល\nDetection 4: លទ្ធភាព\nDetection 5: ទីផ្សារ\nDetection 6: សេវាកម្ម\nDetection 7: ដើម្បីឱ្យកិច្ចខិតខំប្រឹងប្រែងទាំងអស់ទាំងនេះមានប្រសិទ្ធភាពខ្ពស់និងស្ថិតស្ថេរ\nDetection 8: កម្មវិធី\nDetection 9: និងមានន័យ\nDetection 10: ហិរញ្ញវត្ថុ\nDetection 11: ដើម្បីឱ្យកិច្ចខិតខំប្រឹងប្រែងទាំងអស់ទាំងនេះមានប្រសិទ្ធភាពខ្ពស់និងស្ថិតស្ថេរ\nDetection 12: លក្ខណៈ\nDetection 13: ឱកាសធុរកិច្ច\nDetection 14: ធានានូវសេវាកម្ម\nDetection 15: និងជំនួយ\nDetection 16: សម្រាប់ភាពជោគជ័យ\nDetection 17: អាសន្ន\nDetection 18: យើងបានប្តេជ្ញាផ្តល់ជូននូវសេវាកម្មឱ្យបានគ្រប់ជ្រុងជ្រោយ\nDetection 19: ធ្វើឱ្យការ\nDetection 20: ហិរញ្ញវត្ថុ\nDetection 21: នៅទូទាំងពិភពលោក\nDetection 22: បច្ចេកវិទ្យាថ្មីនិង\nDetection 23: តាមដាន\nDetection 24: ការធ្វើ\nDetection 25: ហេតុដូច្នេះហើយយើងប្តេជ្ញាជួយអ្នកក្នុងការទទួលបាននូវ\nDetection 26: ទូទាំងពិភពលោក\nDetection 27: ធានានូវសេវាកម្ម\nDetection 28: យុទ្ធសាស្ត្រ",
   "detections_processed": 29,
   "coordinate_reference": [
     {
@@ -16,7 +16,7 @@
         "width": 170,
         "height": 51
       },
-      "confidence": 0.663730263710022,
+      "confidence": 0.6637303829193115,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -30,7 +30,7 @@
         "width": 276,
         "height": 69
       },
-      "confidence": 0.6606907248497009,
+      "confidence": 0.660690426826477,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -44,7 +44,7 @@
         "width": 331,
         "height": 63
       },
-      "confidence": 0.6222399473190308,
+      "confidence": 0.622239351272583,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -58,7 +58,7 @@
         "width": 135,
         "height": 54
       },
-      "confidence": 0.5562762022018433,
+      "confidence": 0.5562757849693298,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -72,7 +72,7 @@
         "width": 154,
         "height": 45
       },
-      "confidence": 0.4646599292755127,
+      "confidence": 0.4646601378917694,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -86,7 +86,7 @@
         "width": 114,
         "height": 45
       },
-      "confidence": 0.45996809005737305,
+      "confidence": 0.45996811985969543,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -100,7 +100,7 @@
         "width": 153,
         "height": 60
       },
-      "confidence": 0.4542139172554016,
+      "confidence": 0.4542134404182434,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -114,7 +114,7 @@
         "width": 881,
         "height": 92
       },
-      "confidence": 0.4216463565826416,
+      "confidence": 0.42164576053619385,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -128,7 +128,7 @@
         "width": 149,
         "height": 44
       },
-      "confidence": 0.413581520318985,
+      "confidence": 0.4135811924934387,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -142,7 +142,7 @@
         "width": 199,
         "height": 57
       },
-      "confidence": 0.40107449889183044,
+      "confidence": 0.40107473731040955,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -156,7 +156,7 @@
         "width": 133,
         "height": 51
       },
-      "confidence": 0.3920607268810272,
+      "confidence": 0.3920608162879944,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -170,7 +170,7 @@
         "width": 888,
         "height": 83
       },
-      "confidence": 0.3848501741886139,
+      "confidence": 0.3848503530025482,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -184,7 +184,7 @@
         "width": 192,
         "height": 57
       },
-      "confidence": 0.3631575107574463,
+      "confidence": 0.36315786838531494,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -198,7 +198,7 @@
         "width": 248,
         "height": 53
       },
-      "confidence": 0.3541542589664459,
+      "confidence": 0.3541547358036041,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -212,7 +212,7 @@
         "width": 349,
         "height": 61
       },
-      "confidence": 0.3433753550052643,
+      "confidence": 0.3433750867843628,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -226,7 +226,7 @@
         "width": 190,
         "height": 47
       },
-      "confidence": 0.3388582170009613,
+      "confidence": 0.33885815739631653,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -240,7 +240,7 @@
         "width": 391,
         "height": 64
       },
-      "confidence": 0.3349616825580597,
+      "confidence": 0.3349619507789612,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -254,7 +254,7 @@
         "width": 139,
         "height": 53
       },
-      "confidence": 0.33033114671707153,
+      "confidence": 0.3303315043449402,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -268,7 +268,7 @@
         "width": 913,
         "height": 82
       },
-      "confidence": 0.32955610752105713,
+      "confidence": 0.3295559883117676,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -282,7 +282,7 @@
         "width": 177,
         "height": 48
       },
-      "confidence": 0.3193805515766144,
+      "confidence": 0.3193804621696472,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -296,7 +296,7 @@
         "width": 143,
         "height": 50
       },
-      "confidence": 0.31568434834480286,
+      "confidence": 0.3156844675540924,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -310,7 +310,7 @@
         "width": 195,
         "height": 49
       },
-      "confidence": 0.31373798847198486,
+      "confidence": 0.31373754143714905,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -324,7 +324,7 @@
         "width": 479,
         "height": 65
       },
-      "confidence": 0.3093537986278534,
+      "confidence": 0.3093542456626892,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -338,7 +338,7 @@
         "width": 76,
         "height": 47
       },
-      "confidence": 0.29803577065467834,
+      "confidence": 0.29803574085235596,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -352,7 +352,7 @@
         "width": 86,
         "height": 45
       },
-      "confidence": 0.2953276038169861,
+      "confidence": 0.2953265309333801,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -366,7 +366,7 @@
         "width": 858,
         "height": 64
       },
-      "confidence": 0.27230140566825867,
+      "confidence": 0.2723015248775482,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -380,7 +380,7 @@
         "width": 321,
         "height": 51
       },
-      "confidence": 0.2664136290550232,
+      "confidence": 0.2664138376712799,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -394,7 +394,7 @@
         "width": 531,
         "height": 63
       },
-      "confidence": 0.25295916199684143,
+      "confidence": 0.2529584765434265,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -408,7 +408,7 @@
         "width": 168,
         "height": 48
       },
-      "confidence": 0.2504509389400482,
+      "confidence": 0.25045114755630493,
       "class_id": 0,
       "class_name": "Khst"
     }
