@@ -160,6 +160,7 @@ func UploadImages(imageCollection *mongo.Collection) gin.HandlerFunc {
 				"id":        imageIDStr,
 				"file_name": r.FileName,
 				"base64":    r.Base64,
+				
 			})
 			annotationsMap[imageIDStr] = r.Annotations
 		}

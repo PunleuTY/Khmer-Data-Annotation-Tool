@@ -102,7 +102,14 @@ const Annotate = () => {
       try {
         const data = await getImageByProjectAPI(CurrentProjectContext);
         if (data) {
-          setImages(data);
+          const processedImages = data.map((img) => ({
+            ...img,
+            url: img.base64, // add url attribute with base64 value
+          }));
+
+          console.log("Fetched images:", processedImages);
+
+          setImages(processedImages);
         }
       } catch (error) {
         console.error("Failed to fetch images in useEffect:", error);
@@ -228,36 +235,46 @@ const Annotate = () => {
 
   // --- Annotations ---
   const addAnnotation = (ann) => {
-    saveToHistory();
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
-      list.push({
+      const newAnn = {
         ...ann,
         id: `a_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
         text: "",
         gt: "",
         accuracy: null,
         label: "",
-      });
-      return { ...prev, [currentId]: list };
+      };
+      const updated = { ...prev, [currentId]: [...list, newAnn] };
+      // Save to history after state update
+      saveToHistoryWith(updated, fullOcr);
+      return updated;
     });
   };
 
   const updateAnnotation = (id, patch) => {
-    saveToHistory();
+    // saveToHistory();
+
     setAnnotations((prev) => {
       const list = prev[currentId] ? [...prev[currentId]] : [];
       const idx = list.findIndex((a) => a.id === id);
-      if (idx >= 0) list[idx] = { ...list[idx], ...patch };
-      return { ...prev, [currentId]: list };
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...patch };
+      }
+      const updated = { ...prev, [currentId]: list };
+      saveToHistoryWith(updated, fullOcr);
+      return updated;
     });
   };
 
   const deleteAnnotation = (id) => {
-    saveToHistory();
     setAnnotations((prev) => {
-      const list = prev[currentId]?.filter((a) => a.id !== id) || [];
-      return { ...prev, [currentId]: list };
+      const list = prev[currentId]
+        ? prev[currentId].filter((a) => a.id !== id)
+        : [];
+      const updated = { ...prev, [currentId]: list };
+      saveToHistoryWith(updated, fullOcr);
+      return updated;
     });
   };
 
@@ -270,20 +287,27 @@ const Annotate = () => {
   };
 
   // --- Undo/Redo ---
-  const saveToHistory = useCallback(() => {
-    const currentState = {
-      annotations: { ...annotations },
-      textAnnotations: { ...fullOcr },
-      timestamp: Date.now(),
-    };
-    setHistory((prevHistory) => {
-      const newHistory = prevHistory.slice(0, historyIndex + 1);
-      newHistory.push(currentState);
-      if (newHistory.length > HISTORY_LIMIT) newHistory.shift();
-      setHistoryIndex(newHistory.length - 1);
-      return newHistory;
-    });
-  }, [annotations, fullOcr, historyIndex]);
+  const saveToHistoryWith = useCallback(
+    (annotations, fullOcr) => {
+      const currentState = {
+        annotations: { ...annotations },
+        textAnnotations: { ...fullOcr },
+        timestamp: Date.now(),
+      };
+      setHistory((prevHistory) => {
+        const newHistory = prevHistory.slice(0, historyIndex + 1);
+        newHistory.push(currentState);
+        if (newHistory.length > 50) {
+          newHistory.shift();
+          setHistoryIndex(newHistory.length - 1);
+          return newHistory;
+        }
+        setHistoryIndex(newHistory.length - 1);
+        return newHistory;
+      });
+    },
+    [historyIndex]
+  );
 
   const undo = useCallback(() => {
     if (historyIndex > 0) {
@@ -507,6 +531,7 @@ const Annotate = () => {
                 onBatchEnd={() =>
                   setBatchInfo({ running: false, total: 0, current: 0, pct: 0 })
                 }
+                runOcr={runOcr}
               />
             </TabsContent>
             <TabsContent
@@ -518,6 +543,7 @@ const Annotate = () => {
                 annotations={annotations}
                 currentId={currentId}
                 onUpdate={setAnnotations}
+                runOcr={runOcr}
               />
             </TabsContent>
           </Tabs>
