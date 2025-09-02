@@ -236,3 +236,134 @@ func SaveGroundTruth(imageCollection *mongo.Collection) gin.HandlerFunc {
 		})
 	}
 }
+
+// package controllers
+
+// import (
+// 	"context"
+// 	"encoding/base64"
+// 	"log"
+// 	"net/http"
+// 	"os"
+// 	"path/filepath"
+
+// 	"backend/models"
+
+// 	"github.com/gin-gonic/gin"
+// 	"go.mongodb.org/mongo-driver/bson"
+// 	"go.mongodb.org/mongo-driver/bson/primitive"
+// 	"go.mongodb.org/mongo-driver/mongo"
+// )
+
+// // SaveGroundTruth handles saving image + annotations + base64 to MongoDB
+// func SaveGroundTruth(imageCollection *mongo.Collection) gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		var req struct {
+// 			Filename    string              `json:"filename"`
+// 			ProjectID   string              `json:"project_id"`
+// 			Annotations []models.Annotation `json:"annotations"`
+// 			Meta        models.Meta         `json:"meta"`
+// 			Base64Image string              `json:"base64_image"`
+// 		}
+
+// 		if err := c.ShouldBindJSON(&req); err != nil {
+// 			log.Println("BindJSON error:", err)
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request", "details": err.Error()})
+// 			return
+// 		}
+
+// 		// Validate project ID
+// 		projectID, err := primitive.ObjectIDFromHex(req.ProjectID)
+// 		if err != nil {
+// 			log.Println("Invalid project_id:", req.ProjectID)
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project_id"})
+// 			return
+// 		}
+
+// 		// Check if image exists
+// 		var imageDoc models.Image
+// 		err = imageCollection.FindOne(context.Background(), bson.M{"name": req.Filename, "project_id": projectID}).Decode(&imageDoc)
+// 		if err != nil {
+// 			// Image not found → create new
+// 			imageDoc = models.Image{
+// 				ProjectID:   projectID,
+// 				Name:        req.Filename,
+// 				Status:      "final",
+// 				Annotations: req.Annotations,
+// 				Meta:        req.Meta,
+// 			}
+// 		}
+
+// 		// Ensure uploads folder exists
+// 		finalDir := "uploads/final/"
+// 		os.MkdirAll(finalDir, os.ModePerm)
+// 		finalPath := filepath.Join(finalDir, req.Filename)
+
+// 		// Save base64 image
+// 		if req.Base64Image != "" {
+// 			data, err := base64.StdEncoding.DecodeString(req.Base64Image)
+// 			if err != nil {
+// 				log.Println("Base64 decode error:", err)
+// 				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid base64 image"})
+// 				return
+// 			}
+// 			if err := os.WriteFile(finalPath, data, 0644); err != nil {
+// 				log.Println("Failed to write image file:", err)
+// 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+// 				return
+// 			}
+// 			imageDoc.Path = finalPath
+// 			imageDoc.Base64 = "data:image/jpeg;base64," + req.Base64Image
+// 		} else if imageDoc.Path != "" {
+// 			// Move existing image to final path if needed
+// 			os.Rename(imageDoc.Path, finalPath)
+// 			data, _ := os.ReadFile(finalPath)
+// 			imageDoc.Base64 = "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(data)
+// 			imageDoc.Path = finalPath
+// 		} else {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "No image data provided"})
+// 			return
+// 		}
+
+// 		// Update annotations, meta, and status
+// 		imageDoc.Annotations = req.Annotations
+// 		imageDoc.Meta = req.Meta
+// 		imageDoc.Status = "final"
+// 		imageDoc.ProjectID = projectID
+
+// 		if imageDoc.ID.IsZero() {
+// 			// Insert new image
+// 			res, err := imageCollection.InsertOne(context.Background(), imageDoc)
+// 			if err != nil {
+// 				log.Println("Insert failed:", err)
+// 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert image", "details": err.Error()})
+// 				return
+// 			}
+// 			imageDoc.ID = res.InsertedID.(primitive.ObjectID)
+// 			log.Println("Inserted new image with ID:", imageDoc.ID.Hex())
+// 		} else {
+// 			// Update existing image
+// 			_, err := imageCollection.UpdateByID(context.Background(), imageDoc.ID, bson.M{
+// 				"$set": bson.M{
+// 					"annotations": imageDoc.Annotations,
+// 					"status":      imageDoc.Status,
+// 					"path":        imageDoc.Path,
+// 					"base64":      imageDoc.Base64,
+// 					"meta":        imageDoc.Meta,
+// 				},
+// 			})
+// 			if err != nil {
+// 				log.Println("Update failed:", err)
+// 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update image", "details": err.Error()})
+// 				return
+// 			}
+// 			log.Println("Updated image ID:", imageDoc.ID.Hex())
+// 		}
+
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"message":  "Ground truth saved successfully",
+// 			"filename": req.Filename,
+// 			"id":       imageDoc.ID.Hex(),
+// 		})
+// 	}
+// }
