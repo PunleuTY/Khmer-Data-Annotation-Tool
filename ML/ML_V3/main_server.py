@@ -7,9 +7,10 @@ from api_client import send_to_backend
 app = FastAPI(title="User Box OCR API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],  # frontend
+    allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 BACKEND_URL = "http://127.0.0.1:5000/images/upload" 

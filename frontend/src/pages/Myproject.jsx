@@ -146,8 +146,8 @@ export function project() {
   }, []); // <-- empty deps = run only once
 
   return (
-    <div className="min-h-full bg-gray-50 m-6">
-      <h1 className=" text-5xl text-[#ff3f34] font-cadt ">Project Page</h1>
+    <div className="min-h-full bg-gray-50">
+      <h1 className=" text-5xl text-[#ff3f34] font-cadt p-6">Project Page</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-20">
         <NavLink
           to={`/annotate`}
