@@ -7,16 +7,26 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Point struct {
-	X int `bson:"x" json:"x"`
-	Y int `bson:"y" json:"y"`
-}
+// type Point struct {
+// 	X int `bson:"x" json:"x"`
+// 	Y int `bson:"y" json:"y"`
+// }
 
+//	type Rect struct {
+//		X int `bson:"x" json:"x"`
+//		Y int `bson:"y" json:"y"`
+//		W int `bson:"w" json:"w"`
+//		H int `bson:"h" json:"h"`
+//	}
+type Point struct {
+	X float64 `bson:"x" json:"x"`
+	Y float64 `bson:"y" json:"y"`
+}
 type Rect struct {
-	X int `bson:"x" json:"x"`
-	Y int `bson:"y" json:"y"`
-	W int `bson:"w" json:"w"`
-	H int `bson:"h" json:"h"`
+	X float64 `bson:"x" json:"x"`
+	Y float64 `bson:"y" json:"y"`
+	W float64 `bson:"w" json:"w"`
+	H float64 `bson:"h" json:"h"`
 }
 
 type Annotation struct {
