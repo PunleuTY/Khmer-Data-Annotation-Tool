@@ -26,3 +26,32 @@ export const uploadImages = async (projectId, files, annotations) => {
 
   return await res.json();
 };
+
+export const saveGroundTruth = async (filename, projectId, imageId, annotations) => {
+  if (!annotations) return null;
+  const payload = {
+    filename,
+    project_id: projectId,
+    image_id: imageId,
+    annotations: annotations,
+    meta: {
+      tool: "Khmer Data Annotation Tool",
+      lang: "khm",
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  console.log("save ground truth payload", payload);
+  try {
+    const res = await fetch("http://127.0.0.1:5000/images/save-groundtruth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    alert("Error saving ground truth");
+  }
+};
