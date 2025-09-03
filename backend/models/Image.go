@@ -7,16 +7,26 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Point struct {
-	X int `bson:"x" json:"x"`
-	Y int `bson:"y" json:"y"`
-}
+// type Point struct {
+// 	X int `bson:"x" json:"x"`
+// 	Y int `bson:"y" json:"y"`
+// }
 
+//	type Rect struct {
+//		X int `bson:"x" json:"x"`
+//		Y int `bson:"y" json:"y"`
+//		W int `bson:"w" json:"w"`
+//		H int `bson:"h" json:"h"`
+//	}
+type Point struct {
+	X float64 `bson:"x" json:"x"`
+	Y float64 `bson:"y" json:"y"`
+}
 type Rect struct {
-	X int `bson:"x" json:"x"`
-	Y int `bson:"y" json:"y"`
-	W int `bson:"w" json:"w"`
-	H int `bson:"h" json:"h"`
+	X float64 `bson:"x" json:"x"`
+	Y float64 `bson:"y" json:"y"`
+	W float64 `bson:"w" json:"w"`
+	H float64 `bson:"h" json:"h"`
 }
 
 type Annotation struct {
@@ -40,7 +50,6 @@ type Image struct {
 	Name        string             `bson:"name" json:"name"`
 	Path        string             `bson:"path" json:"path"`
 	Base64      string             `bson:"base64,omitempty" json:"base64"`
-	URL         string             `bson:"url,omitempty" json:"url,omitempty"`
 	Width       int                `bson:"width" json:"width"`
 	Height      int                `bson:"height" json:"height"`
 	Status      string             `bson:"status" json:"status"` // pending/final

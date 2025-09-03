@@ -2,62 +2,26 @@ import Footer from "../components/Footer";
 import { FcApproval } from "react-icons/fc";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { MdOutlineArrowDropDown } from "react-icons/md";
-import home from "../assets/home.png";
 import homepage from "../assets/homepage.jpg";
-import Nav2 from "../assets/Nav2.png";
 import {
   FaUpload,
   FaDrawPolygon,
   FaSearch,
-  FaCheck,
   FaFileExport,
   FaChartLine,
   FaClipboardList,
 } from "react-icons/fa";
-import { TbTextScan2 } from "react-icons/tb";
-import { NavLink, useNavigate } from "react-router-dom";
 
-export let MyProjects = false;
-
-const workflowSteps = [
-  {
-    title: "OCR gibberish",
-    description:
-      "Maybe the wrong language is set, or the OCR can’t read the text clearly.",
-    icon: <TbTextScan2 className="text-white-500" />,
-    color: "bg-orange-500",
-  },
-  {
-    title: "Polygon won’t finish",
-    description:
-      "You didn’t complete the polygon properly,double-click to close.",
-    icon: <FaDrawPolygon className="text-white-500" />,
-    color: "bg-blue-500",
-  },
-  {
-    title: "Overlaps causing duplicates",
-    description: "Multiple overlapping regions on the same text line.",
-    icon: <FaSearch className="text-white-500" />,
-    color: "bg-green-500",
-  },
-  {
-    title: "Low accuracy",
-    description:
-      "The annotation box is too big/loose, or the text is rotated/curved.",
-    icon: <FaCheck className="text-white-500" />,
-    color: "bg-yellow-500",
-  },
-];
 const dataItems = [
   {
     number: "01",
-    title: <span className="text-blue-400">Upload Images</span>,
+    title: <span className="text-gray-600">Upload Images</span>,
     description: (
       <>
-        <span className=" text-sky-600">Click</span> on select image button to
-        drag & drop or import images for adding one or many files (JPG/PNG).
+        <span className=" text-blue-900">Click</span> on select image button to
+        adding one or many files (JPG/PNG).
         <p>
-          <span className="font-bold text-sky-600">Tip : </span>
+          <span className="font-bold text-gray-600">Tip : </span>
           <span>
             {" "}
             Use high-quality, clear images to get better OCR results later.
@@ -65,281 +29,237 @@ const dataItems = [
         </p>
       </>
     ),
-    color: "bg-blue-400",
-    icon: <FaUpload style={{ color: "#2798F5" }} />,
+    color: "bg-red-300",
+    icon: <FaUpload style={{ color: "#202381" }} />, // soft red
   },
-  {
-    number: "04",
-    title: <span className="text-blue-400">Validate</span>,
-    description: (
-      <>
-        Compare OCR output against the actual text (ground truth) you enter. The
-        system calculates accuracy at the character or word level.
-        <p>
-          <span className="font-bold text-sky-600">Tip : </span>
-          <span>
-            {" "}
-            Checks the quality of OCR and correct OCR mistakes immediately to
-            improve dataset reliability.
-          </span>
-        </p>
-      </>
-    ),
-    color: "bg-blue-500",
-    icon: <FaSearch className="text-white-500" />,
-  },
+
   {
     number: "02",
-    title: <span className="text-blue-400">Annotation</span>,
+    title: <span className="text-gray-600 ">Annotation</span>,
     description: (
       <>
         Select the type of annotation you need:
         <ul className="list-disc ml-5 mt-2">
-          <li>Box: A rectangular shape to mark the text area.</li>
-          <li>
-            Polygon: Custom shape that follows the exact outline of the text.
-          </li>
+          <li>Bounding Box: A rectangular shape to mark the text area.</li>
+          <li>Polygon: Custom shape that follows the outline of the text.</li>
         </ul>
         <p>
-          <span className="font-bold text-sky-600">Tip : </span>
+          <span className="font-bold text-gray-600">Tip : </span>
           <span>
             {" "}
-            Use high-quality, clear images to get better OCR results later.
+            Keep bounding boxes tight around the text without cutting letters.
           </span>
         </p>
       </>
     ),
-    color: "bg-sky-500",
-    icon: <FaDrawPolygon style={{ color: "#2798E5" }} />,
+    color: "bg-red-400",
+    icon: <FaDrawPolygon style={{ color: "#202381" }} />,
+  },
+
+  {
+    number: "03",
+    title: <span className="text-gray-600">Extract Text (OCR)</span>,
+    description: (
+      <>
+        Run or Scan OCR engine to extract text.
+        <p>
+          <span className="font-bold text-gray-600">Tip : </span>
+          <span>
+            {" "}
+            Transforms image-based text into machine-readable format.
+          </span>
+        </p>
+      </>
+    ),
+    color: "bg-red-300",
+    icon: <FaChartLine style={{ color: "#202381" }} />,
+  },
+  {
+    number: "04",
+    title: <span className="text-gray-600">Validate</span>,
+    description: (
+      <>
+        Compare OCR output with the actual text (ground truth) you enter.
+        <p>
+          <span className="font-bold text-gray-600">Tip : </span>
+          <span>
+            {" "}
+            Checks the quality and correct OCR mistakes immediately to improve
+            dataset reliability.
+          </span>
+        </p>
+      </>
+    ),
+    color: "bg-red-400",
+    icon: <FaSearch style={{ color: "#202381" }} />,
   },
   {
     number: "05",
-    title: <span className="text-sky-600">Edit Result</span>,
+    title: <span className="text-gray-500">Edit Result</span>,
     description: (
       <>
-        <span className="text-blue-500">Click</span> on JSON edit button to
-        modify the OCR results or annotations,
-        <span className="text-blue-500">Then,</span> apply changes.
+        <span className=" text-blue-900">Click</span> on JSON edit button to
+        modify the OCR results or annotations.
+        <span className=" text-blue-900">Then,</span> Apply changes.
         <p>
-          <span className="font-bold text-sky-600">Tip : </span>
+          <span className="font-bold text-gray-600">Tip : </span>
           <span>
             {" "}
-            Use high-quality, clear images to get better OCR results later.
+            If something is incorrect you can fix it before exporting.
           </span>
         </p>
       </>
     ),
-    color: "bg-sky-600",
-    icon: <FaClipboardList />,
+    color: "bg-red-300",
+    icon: <FaClipboardList style={{ color: "#202381" }} />,
   },
-  {
-    number: "03",
-    title: <span className="text-sky-600">Extract Text (OCR)</span>,
-    description: (
-      <>
-        Run or Scan OCR engine to extract Khmer/English text.
-        <p>
-          <span className="font-bold text-sky-600">Tip : </span>
-          <span>
-            {" "}
-            Transforms image-based text into machine-readable format and you can
-            re-run OCR after refining annotations.
-          </span>
-        </p>
-      </>
-    ),
-    color: "bg-sky-600",
-    icon: <FaChartLine />,
-  },
+
   {
     number: "06",
-    title: <span style={{ color: "#2798B5" }}>Export</span>,
+    title: <span className="text-gray-600">Export</span>,
     description: (
       <>
-        Export your annotated data in standard formats JSON/YOLO for use in
-        machine learning models or other applications.
+        Export your annotated data in standard formats JSON/YOLO.
         <p>
-          <span className="font-bold text-sky-600">Tip:</span>
-          <span>
-            {" "}
-            Store your JSON files and keep a copy of the original images along
-            with your annotations in safe storage.
-          </span>
+          <span className="font-bold text-gray-600">Tip:</span>
+          <span> Store your JSON files in safe storage.</span>
         </p>
       </>
     ),
-    color: "bg-sky-700",
-    icon: <FaFileExport style={{ color: "#2798B5" }} />,
+    color: "bg-red-400",
+    icon: <FaFileExport style={{ color: "#202381" }} />,
   },
 ];
+
 export const Home = () => {
   return (
     <div className="home-container">
-      {/* Welcome Banner */}
-      {/* <div className="flex justify-between items-center h-55 bg-blue-100 p-6 m-4 rounded-lg mt-8 mb-4">
-        <div>
-          <h1 className="text-4xl font-bold text-blue-500">
-            WELCOME TO HOME PAGE
-          </h1>
-          <p className="text-blue-500 text-sm">
-            Get started to annotate your Khmer text data with utmost precision.
-          </p>
-        </div>
-        <div className="items-center ">
-          <img
-            src={Nav2}
-            alt="Home"
-            className="rounded-md max-h-90 object-contain items-center"
-          />
-        </div>
-      </div> */}
-      <div className="bg-white m-4 pt-12 rounded-lg">
-        <h2 className="text-2xl font-bold ml-8 text-[#12284c] mb-2 text-start ">
+      <div className="bg-white m-2  pl-10 sm:pt-12 pt-10 h-auto lg:h-175 rounded-lg ">
+        <h2 className="text-base sm:text-xl md:text-2xl font-bold ml-4 sm:ml-8 text-[#12284c] mb-4 text-start">
           Welcome To
         </h2>
-        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] mb-4 text-start">
+        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#ff3f34] mb-3 text-start ">
           Khmer Data
         </h2>
-        <h2 className="text-5xl font-cadt ml-8 text-[#ff3f34] text-start">
+        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#ff3f34] mb-3 lg:mb-0 text-start ">
           Annotation Tool
         </h2>
+
         {/* Tool Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-8">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center px-4 sm:px-8">
           {/* Left Content */}
           <div>
-            <p className="text-[#12284c] font-semibold max-w-2xl mb-">
+            <p className="text-[#12284c] font-semibold max-w-2xl text-xs lg:text-lg pt-0  md:text-base">
               Upload images, annotate text regions, extract Khmer/English text
               with OCR, and validate against ground truth to build high-quality
               datasets.
             </p>
 
-            <ul className="text-[#12284c] font-bold mt-10 space-y-2">
+            <ul className="text-[#12284c] font-bold mt-8 space-y-2 text-xs md:text-base">
               <li className="flex items-center">
-                <FcApproval className="mr-3" /> Bounding box and polygon
-                annotations
+                <FcApproval className="mr-2 sm:mr-3 text-sm  " />
+                Bounding box and polygon annotations
               </li>
               <li className="flex items-center">
-                <FcApproval className="mr-3" /> Khmer and English OCR extraction
+                <FcApproval className="mr-2 sm:mr-3 text-sm " />
+                Khmer and English OCR extraction
               </li>
               <li className="flex items-center">
-                <FcApproval className="mr-3" /> Validation with accuracy metrics
+                <FcApproval className="mr-2 sm:mr-3 text-sm  " />
+                Validation with accuracy metrics
               </li>
             </ul>
-            <div className="flex gap-4 mt-12">
-              {/* Upload Button */}
-              <NavLink
-                onClick={() => {
-                  MyProjects = false;
-                }}
-                to="/annotate"
-                className="bg-[#12284c] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
-              >
-                Start New Project <FaArrowRightLong />
-              </NavLink>
 
-              {/* Scroll Button */}
-              <NavLink
-                onClick={() => {
-                  MyProjects = true;
-                }}
-                to="/annotate"
-                className="bg-[#76bc21] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt"
+            {/* Buttons */}
+            <div className="flex gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-10 flex-nowrap">
+              <a
+                href="/annotate"
+                className="bg-[#12284c] text-white px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-xl flex items-center gap-1 sm:gap-2 font-cadt text-[10px] sm:text-xs md:text-sm lg:text-base whitespace-nowrap"
               >
-                {/* {" "} */}
-                My Project <MdOutlineArrowDropDown />
-              </NavLink>
+                Get Started{" "}
+                <FaArrowRightLong className="text-[12px] sm:text-sm md:text-base" />
+              </a>
+
+              <a
+                href="#instructions"
+                className="bg-[#76bc21] text-white px-2 sm:px-3 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-xl flex items-center gap-1 sm:gap-2 font-cadt text-[10px] sm:text-xs md:text-sm lg:text-base whitespace-nowrap"
+              >
+                Instruction{" "}
+                <MdOutlineArrowDropDown className="text-[12px] sm:text-sm md:text-base" />
+              </a>
             </div>
           </div>
+
           {/* Right Image Panel */}
-          <div className="flex justify-end items-center">
+          <div className="flex justify-center lg:justify-end items-center mt-6 lg:mt-0">
             <div className="bg-white">
               <img
                 src={homepage}
                 alt="Annotated Document"
-                className="rounded-md max-h-100 object-contain"
+                className="rounded-md max-h-48 sm:max-h-64 md:max-h-96 lg:max-h-100 object-contain"
               />
             </div>
           </div>
         </section>
+
+        <hr className="border-t border-gray-300 w-full" />
       </div>
+
       {/* Instructions Section */}
       <section
         id="instructions"
-        className="font-bold mt-20 text-gray-600  text-3xl text-center "
+        className="mt-10 text-white bg-[#ff3f34] p-6 m-4 rounded-lg mb-4 items-center text-center"
       >
-        Annotation Workflow Instructions
+        <h2 className="text-lg font-bold sm:text-2xl md:text-4xl whitespace-nowrap">
+          Annotation Workflow Instruction
+        </h2>
+        <div className="text-white text-xs sm:text-sm md:text-base text-center mt-5 max-w-5xl mx-auto">
+          Follow this detailed step-by-step annotation workflow how to annotate
+          images, run OCR, validate, and export your results to more
+          efficiently.
+        </div>
       </section>
-      <p className="text-gray-600 text-center mb-2 mt-5">
-        Follow this detailed step-by-step annotation workflow how to annotate
-        images, run OCR, validate, and export your results to more efficiently.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 rounded-lg p-6 mt-1 mb-2">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-7 rounded-lg p-6 mt-1 mb-2">
         {dataItems.map((item, index) => (
           <div
             key={index}
-            className="flex items-center mb-2 bg-white shadow-md rounded-lg p-3 hover:shadow-lg transition duration-300"
+            className="flex flex-col sm:flex-row bg-white shadow-md rounded-lg p-5 hover:shadow-lg transition duration-300 h-full"
           >
-            {/* Left Side - Number */}
-            <div
-              className={`flex-shrink-0 text-white px-4 py-3 rounded-full ${item.color} font-bold`}
-            >
-              {item.number}
+            {/* Number (top on mobile, left on desktop) */}
+            <div className="flex items-center justify-center mb-3 sm:mb-0 sm:mr-4">
+              <div className="flex items-center justify-center text-center w-12 h-12 text-white text-2xl font-bold rounded-full bg-[#FF6467]">
+                {item.number}
+              </div>
             </div>
 
-            {/* Middle - Text */}
-            <div>
+            {/* Content */}
+            <div className="flex-1 flex flex-col items-start justify-start">
               <h3
-                className={`font-bold ml-5 {item.color.replace("bg", "text")}`}
+                className={`font-bold ${item.color.replace(
+                  "bg",
+                  "text"
+                )} text-center sm:text-left w-full`}
               >
                 {item.title}
               </h3>
-              <p className="text-gray-600 text-sm max-w-md  ml-5">
+              <div className="text-gray-600 text-sm max-w-md mt-1">
                 {item.description}
-              </p>
+              </div>
             </div>
 
-            {/* Right Side - Icon */}
-            <div className="relative flex items-center justify-center w-13 h-13  ml-2 rounded-full bg-white border-4 border-gray-100 mx-1">
-              <span className={`text-2xl  ${item.color.replace("bg", "text")}`}>
-                {item.icon}
-              </span>
+            {/* Icon (hidden on mobile, visible on md+) */}
+            <div className="hidden md:flex items-center justify-end ml-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white border-4 border-gray-100 shadow-sm">
+                <span
+                  className={`text-2xl ${item.color.replace("bg", "text")}`}
+                >
+                  {item.icon}
+                </span>
+              </div>
             </div>
           </div>
         ))}
-        {/* Troubleshooting section */}
-      </div>
-      <div className="bg-blue-50 p-6 m-4 rounded-lg mt-8 mb-4">
-        <h2 className="font-bold text-2xl text-blue-400 text-center mb-8">
-          Troubleshooting
-        </h2>
-
-        <div className="flex flex-row justify-between items-start space-x-6">
-          {workflowSteps.map((step, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center w-1/4"
-            >
-              {/* Dot with icon */}
-              <span
-                className={`flex items-center justify-center w-12 h-12 rounded-full shadow-md text-white mb-4
-            ${
-              index % 2 === 0
-                ? "bg-blue-400"
-                : index % 2 === 1
-                ? "bg-blue-400"
-                : "bg-blue-300"
-            }
-          `}
-              >
-                {step.icon}
-              </span>
-              {/* Title */}
-              <h3 className="text-lg   text-gray-500">{step.title}</h3>
-              {/* Description */}
-              <p className="text-gray-500 text-sm mt-2">{step.description}</p>
-            </div>
-          ))}
-        </div>
       </div>
 
       <Footer />

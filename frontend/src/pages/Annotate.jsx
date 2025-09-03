@@ -328,16 +328,16 @@ const Annotate = () => {
   }, [history, historyIndex]);
 
   return (
-    <div className="min-h-full bg-gray-50 p-6">
-      <div className="flex justify-between">
+    <div className="min-h-full bg-gray-50">
+      <div className="flex justify-between px-6 pt-6">
         <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
       </div>
 
       {/* Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-6">
         {/* Upload + Dataset */}
         <div>
-          <Card className="bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]">
+          <Card className="bg-white rounded-xl h-full shadow-md border-b-4 border-t-4 border-[#ff3f34]">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <ImagePlus className="w-4 h-4" />
