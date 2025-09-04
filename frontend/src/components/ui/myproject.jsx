@@ -137,12 +137,18 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
       console.log("Delete item:", item);
 
       try {
-        // Placeholder fetch request to backend
+        // Delete project via API
         const response = await deleteProjectAPI(item.id);
 
-        if (response.ok) {
+        console.log("Delete response:", response);
+
+        // Check if deletion was successful
+        if (response.success || response.message) {
           console.log("Item deleted successfully");
-          // Handle successful deletion (e.g., refresh data, show success message)
+          // Automatically refresh the project list after successful deletion
+          if (onProjectCreated) {
+            await onProjectCreated();
+          }
         } else {
           console.error("Failed to delete item");
         }
@@ -152,110 +158,106 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
     }
   };
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">No data available</div>
-    );
-  }
-
   return (
     <div>
-      <div className="overflow-x-auto shadow-lg rounded-lg">
-        <table className="min-w-full bg-white border border-gray-200 table-fixed">
-          {/* Table Header */}
-          <thead className="bg-red-500">
-            <tr>
-              <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
-                Image
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-10">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-80">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left  text-xs font-medium text-white uppercase tracking-wider w-40">
-                Last Edit 
-              </th>
-              <th className="px-1 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-16">
-              </th>
-              <th className="px-1 py-3 text-center text-xs font-medium text-white not-first-of-type:uppercase tracking-wider w-16">
-              </th>
-            </tr>
-          </thead>
-
-          {/* Table Body */}
-          <tbody className="divide-y divide-gray-200">
-            {data.map((item, index) => (
-              <tr
-                key={item.id || index}
-                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
-              >
-                {/* Image Column */}
-                <td className="px-5 py-2 whitespace-nowrap w-20 ">
-                  {/* make image in the center of row */}
-                  <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
-                    <img
-                      className="h-14 w-14 rounded-lg object-cover border border-gray-300"
-                      src={nav2}
-                      alt={item.title || "Image"}
-                    />
-                  </div>
-                </td>
-
-                {/* Title Column */}
-                <td className="px-3 py-4 w-10">
-                  <div className="text-sm font-medium text-gray-900 truncate">
-                    {item.name || "No title"}
-                  </div>
-                </td>
-
-                {/* Description Column */}
-                <td className="w-80">
-                  <div className="text-sm text-gray-900 px-5 ">
-                    <span className="mr-2 truncate">
-                      {truncateDescription(item.description)}
-                    </span>
-                    {item.description && item.description.length > 50 && (
-                      <button
-                        onClick={() => showFullDescription(item.description)}
-                        className="text-blue-600 hover:text-blue-800 text-xs font-medium bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded flex-shrink-0"
-                      >
-                        More
-                      </button>
-                    )}
-                  </div>
-                </td>
-
-                {/* Last Edit Column */}
-                <td className="px-6 py-4 whitespace-nowrap w-40">
-                  <div className="text-sm text-gray-900 ">
-                    {formatLastEdit(item.updated_at)}
-                  </div>
-                </td>
-
-                {/* Actions Column */}
-                <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-end w-16">
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="text-white rounded text-xs font-medium transition-colors duration-200"
-                  >
-                    <MdEdit className="-mr-5 h-5 w-5 text-black" />
-                  </button>
-                </td>
-                <td className="whitespace-nowrap text-sm font-medium text-right w-16">
-                  <button
-                    onClick={() => handleDelete(item)}
-                    className="text-white rounded text-xs font-medium transition-colors duration-200t"
-                  >
-                    <MdDelete className=" mr-8 h-6 w-6 text-red-500 hover:text-red-700" />
-                  </button>
-                </td>
+      {!data || data.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">No data available</div>
+      ) : (
+        <div className="overflow-x-auto shadow-lg rounded-lg">
+          <table className="min-w-full bg-white border border-gray-200 table-fixed">
+            {/* Table Header */}
+            <thead className="bg-red-500">
+              <tr>
+                <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
+                  Image
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-10">
+                  Title
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-80">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left  text-xs font-medium text-white uppercase tracking-wider w-40">
+                  Last Edit
+                </th>
+                <th className="px-1 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-16"></th>
+                <th className="px-1 py-3 text-center text-xs font-medium text-white not-first-of-type:uppercase tracking-wider w-16"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            {/* Table Body */}
+            <tbody className="divide-y divide-gray-200">
+              {data.map((item, index) => (
+                <tr
+                  key={item.id || index}
+                  className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
+                >
+                  {/* Image Column */}
+                  <td className="px-5 py-2 whitespace-nowrap w-20 ">
+                    {/* make image in the center of row */}
+                    <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
+                      <img
+                        className="h-14 w-14 rounded-lg object-cover border border-gray-300"
+                        src={nav2}
+                        alt={item.title || "Image"}
+                      />
+                    </div>
+                  </td>
+
+                  {/* Title Column */}
+                  <td className="px-3 py-4 w-10">
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {item.name || "No title"}
+                    </div>
+                  </td>
+
+                  {/* Description Column */}
+                  <td className="w-80">
+                    <div className="text-sm text-gray-900 px-5 ">
+                      <span className="mr-2 truncate">
+                        {truncateDescription(item.description)}
+                      </span>
+                      {item.description && item.description.length > 50 && (
+                        <button
+                          onClick={() => showFullDescription(item.description)}
+                          className="text-blue-600 hover:text-blue-800 text-xs font-medium bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded flex-shrink-0"
+                        >
+                          More
+                        </button>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Last Edit Column */}
+                  <td className="px-6 py-4 whitespace-nowrap w-40">
+                    <div className="text-sm text-gray-900 ">
+                      {formatLastEdit(item.updated_at)}
+                    </div>
+                  </td>
+
+                  {/* Actions Column */}
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-end w-16">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="text-white rounded text-xs font-medium transition-colors duration-200"
+                    >
+                      <MdEdit className="-mr-5 h-5 w-5 text-black" />
+                    </button>
+                  </td>
+                  <td className="whitespace-nowrap text-sm font-medium text-right w-16">
+                    <button
+                      onClick={() => handleDelete(item)}
+                      className="text-white rounded text-xs font-medium transition-colors duration-200t"
+                    >
+                      <MdDelete className=" mr-8 h-6 w-6 text-red-500 hover:text-red-700" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Description Modal */}
       <DescriptionModal

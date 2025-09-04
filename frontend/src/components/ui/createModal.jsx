@@ -66,7 +66,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
       />
 
       <div className="relative z-10 bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
-        <div className="flex  mb-8 bg-yellow-500">
+        <div className="flex  mb-8">
           <h2 className="text-center text-xl font-semibold text-gray-800">
             Create New Project
           </h2>
