@@ -72,20 +72,19 @@ export function AnnotationCanvas({
     if (!ctx) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    annotations.forEach((a) => {
-      // Show temp drag position if this annotation is being dragged
+    annotations.forEach((a, i) => {
       const annotationToShow =
         dragging && a.id === selectedId && tempDragPosition
           ? tempDragPosition
           : a;
-      drawAnnotation(ctx, annotationToShow, scale, a.id === selectedId);
+      drawAnnotation(ctx, annotationToShow, scale, a.id === selectedId, i);
     });
 
     if (temp) drawTempAnnotation(ctx, temp, mousePos);
   };
 
   /** Draw saved annotation */
-  const drawAnnotation = (ctx, annotation, scale, selected) => {
+  const drawAnnotation = (ctx, annotation, scale, selected, index) => {
     ctx.save();
     ctx.strokeStyle = selected ? COLORS.selected.stroke : COLORS.box.stroke;
     ctx.fillStyle = selected ? COLORS.selected.fill : COLORS.box.fill;
@@ -95,6 +94,22 @@ export function AnnotationCanvas({
       const { x, y, w, h } = toCanvasRect(annotation.rect, scale);
       ctx.strokeRect(x, y, w, h);
       ctx.fillRect(x, y, w, h);
+
+      // ✅ Draw label above the box
+      const label = `#${index + 1}`;
+      ctx.font = "16px Arial";
+
+      // Measure text width for background
+      const textWidth = ctx.measureText(label).width;
+      const textHeight = 18; // approximate height
+
+      // Background rectangle
+      ctx.fillStyle = "red";
+      ctx.fillRect(x, y - textHeight, textWidth + 6, textHeight); // 6px padding
+
+      // Text
+      ctx.fillStyle = "white";
+      ctx.fillText(label, x + 3, y - 3); // 3px padding
     }
 
     if (annotation.type === "polygon") {
@@ -108,6 +123,20 @@ export function AnnotationCanvas({
       ctx.closePath();
       ctx.stroke();
       ctx.fill();
+
+      // Label at first point of polygon
+      const first = toCanvasPoint(annotation.points[0], scale);
+      const label = `#${index + 1}`;
+      ctx.font = "16px Arial";
+
+      const textWidth = ctx.measureText(label).width;
+      const textHeight = 20;
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(first.x, first.y - textHeight, textWidth + 6, textHeight);
+
+      ctx.fillStyle = "white";
+      ctx.fillText(label, first.x + 3, first.y - 3);
     }
 
     ctx.restore();
@@ -137,9 +166,35 @@ export function AnnotationCanvas({
     ctx.restore();
   };
 
+  /** Clamp helper */
+  const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+  function clampRectToImage(rect, image) {
+    const x = clamp(rect.x, 0, image.width);
+    const y = clamp(rect.y, 0, image.height);
+
+    const w = Math.max(0, Math.min(rect.w, image.width - x));
+    const h = Math.max(0, Math.min(rect.h, image.height - y));
+
+    return { x, y, w, h };
+  }
+
+  function clampPointsToImage(points, image) {
+    return points.map((p) => ({
+      x: clamp(p.x, 0, image.width),
+      y: clamp(p.y, 0, image.height),
+    }));
+  }
+
   const getPos = React.useCallback((e) => {
     const rect = canvasRef.current.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+
+    return {
+      x: clamp(rawX, 0, rect.width),
+      y: clamp(rawY, 0, rect.height),
+    };
   }, []);
 
   /** Find shape under cursor */
@@ -169,7 +224,6 @@ export function AnnotationCanvas({
           setSelectedId(hit.id);
           setDragging(true);
           setDragOffset({ startPos: pos, shape: hit });
-          // Initialize temp drag position with original shape
           setTempDragPosition(hit);
           return;
         } else {
@@ -183,12 +237,16 @@ export function AnnotationCanvas({
       }
 
       if (mode === "polygon") {
+        const clamped = {
+          x: clamp(pos.x, 0, canvasRef.current.width),
+          y: clamp(pos.y, 0, canvasRef.current.height),
+        };
         if (!temp) {
-          setTemp({ type: "polygon", points: [pos] });
+          setTemp({ type: "polygon", points: [clamped] });
         } else {
           setTemp((prev) => ({
             ...prev,
-            points: [...prev.points, pos],
+            points: [...prev.points, clamped],
           }));
         }
       }
@@ -204,23 +262,32 @@ export function AnnotationCanvas({
       setMousePos(pos);
 
       if (drawing && temp?.type === "box") {
-        setTemp((prev) => ({ ...prev, w: pos.x - prev.x, h: pos.y - prev.y }));
+        setTemp((prev) => {
+          const clampedX = clamp(pos.x, 0, canvasRef.current.width);
+          const clampedY = clamp(pos.y, 0, canvasRef.current.height);
+
+          return {
+            ...prev,
+            w: clampedX - prev.x,
+            h: clampedY - prev.y,
+          };
+        });
       }
 
-      // CHANGED: Update temp position instead of actual annotation during drag
       if (dragging && selectedId && dragOffset) {
         const dx = (pos.x - dragOffset.startPos.x) * scale.sx;
         const dy = (pos.y - dragOffset.startPos.y) * scale.sy;
         const shape = dragOffset.shape;
 
         if (shape.type === "box") {
+          const movedRect = {
+            ...shape.rect,
+            x: shape.rect.x + dx,
+            y: shape.rect.y + dy,
+          };
           setTempDragPosition({
             ...shape,
-            rect: {
-              ...shape.rect,
-              x: shape.rect.x + dx,
-              y: shape.rect.y + dy,
-            },
+            rect: clampRectToImage(movedRect, image),
           });
         }
 
@@ -231,7 +298,7 @@ export function AnnotationCanvas({
           }));
           setTempDragPosition({
             ...shape,
-            points: movedPoints,
+            points: clampPointsToImage(movedPoints, image),
           });
         }
       }
@@ -240,25 +307,52 @@ export function AnnotationCanvas({
   );
 
   /** Mouse Up */
+  /** Mouse Up */
   const onMouseUp = React.useCallback(() => {
     if (temp?.type === "box" && drawing) {
       const norm = toImageRect(temp, scale);
-      onAddAnnotation({ id: Date.now().toString(), type: "box", rect: norm });
+      const clampedRect = clampRectToImage(norm, image);
+
+      // ✅ Only save if rect is not fully zeroed out
+      if (
+        clampedRect.w !== 0 &&
+        clampedRect.h !== 0 &&
+        clampedRect.x !== 0 &&
+        clampedRect.y !== 0
+      ) {
+        onAddAnnotation({
+          id: Date.now().toString(),
+          type: "box",
+          rect: clampedRect,
+        });
+      }
+
       setTemp(null);
     }
 
-    // CHANGED: Only update annotation when drag is complete
     if (dragging && selectedId && tempDragPosition) {
       if (tempDragPosition.type === "box") {
-        onUpdateAnnotation(selectedId, {
-          rect: tempDragPosition.rect,
-        });
+        const finalRect = clampRectToImage(tempDragPosition.rect, image);
+
+        if (
+          !(
+            finalRect.x === 0 &&
+            finalRect.y === 0 &&
+            finalRect.w === 0 &&
+            finalRect.h === 0
+          )
+        ) {
+          onUpdateAnnotation(selectedId, { rect: finalRect });
+        }
       }
+
       if (tempDragPosition.type === "polygon") {
-        onUpdateAnnotation(selectedId, {
-          points: tempDragPosition.points,
-        });
+        const finalPts = clampPointsToImage(tempDragPosition.points, image);
+        if (finalPts.length >= 3) {
+          onUpdateAnnotation(selectedId, { points: finalPts });
+        }
       }
+
       setTempDragPosition(null);
     }
 
@@ -269,6 +363,7 @@ export function AnnotationCanvas({
     temp,
     drawing,
     scale,
+    image,
     onAddAnnotation,
     dragging,
     selectedId,
@@ -280,10 +375,11 @@ export function AnnotationCanvas({
   const onDblClick = () => {
     if (temp && temp.type === "polygon" && temp.points.length >= 3) {
       const normPts = temp.points.map((p) => toImagePoint(p, scale));
+      const clampedPts = clampPointsToImage(normPts, image);
       onAddAnnotation({
         id: Date.now().toString(),
         type: "polygon",
-        points: normPts,
+        points: clampedPts,
       });
       setTemp(null);
     }

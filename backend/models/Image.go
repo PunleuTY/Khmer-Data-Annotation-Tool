@@ -35,6 +35,7 @@ type Annotation struct {
     ID       string   `bson:"id" json:"id"`
     Label    string   `bson:"label" json:"label"`
     Rect     Rect     `bson:"rect" json:"rect"`
+	POINTS	[]Point  `bson:"points,omitempty" json:"points,omitempty"`
     Text     string   `bson:"text" json:"text"`
     Type     string   `bson:"type" json:"type"`
     // Url      string   `bson:"url" json:"url"` // 🔹 new field for cropped base64

@@ -142,12 +142,32 @@ const Annotate = () => {
 
     try {
       // Convert bounding boxes
-      const boxes = anns.map((ann) => [
-        ann.rect.x,
-        ann.rect.y,
-        ann.rect.x + ann.rect.w,
-        ann.rect.y + ann.rect.h,
-      ]);
+      const boxes = anns.map((ann) => {
+        if (ann.type === "polygon" && ann.points) {
+          const xs = ann.points.map((p) => p.x);
+          const ys = ann.points.map((p) => p.y);
+          const minX = Math.min(...xs);
+          const minY = Math.min(...ys);
+          const maxX = Math.max(...xs);
+          const maxY = Math.max(...ys);
+          return [minX, minY, maxX, maxY];
+        } else
+        if (ann.type === "box" && ann.rect) {
+          return [
+            ann.rect.x,
+            ann.rect.y,
+            ann.rect.x + ann.rect.w,
+            ann.rect.y + ann.rect.w,
+          ];
+        } else if (
+          ann.rect.x === 0 &&
+          ann.rect.y === 0 &&
+          ann.rect.width === 0 &&
+          ann.rect.height === 0
+        ) {
+          return [1, 1, 2, 2]; // Minimal box to avoid issues
+        }
+      });
 
       // Ensure we have a File object
       let fileToSend;
