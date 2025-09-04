@@ -1,93 +1,5 @@
-// import axios from 'axios';
-
 import { file } from "jszip";
-
-// const API_BASE_URL = "http://localhost:3001/api";
 const BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/images/";
-
-// export const sendImagesToBackend = async (images, endpoint = '/upload-images', additionalData = {}) => {
-//     try {
-//         // Validate images
-//         if (!images || images.length === 0) {
-//             throw new Error('No images provided');
-//         }
-
-//         // Validate file types
-//         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-//         const invalidFiles = images.filter(file => !allowedTypes.includes(file.type));
-
-//         if (invalidFiles.length > 0) {
-//             throw new Error('Only JPG and PNG images are allowed');
-//         }
-
-//         // Create FormData
-//         const formData = new FormData();
-
-//         // Append images
-//         images.forEach((image, index) => {
-//             formData.append('images', image);
-//         });
-
-//         // Append additional data
-//         Object.keys(additionalData).forEach(key => {
-//             formData.append(key, additionalData[key]);
-//         });
-
-//         // Send request
-//         const response = await axios.post(`${API_BASE_URL}${endpoint}`, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error sending images:', error);
-//         throw error;
-//     }
-// };
-
-// src/api/uploadAPI.js
-
-// export const uploadFormData = async (url, payload = {}) => {
-//   const formData = new FormData();
-
-//   Object.entries(payload).forEach(([key, value]) => {
-//     if (Array.isArray(value)) {
-//       value.forEach((item) => {
-//         formData.append(
-//           key,
-//           item instanceof Blob ? item : JSON.stringify(item)
-//         );
-//       });
-//     } else if (value instanceof Blob) {
-//       formData.append(key, value);
-//     } else if (typeof value === "object") {
-//       formData.append(key, JSON.stringify(value));
-//     } else if (value !== undefined && value !== null) {
-//       formData.append(key, value);
-//     }
-//   });
-
-//   const res = await fetch(url, {
-//     method: "POST",
-//     body: formData,
-//   });
-
-//   if (!res.ok) {
-//     throw new Error(`Request failed: ${res.statusText}`);
-//   }
-
-//   return await res.json();
-// };
-
-// // Specialized for images + annotations
-// export const uploadImages = async (projectId, files, annotations = []) => {
-//   return await uploadFormData(BACKEND_UPLOAD_URL, {
-//     project_id: projectId,
-//     images: files,
-//     annotations: annotations,
-//   });
-// };
 
 export const uploadImages = async (projectId, files, annotations) => {
   if (!files || files.length === 0) return null;
@@ -113,4 +25,33 @@ export const uploadImages = async (projectId, files, annotations) => {
   }
 
   return await res.json();
+};
+
+export const saveGroundTruth = async (filename, projectId, imageId, annotations) => {
+  if (!annotations) return null;
+  const payload = {
+    filename,
+    project_id: projectId,
+    image_id: imageId,
+    annotations: annotations,
+    meta: {
+      tool: "Khmer Data Annotation Tool",
+      lang: "khm",
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  console.log("save ground truth payload", payload);
+  try {
+    const res = await fetch("http://127.0.0.1:5000/images/save-groundtruth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    alert("Error saving ground truth");
+  }
 };

@@ -30,14 +30,15 @@ type Rect struct {
 }
 
 type Annotation struct {
-	ID     string  `bson:"id" json:"id"`
-	Type   string  `bson:"type" json:"type"` // box, polygon, etc.
-	Rect   *Rect   `bson:"rect,omitempty" json:"rect,omitempty"`
-	Points []Point `bson:"points,omitempty" json:"points,omitempty"`
-	Text   string  `bson:"text,omitempty" json:"text,omitempty"`
-	GT     string  `bson:"gt,omitempty" json:"gt,omitempty"`
+    Accuracy *float64 `bson:"accuracy" json:"accuracy"`
+    GT       string   `bson:"gt" json:"gt"`
+    ID       string   `bson:"id" json:"id"`
+    Label    string   `bson:"label" json:"label"`
+    Rect     Rect     `bson:"rect" json:"rect"`
+    Text     string   `bson:"text" json:"text"`
+    Type     string   `bson:"type" json:"type"`
+    // Url      string   `bson:"url" json:"url"` // 🔹 new field for cropped base64
 }
-
 type Meta struct {
 	Tool      string `bson:"tool,omitempty" json:"tool"`
 	Lang      string `bson:"lang,omitempty" json:"lang"`
@@ -45,16 +46,18 @@ type Meta struct {
 }
 
 type Image struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	ProjectID   primitive.ObjectID `bson:"project_id" json:"project_id"`
-	Name        string             `bson:"name" json:"name"`
-	Path        string             `bson:"path" json:"path"`
-	Base64      string             `bson:"base64,omitempty" json:"base64"`
-	Width       int                `bson:"width" json:"width"`
-	Height      int                `bson:"height" json:"height"`
-	Status      string             `bson:"status" json:"status"` // pending/final
-	Annotations []Annotation       `bson:"annotations" json:"annotations"`
-	Meta        Meta               `bson:"meta,omitempty" json:"meta,omitempty"`
+    ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+    ProjectID   primitive.ObjectID `bson:"project_id" json:"project_id"`
+    Name        string             `bson:"name" json:"name"`
+    Path        string             `bson:"path" json:"path"`
+    Base64      string             `bson:"base64" json:"base64"`
+    Width       int                `bson:"width" json:"width"`
+    Height      int                `bson:"height" json:"height"`
+    Status      string             `bson:"status" json:"status"`
+    Annotations []Annotation       `bson:"annotations" json:"annotations"`
+    Meta        Meta               `bson:"meta" json:"meta"`
+    CreatedAt   time.Time          `bson:"created_at" json:"created_at"`
+    UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at"`
 }
 
 type Project struct {

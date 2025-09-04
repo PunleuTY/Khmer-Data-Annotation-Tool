@@ -30,7 +30,7 @@ import { levenshteinSimilarity } from "@/lib/levenshtein";
 import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
 import { CurrentProjectContext, ProjectContext } from "./Myproject";
-import { uploadImages } from "@/server/sendImageAPI";
+import { uploadImages, saveGroundTruth } from "@/server/sendImageAPI";
 import { ImageUploader } from "@/components/image-uploader";
 import { getImageByProjectAPI } from "@/server/saveResultAPI";
 
@@ -38,43 +38,16 @@ import { getImageByProjectAPI } from "@/server/saveResultAPI";
 const HISTORY_LIMIT = 50;
 
 // --- HELPERS ---
-function transformData(data) {
-  const result = {};
-  let counter = 1;
+const convertAnnotations = (data) => {
+  if (!data || !data.id || !data.annotations) return {};
 
-  (Array.isArray(data) ? data : [data]).forEach((item) => {
-    if (!item.annotations || !item.annotations.images) return;
-    const aid = item.id;
+  // Convert ObjectId to string if needed
+  const id = typeof data.id === "string" ? data.id : data.id.toString();
 
-    item.annotations.images.forEach((img) => {
-      const imgAnns = (img.annotations || []).map((ann) => {
-        const [x1, y1, x2, y2] =
-          ann.box_coordinates?.length === 4
-            ? ann.box_coordinates
-            : [0, 0, 0, 0];
-        return {
-          id: `a_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-          label: ann.label || "",
-          rect: {
-            x: x1,
-            y: y1,
-            w: Math.max(0, x2 - x1),
-            h: Math.max(0, y2 - y1),
-          },
-          type: "box",
-          text: ann.extracted_text || "",
-          gt: "",
-          accuracy: ann.accuracy ?? null,
-        };
-      });
-
-      result[aid] = [...(result[aid] || []), ...imgAnns];
-      counter++;
-    });
-  });
-
-  return result;
-}
+  return {
+    [id]: data.annotations,
+  };
+};
 
 const Annotate = () => {
   const [mode, setMode] = useState("box"); // 'box' | 'polygon' | 'edit'
@@ -109,6 +82,14 @@ const Annotate = () => {
 
           console.log("Fetched images:", processedImages);
 
+          const anns = processedImages.reduce((acc, img) => {
+            console.log("Processing image for annotations:", img);
+            return { ...acc, ...convertAnnotations(img) };
+          }, {});
+
+          console.log("Converted annotations:", anns);
+
+          setAnnotations(anns);
           setImages(processedImages);
         }
       } catch (error) {
@@ -121,6 +102,22 @@ const Annotate = () => {
       fetchImages();
     }
   }, [CurrentProjectContext]);
+
+  const fetchSaveGroundTruth = async () => {
+    const ann = annotations[currentId] || [];
+    const file_name = currentImage ? currentImage.name : "unknown.png";
+    try {
+      const data = await saveGroundTruth(
+        file_name,
+        CurrentProjectContext,
+        currentId,
+        ann
+      );
+      console.log("Fetched saveimages:", data);
+    } catch (error) {
+      console.error("Failed to fetch images in useEffect:", error);
+    }
+  };
 
   // --- Init History ---
   useEffect(() => {
@@ -463,6 +460,13 @@ const Annotate = () => {
                 </Button>
                 <Button variant="outline" size="sm" onClick={runOcr}>
                   <ScanText className="w-4 h-4 mr-2" /> OCR Entire
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={fetchSaveGroundTruth}
+                >
+                  <ScanText className="w-4 h-4 mr-2" /> SAVE
                 </Button>
                 <Button
                   variant="outline"
