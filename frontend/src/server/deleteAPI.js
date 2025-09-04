@@ -6,12 +6,12 @@ export const deleteProjectAPI = async (projectId) => {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
-
+    
     // Some APIs return 204 No Content for successful deletes
     if (res.status === 204) {
       return { success: true, message: "Project deleted successfully" };
     }
-
+    
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.message || `HTTP ${res.status}: ${res.statusText}`);
