@@ -15,7 +15,7 @@ OUTPUT_TEXT_PATH = os.path.join(ROOT_DIR, "../extracted_khmer_text_results.txt")
 RESULTS_JSON_PATH = os.path.join(ROOT_DIR, "../extraction_results.json")
 
 # Tesseract settings
-TESSERACT_CMD = r"/opt/homebrew/bin/tesseract"
+TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 TESSERACT_LANG = "khm"
 TESSERACT_CONFIG = r"--psm 6 --oem 3"
 

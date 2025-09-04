@@ -12,8 +12,8 @@ import { Play, Trash2 } from "lucide-react";
 import { useI18n } from "./translator-provider";
 import { Progress } from "@/components/ui/progress";
 
-// API
-import { sendImagesToBackend } from "../server/sendImageAPI";
+// // API
+// import { sendImagesToBackend } from "../server/sendImageAPI";
 
 
 export function AnnotationList({
@@ -22,10 +22,10 @@ export function AnnotationList({
   onSetGT,
   onDelete,
   onUpdate,
-  lang,
   onBatchStart,
   onBatchStep,
   onBatchEnd,
+  runOcr,
 }) {
   const { t } = useI18n();
   const [busy, setBusy] = React.useState(false);
@@ -52,32 +52,32 @@ export function AnnotationList({
   //   }
 
 
-  const runOcrAll = async () => {
-    if (!annotations.length || !image) return;
-    setBusy(true);
-    cancelRef.current.cancel = false;
+  // const runOcrAll = async () => {
+  //   if (!annotations.length || !image) return;
+  //   setBusy(true);
+  //   cancelRef.current.cancel = false;
 
-    // Send the image and annotations to backend
-    await sendImagesToBackend({
-      image: image.url,
-      annotations: annotations,
-    });
+  //   // Send the image and annotations to backend
+  //   await sendImagesToBackend({
+  //     image: image.url,
+  //     annotations: annotations,
+  //   });
 
-    onBatchStart && onBatchStart(annotations.length);
-    for (let i = 0; i < annotations.length; i++) {
-      if (cancelRef.current.cancel) break;
-      setProgress({
-        status: t("annotate.processing"),
-        pct: Math.round((i / annotations.length) * 100),
-      });
-      // eslint-disable-next-line no-await-in-loop
-      //   await runOcr(annotations[i].id)
-      onBatchStep && onBatchStep(i + 1);
-    }
-    setProgress(null);
-    setBusy(false);
-    onBatchEnd && onBatchEnd();
-  };
+  //   onBatchStart && onBatchStart(annotations.length);
+  //   for (let i = 0; i < annotations.length; i++) {
+  //     if (cancelRef.current.cancel) break;
+  //     setProgress({
+  //       status: t("annotate.processing"),
+  //       pct: Math.round((i / annotations.length) * 100),
+  //     });
+  //     // eslint-disable-next-line no-await-in-loop
+  //     //   await runOcr(annotations[i].id)
+  //     onBatchStep && onBatchStep(i + 1);
+  //   }
+  //   setProgress(null);
+  //   setBusy(false);
+  //   onBatchEnd && onBatchEnd();
+  // };
 
   const cancelBatch = () => {
     cancelRef.current.cancel = true;
@@ -104,7 +104,7 @@ export function AnnotationList({
           <Button
             variant="outline"
             size="sm"
-            onClick={runOcrAll}
+            onClick={runOcr}
             disabled={!annotations.length || busy}
           >
             <Play className="w-4 h-4 mr-2" />
@@ -129,7 +129,7 @@ export function AnnotationList({
                     {t("Accuracy")}: {(a.accuracy * 100).toFixed(1)}%
                   </Badge>
                 )}
-                <Button
+                {/* <Button
                   variant="outline"
                   size="sm"
                   onClick={() => runOcr(a.id)}
@@ -137,7 +137,7 @@ export function AnnotationList({
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {t("RunOcr")}
-                </Button>
+                </Button> */}
                 <Button
                   variant="destructive"
                   size="icon"
@@ -151,7 +151,7 @@ export function AnnotationList({
             </div>
 
             <div className="mt-3 grid md:grid-cols-3 gap-3">
-              <div>
+              {/* <div>
                 <label className="text-xs text-gray-600 block mb-1">
                   {t("Label")}
                 </label>
@@ -160,8 +160,8 @@ export function AnnotationList({
                   onChange={(e) => onUpdate(a.id, { label: e.target.value })}
                   placeholder="Text region label"
                 />
-              </div>
-              <div className="md:col-span-2">
+              </div> */}
+              <div className="md:col-span-3">
                 <label className="text-xs text-gray-600 block mb-1">
                   {t("Extracted")}
                 </label>

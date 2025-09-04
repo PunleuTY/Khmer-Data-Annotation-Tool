@@ -1,50 +1,40 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { FaWandMagicSparkles } from "react-icons/fa6";
-import { FaSortAmountUp } from "react-icons/fa";
+import { FaSortAmountUp, FaHome } from "react-icons/fa";
 import { MdOutlineUploadFile } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
-import { TbLogout2 } from "react-icons/tb";
 import Logo from "../assets/profiles/Logo.png";
+import NewLogoWhite from "../assets/NewLogoWhite.png";
+import { TbLogout2 } from "react-icons/tb";
+
 const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logging out...");
   };
 
   const navigationItems = [
+    { name: "My Project", path: "/project", icon: FaSortAmountUp },
     { name: "Home", path: "/", icon: FaHome },
     { name: "Feature", path: "/feature", icon: FaWandMagicSparkles },
-    // { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
-    { name: "Annotate", path: "/project", icon: MdOutlineUploadFile },
+    { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
     { name: "About", path: "/about", icon: RiErrorWarningLine },
   ];
-  return (
-    <div className={"w-56 text-white flex flex-col h-screen"}>
-      {/* Logo Section */}
-      {/* <div className="p-6 bg-[#ff3f34] bg-opacity-20  mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-bold">BL</span>
-            </div>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white">Bread Lady</h1>
-            <p className="text-blue-100 text-sm">Data Tool</p>
-          </div>
-        </div>
-      </div> */}
 
+  return (
+    <div className="flex flex-col h-screen w-16 md:w-56 transition-all duration-300 bg-[#FF3F34]">
       {/* Logo Section */}
-      <div className="p-6 bg-white bg-opacity-20 mb-6 flex items-center justify-center">
-        <img src={Logo} alt="Logo" className="object-contain" />
+      <div className="p-6 flex items-center justify-center">
+        <img
+          src={NewLogoWhite}
+          alt="Logo"
+          className="object-contain w-8 md:w-20"
+        />
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 flex flex-col space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -52,29 +42,21 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-6 px-6 py-4 transition-all duration-200 font-cadt ${
+                `flex items-center justify-center md:justify-start px-4 py-3 rounded-xl mx-2 transition-all duration-200 ${
                   isActive
-                    ? "bg-opacity-25 bg-[#ff3f34] shadow-lg "
-                    : "text-[#12284c] hover:bg-opacity-10 hover:text-[#ff3f34] hover:bg-opacity-10"
+                    ? "bg-white text-[#FF3F34]"
+                    : "text-white hover:bg-opacity-10 hover:text-black"
                 }`
               }
             >
               <Icon className="w-6 h-6" />
-              <span className="font-medium">{item.name}</span>
+              <span className="hidden md:inline ml-6 font-bold text-sm">
+                {item.name}
+              </span>
             </NavLink>
           );
         })}
       </nav>
-
-      {/* Logout Button */}
-      <div className="m-4 border-t border-black border-opacity-30">
-        <div className="bg-red-300 flex justify-center rounded-3xl flex-col items-center p-2">
-          <h1 className="font-bold text-white">Help Center</h1>
-          <h2>Have a problem ?</h2>
-          <h2>How can we help you ?</h2>
-          <button className="bg-green-400">Message</button>
-        </div>
-      </div>
     </div>
   );
 };

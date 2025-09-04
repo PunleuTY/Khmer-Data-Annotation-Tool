@@ -1,44 +1,57 @@
-import axios from 'axios';
+import { file } from "jszip";
+const BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/images/";
 
-const API_BASE_URL = "http://localhost:3001/api";
+export const uploadImages = async (projectId, files, annotations) => {
+  if (!files || files.length === 0) return null;
 
-export const sendImagesToBackend = async (images, endpoint = '/upload-images', additionalData = {}) => {
-    try {
-        // Validate images
-        if (!images || images.length === 0) {
-            throw new Error('No images provided');
-        }
+  const formData = new FormData();
+  formData.append("project_id", projectId);
 
-        // Validate file types
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        const invalidFiles = images.filter(file => !allowedTypes.includes(file.type));
-        
-        if (invalidFiles.length > 0) {
-            throw new Error('Only JPG and PNG images are allowed');
-        }
+  console.log("upload to project", files, projectId);
 
-        // Create FormData
-        const formData = new FormData();
-        
-        // Append images
-        images.forEach((image, index) => {
-            formData.append('images', image);
-        });
+  formData.append("image", files[0]);
 
-        // Append additional data
-        Object.keys(additionalData).forEach(key => {
-            formData.append(key, additionalData[key]);
-        });
+  // ✅ Add annotation points (convert array/object → JSON string)
+  formData.append("annotations", JSON.stringify(annotations));
+  console.log("data annotation go to", annotations);
 
-        // Send request
-        const response = await axios.post(`${API_BASE_URL}${endpoint}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error sending images:', error);
-        throw error;
-    }
+  const res = await fetch("http://127.0.0.1:8000/images/", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to upload images");
+  }
+
+  return await res.json();
+};
+
+export const saveGroundTruth = async (filename, projectId, imageId, annotations) => {
+  if (!annotations) return null;
+  const payload = {
+    filename,
+    project_id: projectId,
+    image_id: imageId,
+    annotations: annotations,
+    meta: {
+      tool: "Khmer Data Annotation Tool",
+      lang: "khm",
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  console.log("save ground truth payload", payload);
+  try {
+    const res = await fetch("http://127.0.0.1:5000/images/save-groundtruth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    alert("Error saving ground truth");
+  }
 };

@@ -1,6 +1,6 @@
 {
   "image_path": "./image_testing/MPTC2.jpg",
-  "model_path": "/Users/typunleu/Documents/ACADEMIC/CADT/NEXT_GEN_BATCH_II/NGB PROJECT/Project_Repo/Khmer-Data-Annotation-Tool/ML/ML_V3/../best.pt",
+  "model_path": "D:\\NGB_II_Project\\Khmer-Data-Annotation-Tool\\ML\\ML_V3\\../best.pt",
   "confidence_threshold": 0.25,
   "detections": [
     {
@@ -13,7 +13,7 @@
         "width": 170,
         "height": 51
       },
-      "confidence": 0.663730263710022,
+      "confidence": 0.6637303829193115,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -27,7 +27,7 @@
         "width": 276,
         "height": 69
       },
-      "confidence": 0.6606907248497009,
+      "confidence": 0.660690426826477,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -41,7 +41,7 @@
         "width": 331,
         "height": 63
       },
-      "confidence": 0.6222399473190308,
+      "confidence": 0.622239351272583,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -55,7 +55,7 @@
         "width": 135,
         "height": 54
       },
-      "confidence": 0.5562762022018433,
+      "confidence": 0.5562757849693298,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -69,7 +69,7 @@
         "width": 154,
         "height": 45
       },
-      "confidence": 0.4646599292755127,
+      "confidence": 0.4646601378917694,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -83,7 +83,7 @@
         "width": 114,
         "height": 45
       },
-      "confidence": 0.45996809005737305,
+      "confidence": 0.45996811985969543,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -97,7 +97,7 @@
         "width": 153,
         "height": 60
       },
-      "confidence": 0.4542139172554016,
+      "confidence": 0.4542134404182434,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -111,7 +111,7 @@
         "width": 881,
         "height": 92
       },
-      "confidence": 0.4216463565826416,
+      "confidence": 0.42164576053619385,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -125,7 +125,7 @@
         "width": 149,
         "height": 44
       },
-      "confidence": 0.413581520318985,
+      "confidence": 0.4135811924934387,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -139,7 +139,7 @@
         "width": 199,
         "height": 57
       },
-      "confidence": 0.40107449889183044,
+      "confidence": 0.40107473731040955,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -153,7 +153,7 @@
         "width": 133,
         "height": 51
       },
-      "confidence": 0.3920607268810272,
+      "confidence": 0.3920608162879944,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -167,7 +167,7 @@
         "width": 888,
         "height": 83
       },
-      "confidence": 0.3848501741886139,
+      "confidence": 0.3848503530025482,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -181,7 +181,7 @@
         "width": 192,
         "height": 57
       },
-      "confidence": 0.3631575107574463,
+      "confidence": 0.36315786838531494,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -195,7 +195,7 @@
         "width": 248,
         "height": 53
       },
-      "confidence": 0.3541542589664459,
+      "confidence": 0.3541547358036041,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -209,7 +209,7 @@
         "width": 349,
         "height": 61
       },
-      "confidence": 0.3433753550052643,
+      "confidence": 0.3433750867843628,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -223,7 +223,7 @@
         "width": 190,
         "height": 47
       },
-      "confidence": 0.3388582170009613,
+      "confidence": 0.33885815739631653,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -237,7 +237,7 @@
         "width": 391,
         "height": 64
       },
-      "confidence": 0.3349616825580597,
+      "confidence": 0.3349619507789612,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -251,7 +251,7 @@
         "width": 139,
         "height": 53
       },
-      "confidence": 0.33033114671707153,
+      "confidence": 0.3303315043449402,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -265,7 +265,7 @@
         "width": 913,
         "height": 82
       },
-      "confidence": 0.32955610752105713,
+      "confidence": 0.3295559883117676,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -279,7 +279,7 @@
         "width": 177,
         "height": 48
       },
-      "confidence": 0.3193805515766144,
+      "confidence": 0.3193804621696472,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -293,7 +293,7 @@
         "width": 143,
         "height": 50
       },
-      "confidence": 0.31568434834480286,
+      "confidence": 0.3156844675540924,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -307,7 +307,7 @@
         "width": 195,
         "height": 49
       },
-      "confidence": 0.31373798847198486,
+      "confidence": 0.31373754143714905,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -321,7 +321,7 @@
         "width": 479,
         "height": 65
       },
-      "confidence": 0.3093537986278534,
+      "confidence": 0.3093542456626892,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -335,7 +335,7 @@
         "width": 76,
         "height": 47
       },
-      "confidence": 0.29803577065467834,
+      "confidence": 0.29803574085235596,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -349,7 +349,7 @@
         "width": 86,
         "height": 45
       },
-      "confidence": 0.2953276038169861,
+      "confidence": 0.2953265309333801,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -363,7 +363,7 @@
         "width": 858,
         "height": 64
       },
-      "confidence": 0.27230140566825867,
+      "confidence": 0.2723015248775482,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -377,7 +377,7 @@
         "width": 321,
         "height": 51
       },
-      "confidence": 0.2664136290550232,
+      "confidence": 0.2664138376712799,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -391,7 +391,7 @@
         "width": 531,
         "height": 63
       },
-      "confidence": 0.25295916199684143,
+      "confidence": 0.2529584765434265,
       "class_id": 0,
       "class_name": "Khst"
     },
@@ -405,7 +405,7 @@
         "width": 168,
         "height": 48
       },
-      "confidence": 0.2504509389400482,
+      "confidence": 0.25045114755630493,
       "class_id": 0,
       "class_name": "Khst"
     }
