@@ -121,7 +121,9 @@ export function project() {
   function createProject() {
     const fetchCreateproject = async () => {
       try {
-        const data = await createProjectAPI(`New Project ${projectContext.length + 1}`); // <-- wait for API
+        const data = await createProjectAPI(
+          `New Project ${projectContext.length + 1}`
+        ); // <-- wait for API
         console.log("CreateProject data:", data);
       } catch (err) {
         console.error("Failed to load project:", err);
@@ -163,7 +165,7 @@ export function project() {
             }}
           />
           <h2 className="text-2xl font-bold mb-4">Create Project</h2>
-        </NavLink>       
+        </NavLink>
         {projectContext.map((project) => (
           <NavLink
             to={`/annotate`}
