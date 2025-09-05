@@ -20,7 +20,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
       const projectName = formData.title || "New Project";
       console.log("createModal: calling createProjectAPI with", projectName);
       const project = await createProjectAPI(projectName);
-      console.log("createModal: createProjectAPI returned", project);
+      console.log("createModal: createProjectAPI returned", project.project.id);
 
       // notify parent if callback exists
       onCreated?.(project);
@@ -30,7 +30,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
       onClose();
 
       // redirect to project page
-      navigate("/Annotate");
+      navigate("/Annotate/" + project.project.id);
     } catch (error) {
       console.error("createModal: createProject failed", error);
       // Show a simple alert but include the error message for debugging

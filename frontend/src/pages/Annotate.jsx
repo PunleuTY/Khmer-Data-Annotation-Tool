@@ -2,6 +2,7 @@
 // This file is part of the Open-Source project:
 import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ import { AnnotationCanvas } from "@/components/annotation-canvas";
 import { levenshteinSimilarity } from "@/lib/levenshtein";
 import { saveProject, clearProject } from "@/lib/storage";
 import { ExportDialog } from "@/components/export-dialog";
-import { CurrentProjectContext, ProjectContext } from "./Myproject";
+// import { CurrentProjectContext, ProjectContext } from "./Myproject";
 import { uploadImages, saveGroundTruth } from "@/server/sendImageAPI";
 import { ImageUploader } from "@/components/image-uploader";
 import { getImageByProjectAPI } from "@/server/saveResultAPI";
@@ -66,6 +67,8 @@ const Annotate = () => {
     total: 0,
     pct: 0,
   });
+  const { id } = useParams();
+  const CurrentProjectContext = id ;
 
   const currentImage = images.find((i) => i.id === currentId);
 
@@ -73,7 +76,7 @@ const Annotate = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const data = await getImageByProjectAPI(CurrentProjectContext);
+        const data = await getImageByProjectAPI(id);
         if (data) {
           const processedImages = data.map((img) => ({
             ...img,
@@ -97,11 +100,11 @@ const Annotate = () => {
       }
     };
 
-    if (CurrentProjectContext) {
+    if (id) {
       // Prevents the API from being called on initial render if context is null
       fetchImages();
     }
-  }, [CurrentProjectContext]);
+  }, [id]);
 
   const fetchSaveGroundTruth = async () => {
     const ann = annotations[currentId] || [];
@@ -109,7 +112,7 @@ const Annotate = () => {
     try {
       const data = await saveGroundTruth(
         file_name,
-        CurrentProjectContext,
+        id,
         currentId,
         ann
       );
@@ -151,8 +154,7 @@ const Annotate = () => {
           const maxX = Math.max(...xs);
           const maxY = Math.max(...ys);
           return [minX, minY, maxX, maxY];
-        } else
-        if (ann.type === "box" && ann.rect) {
+        } else if (ann.type === "box" && ann.rect) {
           return [
             ann.rect.x,
             ann.rect.y,

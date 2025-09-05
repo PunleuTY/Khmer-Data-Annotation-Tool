@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { href, useNavigate } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { MdCreateNewFolder } from "react-icons/md";
@@ -67,6 +67,7 @@ const DescriptionModal = ({ isOpen, onClose, description, title }) => {
 
 // Main Reusable Table Component
 const ReusableTable = ({ data = [], onProjectCreated }) => {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -193,7 +194,11 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                   className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
                 >
                   {/* Image Column */}
-                  <td className="px-5 py-2 whitespace-nowrap w-20 ">
+                  <td
+                    className="px-5 py-2 whitespace-nowrap w-20 "
+                    onClick={() => navigate(`/Annotate/${item.id}`)} // ✅ correct
+                    style={{ cursor: "pointer" }}
+                  >
                     {/* make image in the center of row */}
                     <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
                       <img
