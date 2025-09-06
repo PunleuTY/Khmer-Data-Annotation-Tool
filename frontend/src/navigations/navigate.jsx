@@ -1,46 +1,40 @@
 import { NavLink, useNavigate } from "react-router-dom";
-// icons
 import { RiErrorWarningLine } from "react-icons/ri";
-import { TbReport } from "react-icons/tb";
-import { FaSortAmountUp } from "react-icons/fa";
+import { FaWandMagicSparkles } from "react-icons/fa6";
+import { FaSortAmountUp, FaHome } from "react-icons/fa";
 import { MdOutlineUploadFile } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
+import Logo from "../assets/profiles/Logo.png";
+import NewLogoWhite from "../assets/NewLogoWhite.png";
 import { TbLogout2 } from "react-icons/tb";
+
 const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logging out...");
   };
 
   const navigationItems = [
+    { name: "My Project", path: "/project", icon: FaSortAmountUp },
     { name: "Home", path: "/", icon: FaHome },
-    { name: "Annotate", path: "/upload", icon: MdOutlineUploadFile },
-    { name: "Result", path: "/result", icon: FaSortAmountUp },
-    { name: "Report", path: "/report", icon: TbReport },
+    { name: "Feature", path: "/feature", icon: FaWandMagicSparkles },
+    { name: "Annotate", path: "/annotate", icon: MdOutlineUploadFile },
     { name: "About", path: "/about", icon: RiErrorWarningLine },
   ];
 
   return (
-    <div className="w-64 bg-[#0099FFB3] text-white flex flex-col h-screen">
+    <div className="flex flex-col h-screen w-16 md:w-56 transition-all duration-300 bg-[#FF3F34]">
       {/* Logo Section */}
-      <div className="p-6 bg-white bg-opacity-20 rounded-br-3xl mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 bg-[#0099FFB3] rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-bold">BL</span>
-            </div>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white">Bread Lady</h1>
-            <p className="text-blue-100 text-sm">Data Tool</p>
-          </div>
-        </div>
+      <div className="p-6 flex items-center justify-center">
+        <img
+          src={NewLogoWhite}
+          alt="Logo"
+          className="object-contain w-8 md:w-20"
+        />
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 space-y-3">
+      <nav className="flex-1 flex flex-col space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -48,30 +42,21 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center space-x-8 px-4 py-3 rounded-lg transition-all duration-200 ${
+                `flex items-center justify-center md:justify-start px-4 py-3 rounded-xl mx-2 transition-all duration-200 ${
                   isActive
-                    ? "bg-[#DFEFFA] bg-opacity-15 text-[#0099FFB3] shadow-lg"
-                    : "text-blue-100 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3]"
+                    ? "bg-white text-[#FF3F34]"
+                    : "text-white hover:bg-opacity-10 hover:text-black"
                 }`
               }
             >
               <Icon className="w-6 h-6" />
-              <span className="font-medium">{item.name}</span>
+              <span className="hidden md:inline ml-6 font-bold text-sm">
+                {item.name}
+              </span>
             </NavLink>
           );
         })}
       </nav>
-
-      {/* Logout Button */}
-      <div className="p-4 border-t border-blue-300 border-opacity-30">
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-3 w-full px-4 py-3 hover:bg-[#DFEFFA] hover:bg-opacity-10 hover:text-[#0099FFB3] rounded-lg"
-        >
-          <TbLogout2 className="w-6 h-6" />
-          <span className="font-medium">Log Out</span>
-        </button>
-      </div>
     </div>
   );
 };
