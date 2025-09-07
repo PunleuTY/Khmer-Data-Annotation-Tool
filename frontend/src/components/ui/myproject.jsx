@@ -169,9 +169,9 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
             {/* Table Header */}
             <thead className="bg-[#12284C]">
               <tr>
-                <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
+                {/* <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
                   Image
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-10">
                   Title
                 </th>
@@ -193,13 +193,11 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                   key={item.id || index}
                   className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
                 >
-                  {/* Image Column */}
-                  <td
+                  {/* <td
                     className="px-5 py-2 whitespace-nowrap w-20 "
                     onClick={() => navigate(`/Annotate/${item.id}`)} // ✅ correct
                     style={{ cursor: "pointer" }}
                   >
-                    {/* make image in the center of row */}
                     <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
                       <img
                         className="h-14 w-14 rounded-lg object-cover border border-gray-300"
@@ -207,10 +205,14 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                         alt={item.title || "Image"}
                       />
                     </div>
-                  </td>
+                  </td> */}
 
                   {/* Title Column */}
-                  <td className="px-3 py-4 w-10">
+                  <td
+                    className="px-3 py-4 w-10"
+                    onClick={() => navigate(`/Annotate/${item.id}`)} // ✅ correct
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="text-sm font-medium text-gray-900 truncate">
                       {item.name || "No title"}
                     </div>

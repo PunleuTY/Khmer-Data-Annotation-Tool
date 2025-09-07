@@ -473,7 +473,7 @@ const Annotate = () => {
           <Card className="overflow-hidden bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#12284c]">
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 overflow-auto">
                 <Button
                   variant="outline"
                   size="sm"
