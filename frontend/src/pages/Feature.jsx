@@ -57,7 +57,7 @@ const SidebarItem = () => {
         results in seconds!
       </p>
       <a href="/annotate">
-        <button className="bg-[#ff3f34] text-white font-semibold px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded shadow hover:bg-white hover:text-[#ff3f34] transition text-xs sm:text-sm md:text-base whitespace-nowrap">
+        <button className="bg-[#F88F2D] text-white font-semibold px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-white hover:text-[#F88F2D] transition text-xs sm:text-sm md:text-base whitespace-nowrap">
           Start Validate Now
         </button>
       </a>
@@ -69,7 +69,7 @@ const Features = () => {
   return (
     <div className="min-h-full bg-gray-50">
       <main className="flex-1 p-8 bg-gray-50 overflow-y-auto">
-        <h1 className="text-2xl md:5xl text-center sm:text-4xl font-cadt text-[#ff3f34]">
+        <h1 className="text-2xl md:text-5xl text-center sm:text-4xl font-cadt text-[#F88F2D]">
           Powerful Features
         </h1>
         <p className="text-gray-600 sm:text-lg text-base mt-4 sm:mt-6 mb-4 sm:mb-6 text-center">

@@ -61,7 +61,7 @@ export function ExportDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#ff3f34]">
+      <DialogContent className="sm:max-w-md bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 border-b-4 border-t-4 border-[#12284c]">
         <DialogHeader>
           <DialogTitle>{t("Title")}</DialogTitle>
         </DialogHeader>
@@ -76,7 +76,7 @@ export function ExportDialog({
               <label className="flex items-center gap-2 border rounded-md p-2">
                 <RadioGroupItem
                   value="json"
-                  className="text-[#ff3f34] data-[state=checked]:bg-[#ff3f34] data-[state=checked]:border-[#ff3f34]"
+                  className="text-[#12284c] data-[state=checked]:bg-[#12284c] data-[state=checked]:border-[#12284c]"
                 />{" "}
                 JSON
               </label>
@@ -97,7 +97,7 @@ export function ExportDialog({
               <label className="flex items-center gap-2 border rounded-md p-2">
                 <RadioGroupItem
                   value="yolo"
-                  className="text-[#ff3f34] data-[state=checked]:bg-[#ff3f34] data-[state=checked]:border-[#ff3f34]"
+                  className="text-[#12284c] data-[state=checked]:bg-[#12284c] data-[state=checked]:border-[#12284c]"
                 />{" "}
                 YOLO
               </label>
@@ -115,7 +115,7 @@ export function ExportDialog({
             </label>
           </div>
           <div className="flex justify-end ">
-            <Button onClick={onExport} className={"bg-[#ff3f34] text-white hover:bg-[#ff3e34b2]"}>{t("Download")}</Button>
+            <Button onClick={onExport} className={"bg-[#F88F2D] text-white hover:bg-[#ffa754]"}>{t("Download")}</Button>
           </div>
         </div>
       </DialogContent>

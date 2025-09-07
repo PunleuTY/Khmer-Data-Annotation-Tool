@@ -147,7 +147,7 @@ export const EditModal = ({ isOpen, onClose, onEdited, item }) => {
           <button
             onClick={editProject}
             disabled={loading}
-            className={`bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
+            className={`bg-[#ffa754] hover:bg-[#ffa754] text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >

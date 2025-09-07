@@ -167,7 +167,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
         <div className="overflow-x-auto shadow-lg rounded-lg">
           <table className="min-w-full bg-white border border-gray-200 table-fixed">
             {/* Table Header */}
-            <thead className="bg-red-500">
+            <thead className="bg-[#12284C]">
               <tr>
                 <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
                   Image
@@ -275,7 +275,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
       <div className="flex justify-end mt-4">
         <button
           onClick={() => setCreateModalOpen(true)}
-          className="bg-red-500 hover:bg-red-600 text-white w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+          className="bg-[#F88F2D] hover:bg-[#fb9a40] text-white w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
         >
           <MdCreateNewFolder className="h-8 w-8" />
         </button>

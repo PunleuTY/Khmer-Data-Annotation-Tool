@@ -149,9 +149,9 @@ export function project() {
   return (
     <div className="min-h-full m-6">
       <div className="min-h-screen">
-        <h1 className="text-center text-5xl text-[#ff3f34] font-cadt mb-10">
+        <h1 className="text-center text-5xl text-[#F88F2D] font-cadt mb-10">
           Project Page
-        </h1>
+        </h1> 
         <main>
           <ReusableTable
             data={projectContext}

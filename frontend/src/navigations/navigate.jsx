@@ -4,7 +4,7 @@ import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FaSortAmountUp, FaHome } from "react-icons/fa";
 import { MdOutlineUploadFile } from "react-icons/md";
 import Logo from "../assets/profiles/Logo.png";
-import NewLogoWhite from "../assets/NewLogoWhite.png";
+import NewLogo from "../assets/NewLogo.png";
 import { TbLogout2 } from "react-icons/tb";
 
 const Sidebar = () => {
@@ -23,14 +23,10 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-16 md:w-56 transition-all duration-300 bg-[#FF3F34]">
+    <div className="flex flex-col h-screen w-16 md:w-56 transition-all duration-300 bg-white">
       {/* Logo Section */}
       <div className="p-6 flex items-center justify-center">
-        <img
-          src={NewLogoWhite}
-          alt="Logo"
-          className="object-contain w-8 md:w-20"
-        />
+        <img src={NewLogo} alt="Logo" className="object-contain w-8 md:w-20" />
       </div>
 
       {/* Navigation Menu */}
@@ -42,10 +38,10 @@ const Sidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center justify-center md:justify-start px-4 py-3 rounded-xl mx-2 transition-all duration-200 ${
+                `flex items-center justify-center md:justify-start px-4 py-4 rounded-xl mx-2 transition-all duration-200 ${
                   isActive
-                    ? "bg-white text-[#FF3F34]"
-                    : "text-white hover:bg-opacity-10 hover:text-black"
+                    ? "bg-[#12284C] text-white shadow-gray-300 shadow-lg"
+                    : "text-[#12284C] hover:bg-opacity-10 hover:text-gray-500"
                 }`
               }
             >

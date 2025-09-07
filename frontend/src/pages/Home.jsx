@@ -138,10 +138,10 @@ export const Home = () => {
         <h2 className="text-base sm:text-xl md:text-2xl font-bold ml-4 sm:ml-8 text-[#12284c] mb-4 text-start">
           Welcome To
         </h2>
-        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#ff3f34] mb-3 text-start ">
+        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#F88F2D] mb-3 text-start ">
           Khmer Data
         </h2>
-        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#ff3f34] mb-3 lg:mb-0 text-start ">
+        <h2 className="text-lg sm:text-3xl md:text-5xl font-cadt ml-4 sm:ml-8 text-[#F88F2D] mb-3 lg:mb-0 text-start ">
           Annotation Tool
         </h2>
 
@@ -171,7 +171,7 @@ export const Home = () => {
             </ul>
 
             {/* Buttons */}
-            <div className="flex gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-10 flex-nowrap">
+            <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-10">
               <a
                 href="/annotate"
                 className="bg-[#12284c] text-white px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-xl flex items-center gap-1 sm:gap-2 font-cadt text-[10px] sm:text-xs md:text-sm lg:text-base whitespace-nowrap"
@@ -180,13 +180,21 @@ export const Home = () => {
                 <FaArrowRightLong className="text-[12px] sm:text-sm md:text-base" />
               </a>
 
-              <a
-                href="#instructions"
-                className="bg-[#76bc21] text-white px-2 sm:px-3 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-xl flex items-center gap-1 sm:gap-2 font-cadt text-[10px] sm:text-xs md:text-sm lg:text-base whitespace-nowrap"
+              {/* Scroll Button */}
+              <button
+                onClick={() => {
+                  const element = document.getElementById("instructions");
+                  if (element) {
+                    element.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                className="bg-[#76bc21] text-white px-10 py-3 rounded-2xl flex items-center gap-2 font-cadt hover:opacity-90 active:scale-95 transition"
               >
-                Instruction{" "}
-                <MdOutlineArrowDropDown className="text-[12px] sm:text-sm md:text-base" />
-              </a>
+                Instruction <MdOutlineArrowDropDown />
+              </button>
             </div>
           </div>
 
@@ -208,7 +216,7 @@ export const Home = () => {
       {/* Instructions Section */}
       <section
         id="instructions"
-        className="mt-10 text-white bg-[#ff3f34] p-6 m-4 rounded-lg mb-4 items-center text-center"
+        className="mt-10 text-white bg-[#12284C] p-6 m-4 rounded-lg mb-4 items-center text-center"
       >
         <h2 className="text-lg font-bold sm:text-2xl md:text-4xl whitespace-nowrap">
           Annotation Workflow Instruction
@@ -228,7 +236,7 @@ export const Home = () => {
           >
             {/* Number (top on mobile, left on desktop) */}
             <div className="flex items-center justify-center mb-3 sm:mb-0 sm:mr-4">
-              <div className="flex items-center justify-center text-center w-12 h-12 text-white text-2xl font-bold rounded-full bg-[#FF6467]">
+              <div className="flex items-center justify-center text-center w-12 h-12 text-white text-2xl font-bold rounded-full bg-[#F88F2D]">
                 {item.number}
               </div>
             </div>

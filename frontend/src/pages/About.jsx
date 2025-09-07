@@ -29,7 +29,7 @@ const About = () => {
       <div className="min-h-full">
         {/* Top Section */}
         <div className="bg-white m-4 rounded-xl pt-6 px-4 md:px-8">
-          <h1 className="text-2xl sm:text-3xl md:text-5xl text-[#ff3f34] font-cadt flex justify-center text-center">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl text-[#F88F2D] font-cadt flex justify-center text-center">
             About Page
           </h1>
           <h4 className="text-sm sm:text-base md:text-xl py-4 text-[#12284c] flex justify-center text-center max-w-3xl mx-auto">
@@ -44,8 +44,8 @@ const About = () => {
 
         {/* Team Section */}
         <div className="mt-12">
-          <div className="bg-[#ff3f34] text-white py-6 px-4 text-center rounded-md mx-4">
-            <h2 className="text-2xl md:text-4xl font-bold mb-2">
+          <div className="bg-[#12284C] text-white py-6 px-4 text-center rounded-md mx-4">
+            <h2 className="text-2xl md:text-4xl font-cadt mb-2">
               Meet Our Team
             </h2>
             <h4 className="text-sm md:text-xl">
