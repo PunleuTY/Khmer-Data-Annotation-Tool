@@ -61,6 +61,9 @@ const Annotate = () => {
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fullOcr, setFullOcr] = useState({ text: "", conf: null });
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const [batchInfo, setBatchInfo] = useState({
     running: false,
     current: 0,
@@ -68,7 +71,7 @@ const Annotate = () => {
     pct: 0,
   });
   const { id } = useParams();
-  const CurrentProjectContext = id ;
+  const CurrentProjectContext = id;
 
   const currentImage = images.find((i) => i.id === currentId);
 
@@ -109,16 +112,16 @@ const Annotate = () => {
   const fetchSaveGroundTruth = async () => {
     const ann = annotations[currentId] || [];
     const file_name = currentImage ? currentImage.name : "unknown.png";
+    setSaveLoading(true);
     try {
-      const data = await saveGroundTruth(
-        file_name,
-        id,
-        currentId,
-        ann
-      );
+      const data = await saveGroundTruth(file_name, id, currentId, ann);
       console.log("Fetched saveimages:", data);
+      setSuccessMsg("Project save successfully!");
+      setTimeout(() => setSuccessMsg(""), 2000);
     } catch (error) {
       console.error("Failed to fetch images in useEffect:", error);
+    } finally {
+      setSaveLoading(false);
     }
   };
 
@@ -142,6 +145,7 @@ const Annotate = () => {
 
     const currentImage = images.find((i) => i.id === currentId);
     if (!currentImage) return;
+    setOcrLoading(true);
 
     try {
       // Convert bounding boxes
@@ -159,7 +163,7 @@ const Annotate = () => {
             ann.rect.x,
             ann.rect.y,
             ann.rect.x + ann.rect.w,
-            ann.rect.y + ann.rect.w,
+            ann.rect.y + ann.rect.h,
           ];
         } else if (
           ann.rect.x === 0 &&
@@ -204,8 +208,13 @@ const Annotate = () => {
         ...prev,
         [currentId]: updatedAnns,
       }));
+
+      setSuccessMsg("OCR completed successfully!");
+      setTimeout(() => setSuccessMsg(""), 2000);
     } catch (err) {
       console.error("OCR failed:", err);
+    } finally {
+      setOcrLoading(false);
     }
   };
 
@@ -346,6 +355,15 @@ const Annotate = () => {
     }
   }, [history, historyIndex]);
 
+  function Loader({ text }) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 py-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-[#ff3f34]" />
+        <span className="text-sm text-gray-700">{text}</span>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-full bg-gray-50">
       <div className="flex justify-between px-6 pt-6">
@@ -363,7 +381,22 @@ const Annotate = () => {
                 Upload Images
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative space-y-4">
+              {ocrLoading && (
+                <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
+                  <Loader text="Running OCR..." />
+                </div>
+              )}
+              {saveLoading && (
+                <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
+                  <Loader text="Saving..." />
+                </div>
+              )}
+              {successMsg && (
+                <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+                  {successMsg}
+                </div>
+              )}
               {/* <input
                 type="file"
                 multiple
@@ -480,15 +513,37 @@ const Annotate = () => {
                 >
                   <PenTool className="w-4 h-4" /> Edit
                 </Button>
-                <Button variant="outline" size="sm" onClick={runOcr}>
-                  <ScanText className="w-4 h-4 mr-2" /> OCR Entire
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={runOcr}
+                  disabled={ocrLoading}
+                >
+                  {ocrLoading ? (
+                    <>
+                      <ScanText className="w-4 h-4 mr-2" /> Loading ..
+                    </>
+                  ) : (
+                    <>
+                      <ScanText className="w-4 h-4 mr-2" /> OCR Entire
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={fetchSaveGroundTruth}
+                  disabled={saveLoading}
                 >
-                  <ScanText className="w-4 h-4 mr-2" /> SAVE
+                  {saveLoading ? (
+                    <>
+                      <ScanText className="w-4 h-4 mr-2" /> SAVING ..
+                    </>
+                  ) : (
+                    <>
+                      <ScanText className="w-4 h-4 mr-2" /> SAVE
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="outline"
@@ -570,6 +625,7 @@ const Annotate = () => {
                 currentId={currentId}
                 onUpdate={setAnnotations}
                 runOcr={runOcr}
+                ocrLoading={ocrLoading}
               />
             </TabsContent>
           </Tabs>
