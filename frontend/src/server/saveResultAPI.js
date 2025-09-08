@@ -1,7 +1,7 @@
 import { loadProject } from "@/lib/storage";
 
 const API_BASE_URL = "http://localhost:3001/api";
-const BACKEND_PROJECT_URL = "http://127.0.0.1:5000/projects";
+const BACKEND_PROJECT_URL = "http://127.0.0.1:3000/projects";
 
 export const loadProjectAPI = async () => {
   try {
@@ -37,7 +37,7 @@ export const createProjectAPI = async (name, description) => {
 
 export const getImageByProjectAPI = async (id) => {
   try {
-    const res = await fetch(`http://127.0.0.1:5000/projects/${id}/images`, {
+    const res = await fetch(`http://127.0.0.1:3000/projects/${id}/images`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });

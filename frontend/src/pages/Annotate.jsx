@@ -409,7 +409,7 @@ const Annotate = () => {
                 <div className="mt-2 max-h-56 overflow-auto border rounded-md divide-y">
                   {images.length === 0 && (
                     <p className="text-sm text-gray-500 p-3">
-                      no images uploaded yet
+                      No images uploaded yet
                     </p>
                   )}
                   {images.map((img, idx) => (
