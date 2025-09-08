@@ -116,7 +116,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
         <div className="flex justify-end mt-6 gap-2 ">
           <button
             onClick={handleClose}
-            className="bg-gray-300 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200"
+            className="bg-gray-300 hover:bg-gray-600 text-black px-6 py-2 rounded-md font-medium transition-colors duration-200"
           >
             Cancel
           </button>

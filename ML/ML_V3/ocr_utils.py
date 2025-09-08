@@ -4,8 +4,8 @@ import pytesseract
 import os
 
 # ---- Configure Tesseract ----
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
+pytesseract.pytesseract.tesseract_cmd = r"/opt/homebrew/bin/tesseract"
+os.environ["TESSDATA_PREFIX"] = r"/opt/homebrew/share/tessdata"
 
 def preprocess_for_ocr(pil_image):
     gray = np.array(pil_image.convert("L"))
