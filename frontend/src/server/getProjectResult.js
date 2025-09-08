@@ -1,4 +1,4 @@
-const BACKEND_PROJECT_URL = "http://127.0.0.1:5000/projects";
+const BACKEND_PROJECT_URL = "http://127.0.0.1:3000/projects";
 
 export const editProjectAPI = async (projectId, updatedData) => {
   try {

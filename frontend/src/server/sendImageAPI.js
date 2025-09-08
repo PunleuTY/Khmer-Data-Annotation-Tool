@@ -43,7 +43,7 @@ export const saveGroundTruth = async (filename, projectId, imageId, annotations)
 
   console.log("save ground truth payload", payload);
   try {
-    const res = await fetch("http://127.0.0.1:5000/images/save-groundtruth", {
+    const res = await fetch("http://127.0.0.1:3000/images/save-groundtruth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
