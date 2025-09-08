@@ -41,19 +41,46 @@ export function AnnotationCanvas({
   // --- Zoom State ---
   const [zoom, setZoom] = React.useState(1);
 
-  /** Update scale on image resize */
+  /** Update scale and canvas size on image resize or zoom change */
   React.useEffect(() => {
     const imgEl = imgRef.current;
     const cvs = canvasRef.current;
     if (!imgEl || !cvs || !image) return;
 
     const updateScale = () => {
-      const width = Math.max(1, imgEl.clientWidth);
-      const height = Math.max(1, imgEl.clientHeight);
-      cvs.width = width;
-      cvs.height = height;
+      // Get the natural display size of the image (before zoom)
+      const naturalWidth = Math.max(1, imgEl.naturalWidth || imgEl.clientWidth);
+      const naturalHeight = Math.max(
+        1,
+        imgEl.naturalHeight || imgEl.clientHeight
+      );
 
-      const newScale = { sx: image.width / width, sy: image.height / height };
+      // Calculate the display size after zoom
+      const displayWidth = naturalWidth * zoom;
+      const displayHeight = naturalHeight * zoom;
+
+      // Set canvas to match the zoomed display size
+      cvs.width = displayWidth;
+      cvs.height = displayHeight;
+
+      // Update the canvas style to match the display size
+      cvs.style.width = `${displayWidth}px`;
+      cvs.style.height = `${displayHeight}px`;
+
+      console.log("Image natural size:", naturalWidth, naturalHeight);
+      console.log(
+        "Image zoomed size:",
+        displayWidth,
+        displayHeight,
+        "zoom:",
+        zoom
+      );
+
+      // Scale factor from image coordinates to canvas coordinates
+      const newScale = {
+        sx: image.width / displayWidth,
+        sy: image.height / displayHeight,
+      };
       setScale(newScale);
     };
 
@@ -61,7 +88,8 @@ export function AnnotationCanvas({
     const ro = new ResizeObserver(updateScale);
     ro.observe(imgEl);
     return () => ro.disconnect();
-  }, [image?.id]);
+  }, [image?.id, zoom]);
+
   /** Redraw annotations when data changes */
   React.useEffect(() => {
     drawCanvas();
@@ -72,10 +100,6 @@ export function AnnotationCanvas({
     if (!ctx) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    // Apply zoom transform
-    ctx.save();
-    // ctx.scale(zoom, zoom);
-
     annotations.forEach((a, i) => {
       const annotationToShow =
         dragging && a.id === selectedId && tempDragPosition
@@ -85,8 +109,6 @@ export function AnnotationCanvas({
     });
 
     if (temp) drawTempAnnotation(ctx, temp, mousePos);
-
-    ctx.restore();
   };
 
   /** Draw saved annotation */
@@ -101,7 +123,7 @@ export function AnnotationCanvas({
       ctx.strokeRect(x, y, w, h);
       ctx.fillRect(x, y, w, h);
 
-      // ✅ Draw label above the box
+      // Draw label above the box
       const label = `#${index + 1}`;
       ctx.font = "16px Arial";
 
@@ -192,18 +214,15 @@ export function AnnotationCanvas({
     }));
   }
 
-  const getPos = React.useCallback(
-    (e) => {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / zoom;
-      const y = (e.clientY - rect.top) / zoom;
-      return {
-        x: clamp(x, 0, rect.width / zoom),
-        y: clamp(y, 0, rect.height / zoom),
-      };
-    },
-    [zoom]
-  );
+  const getPos = React.useCallback((e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return {
+      x: clamp(x, 0, rect.width),
+      y: clamp(y, 0, rect.height),
+    };
+  }, []);
 
   /** Find shape under cursor */
   function findShapeAt(pos) {
@@ -246,8 +265,8 @@ export function AnnotationCanvas({
 
       if (mode === "polygon") {
         const clamped = {
-          x: clamp(pos.x, 0, canvasRef.current.width / zoom),
-          y: clamp(pos.y, 0, canvasRef.current.height / zoom),
+          x: clamp(pos.x, 0, canvasRef.current.width),
+          y: clamp(pos.y, 0, canvasRef.current.height),
         };
         if (!temp) {
           setTemp({ type: "polygon", points: [clamped] });
@@ -259,7 +278,7 @@ export function AnnotationCanvas({
         }
       }
     },
-    [image, mode, getPos, annotations, scale, temp, zoom]
+    [image, mode, getPos, annotations, scale, temp]
   );
 
   /** Mouse Move */
@@ -271,8 +290,8 @@ export function AnnotationCanvas({
 
       if (drawing && temp?.type === "box") {
         setTemp((prev) => {
-          const clampedX = clamp(pos.x, 0, canvasRef.current.width / zoom);
-          const clampedY = clamp(pos.y, 0, canvasRef.current.height / zoom);
+          const clampedX = clamp(pos.x, 0, canvasRef.current.width);
+          const clampedY = clamp(pos.y, 0, canvasRef.current.height);
 
           return {
             ...prev,
@@ -311,17 +330,7 @@ export function AnnotationCanvas({
         }
       }
     },
-    [
-      drawing,
-      dragging,
-      temp,
-      selectedId,
-      scale,
-      image,
-      getPos,
-      dragOffset,
-      zoom,
-    ]
+    [drawing, dragging, temp, selectedId, scale, image, getPos, dragOffset]
   );
 
   /** Mouse Up */
@@ -330,7 +339,7 @@ export function AnnotationCanvas({
       const norm = toImageRect(temp, scale);
       const clampedRect = clampRectToImage(norm, image);
 
-      // ✅ Only save if rect is not fully zeroed out
+      // Only save if rect is not fully zeroed out
       if (
         clampedRect.w !== 0 &&
         clampedRect.h !== 0 &&
@@ -437,27 +446,24 @@ export function AnnotationCanvas({
           Reset
         </button>
       </div>
-      {/* <div className="inline-block relative" style={{ overflow: "visible" }}> */}
-      <div
-        style={{
-          transform: `scale(${zoom})`,
-          transformOrigin: "top left",
-          display: "inline-block",
-          position: "relative",
-        }}
-      >
+
+      <div className="relative inline-block">
         <img
           ref={imgRef}
           src={image?.url || "/placeholder.svg"}
           alt={image?.name || "image to annotate"}
-          className="max-h-[520px] w-auto h-auto object-contain select-none"
+          className={"max-h-[520px] w- h-auto object-contain select-none"}
           draggable={false}
-          style={{ display: "block" }}
+          style={{
+            display: "block",
+            // transform: `scale(${zoom})`,
+            transformOrigin: "top left",
+          }}
         />
         <canvas
           ref={canvasRef}
           className={cn(
-            "absolute inset-0",
+            "absolute",
             mode === "box"
               ? "cursor-crosshair"
               : mode === "edit"
@@ -472,13 +478,12 @@ export function AnnotationCanvas({
           style={{
             left: 0,
             top: 0,
+            transformOrigin: "top left",
+            transform: `scale(${zoom})`,
             pointerEvents: "auto",
-            width: imgRef.current ? imgRef.current.clientWidth : undefined,
-            height: imgRef.current ? imgRef.current.clientHeight : undefined,
           }}
         />
       </div>
-      {/* </div> */}
     </div>
   );
 }

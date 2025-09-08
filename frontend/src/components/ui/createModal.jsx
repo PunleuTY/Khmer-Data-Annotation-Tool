@@ -18,8 +18,9 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
     setLoading(true);
     try {
       const projectName = formData.title || "New Project";
+      const description = formData.description || "";
       console.log("createModal: calling createProjectAPI with", projectName);
-      const project = await createProjectAPI(projectName);
+      const project = await createProjectAPI(projectName, description);
       console.log("createModal: createProjectAPI returned", project.project.id);
 
       // notify parent if callback exists

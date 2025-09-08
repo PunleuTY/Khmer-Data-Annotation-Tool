@@ -103,6 +103,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
   // Function to format date/time
   const formatLastEdit = (lastEdit) => {
+    console.log("Formatting lastEdit:", lastEdit);
     if (!lastEdit) return "";
     const date = new Date(lastEdit);
     return date.toLocaleString("en-US", {
@@ -237,8 +238,10 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
                   {/* Last Edit Column */}
                   <td className="px-6 py-4 whitespace-nowrap w-40">
-                    <div className="text-sm text-gray-900 ">
-                      {formatLastEdit(item.updated_at)}
+                    <div className="text-sm text-gray-900">
+                      {item.updated_at == "0001-01-01T00:00:00Z"
+                        ? formatLastEdit(item.created_at)
+                        : formatLastEdit(item.updated_at)}
                     </div>
                   </td>
 
