@@ -16,7 +16,7 @@ func ProjectRoutes(router *gin.Engine, projectCollection, imageCollection *mongo
 		projectGroup.PUT("/:id", controllers.UpdateProject(projectCollection))
 		projectGroup.DELETE("/:id", controllers.DeleteProject(projectCollection))
 		//get image by project
-		projectGroup.GET("/:id/images", controllers.GetImagesByProject(imageCollection))
+		router.GET("/projects/:id/images", controllers.GetImagesByProject(imageCollection, projectCollection))
 
 	}
 }
