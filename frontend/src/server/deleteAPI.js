@@ -1,4 +1,4 @@
-const BACKEND_PROJECT_URL = "http://127.0.0.1:3000/projects";
+const BACKEND_PROJECT_URL = "http://127.0.0.1:5000/projects";
 
 export const deleteProjectAPI = async (projectId) => {
   try {
