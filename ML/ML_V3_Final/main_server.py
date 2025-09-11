@@ -13,7 +13,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BACKEND_URL = "http://127.0.0.1:3000/images/upload" 
+BACKEND_URL = "http://127.0.0.1:5000/images/upload" 
 
 @app.post("/images/")
 async def ocr_user_boxes(
