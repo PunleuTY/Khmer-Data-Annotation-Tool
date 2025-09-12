@@ -150,7 +150,7 @@ func DeleteProject(projectCollection *mongo.Collection) gin.HandlerFunc {
 }
 
 // added new get images by project
-func GetImagesByProject(imageCollection *mongo.Collection) gin.HandlerFunc {
+func GetImagesByProject(imageCollection *mongo.Collection, projectCollection *mongo.Collection) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("id")
 
@@ -160,9 +160,19 @@ func GetImagesByProject(imageCollection *mongo.Collection) gin.HandlerFunc {
 			return
 		}
 
-		// use project_id (snake_case) because that’s what your docs have
-		filter := bson.M{"project_id": objID}
+		// update the project's updated_at timestamp
+		_, err = projectCollection.UpdateByID(
+			context.Background(),
+			objID,
+			bson.M{"$set": bson.M{"updated_at": time.Now()}},
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update project timestamp"})
+			return
+		}
 
+		// fetch images linked to this project
+		filter := bson.M{"project_id": objID}
 		cursor, err := imageCollection.Find(context.Background(), filter)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch images"})

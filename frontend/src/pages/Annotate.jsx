@@ -366,8 +366,8 @@ const Annotate = () => {
 
   return (
     <div className="min-h-full bg-gray-50">
-      <div className="flex justify-between px-6 pt-6">
-        <h1 className="text-5xl text-[#F88F2D] font-cadt pb-5">Annotate</h1>
+      <div className="flex justify-center px-6 pt-6">
+        <h1 className="text-5xl text-[#F88F2D] font-cadt pb-5">My Workspace</h1>
       </div>
 
       {/* Layout */}
@@ -542,7 +542,7 @@ const Annotate = () => {
                     </>
                   ) : (
                     <>
-                      SAVE
+                      Save project
                     </>
                   )}
                 </Button>

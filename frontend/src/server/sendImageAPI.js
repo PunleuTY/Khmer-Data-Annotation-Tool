@@ -27,7 +27,12 @@ export const uploadImages = async (projectId, files, annotations) => {
   return await res.json();
 };
 
-export const saveGroundTruth = async (filename, projectId, imageId, annotations) => {
+export const saveGroundTruth = async (
+  filename,
+  projectId,
+  imageId,
+  annotations
+) => {
   if (!annotations) return null;
   const payload = {
     filename,
