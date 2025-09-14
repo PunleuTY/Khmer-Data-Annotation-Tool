@@ -173,7 +173,7 @@ export const Home = () => {
             {/* Buttons */}
             <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-10">
               <a
-                href="/annotate"
+                href="/project"
                 className="bg-[#12284c] text-white px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-xl flex items-center gap-1 sm:gap-2 font-cadt text-[10px] sm:text-xs md:text-sm lg:text-base whitespace-nowrap"
               >
                 Get Started{" "}

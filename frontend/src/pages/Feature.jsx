@@ -10,8 +10,8 @@ import Footer from "../components/Footer";
 const featuresData = [
   {
     icon: FiUpload,
-    title: "Upload Dataset",
-    description: "Easily upload your image with format (JPG/PNG).",
+    title: "Create Project Workspace / Upload Dataset",
+    description: "Easily create workspace and upload your image with format (JPG/PNG).",
     tag: "Dataset",
   },
   {
@@ -53,7 +53,7 @@ const SidebarItem = () => {
         Ready to Annotate Your Data?
       </h2>
       <p className="mb-6 text-sm sm:text-base md:text-lg">
-        Upload your datasets Khmer or English and get detailed validation
+        Upload your datasets Khmer and get detailed validation
         results in seconds!
       </p>
       <a href="/annotate">
@@ -73,7 +73,7 @@ const Features = () => {
           Powerful Features
         </h1>
         <p className="text-gray-600 sm:text-lg text-base mt-4 sm:mt-6 mb-4 sm:mb-6 text-center">
-          Easily upload, annotate, and validate your Khmer and English datasets
+          Easily upload, annotate, and validate your Khmer datasets
           with OCR extraction, precise labeling, accuracy metrics, and export
           options-All in one efficient tool.
         </p>
