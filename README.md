@@ -3,7 +3,7 @@
 ![License Badge](https://img.shields.io/badge/license-MIT-green)
 ![Version Badge](https://img.shields.io/badge/version-1.0-blue)
 
-A web-based tool designed to simplify and accelerate Khmer text data annotation for machine learning projects.
+A web-based tool designed to simplify and speed up the annotation of Khmer text, enabling efficient preparation of datasets for AI and machine learning projects using Khmer script.
 
 ---
 
@@ -45,7 +45,7 @@ python main_server.py
 ```
 
 ## 📖 Usage
+![GIF_demo](https://github.com/user-attachments/assets/f65da9dc-bc25-4c89-b215-3718e6a779be)
 
-https://github.com/user-attachments/assets/cf338515-0db7-4274-a66d-0e5e4e2a34d9
 
 
