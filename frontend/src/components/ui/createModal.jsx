@@ -18,8 +18,9 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
     setLoading(true);
     try {
       const projectName = formData.title || "New Project";
+      const description = formData.description || "";
       console.log("createModal: calling createProjectAPI with", projectName);
-      const project = await createProjectAPI(projectName);
+      const project = await createProjectAPI(projectName, description);
       console.log("createModal: createProjectAPI returned", project.project.id);
 
       // notify parent if callback exists
@@ -66,7 +67,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
       />
 
       <div className="relative z-10 bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
-        <div className="flex  mb-8">
+        <div className="flex mb-8">
           <h2 className="text-center text-xl font-semibold text-gray-800">
             Create New Project
           </h2>
@@ -116,14 +117,14 @@ export const CreateProjectModal = ({ isOpen, onClose, onCreated }) => {
         <div className="flex justify-end mt-6 gap-2 ">
           <button
             onClick={handleClose}
-            className="bg-gray-300 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200"
+            className="bg-gray-300 hover:bg-gray-600 text-black px-6 py-2 rounded-md font-medium transition-colors duration-200"
           >
             Cancel
           </button>
           <button 
             onClick={createProject}
             disabled={loading}
-            className={`bg-red-500 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
+            className={`bg-[#F88F2D] hover:bg-orange-300 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >

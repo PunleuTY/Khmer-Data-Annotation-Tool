@@ -103,6 +103,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
   // Function to format date/time
   const formatLastEdit = (lastEdit) => {
+    console.log("Formatting lastEdit:", lastEdit);
     if (!lastEdit) return "";
     const date = new Date(lastEdit);
     return date.toLocaleString("en-US", {
@@ -167,22 +168,21 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
         <div className="overflow-x-auto shadow-lg rounded-lg">
           <table className="min-w-full bg-white border border-gray-200 table-fixed">
             {/* Table Header */}
-            <thead className="bg-red-500">
+            <thead className="bg-[#12284C]">
               <tr>
-                <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
+                {/* <th className="px-3 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-20">
                   Image
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-10">
+                </th> */}
+                <th className="px-6 py-3 text-left text-sm font-medium text-white tracking-wider w-10">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-80">
+                <th className="px-6 py-3 text-left text-sm font-medium text-white tracking-wider w-80">
                   Description
                 </th>
-                <th className="px-6 py-3 text-left  text-xs font-medium text-white uppercase tracking-wider w-40">
+                <th className="px-6 py-3 text-left  text-sm font-medium text-white tracking-wider w-40">
                   Last Edit
                 </th>
-                <th className="px-1 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-16"></th>
-                <th className="px-1 py-3 text-center text-xs font-medium text-white not-first-of-type:uppercase tracking-wider w-16"></th>
+                <th className="px-1 py-3 text-right pr-13 text-sm font-medium text-white tracking-wider w-16">Edit</th>
               </tr>
             </thead>
 
@@ -193,13 +193,11 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                   key={item.id || index}
                   className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
                 >
-                  {/* Image Column */}
-                  <td
+                  {/* <td
                     className="px-5 py-2 whitespace-nowrap w-20 "
                     onClick={() => navigate(`/Annotate/${item.id}`)} // ✅ correct
                     style={{ cursor: "pointer" }}
                   >
-                    {/* make image in the center of row */}
                     <div className="flex-shrink-0 h-12 w-12 mx-auto mb-2">
                       <img
                         className="h-14 w-14 rounded-lg object-cover border border-gray-300"
@@ -207,10 +205,14 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
                         alt={item.title || "Image"}
                       />
                     </div>
-                  </td>
+                  </td> */}
 
                   {/* Title Column */}
-                  <td className="px-3 py-4 w-10">
+                  <td
+                    className="px-6 py-4 w-10"
+                    onClick={() => navigate(`/Annotate/${item.id}`)} // ✅ correct
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="text-sm font-medium text-gray-900 truncate">
                       {item.name || "No title"}
                     </div>
@@ -218,7 +220,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
                   {/* Description Column */}
                   <td className="w-80">
-                    <div className="text-sm text-gray-900 px-5 ">
+                    <div className="text-sm text-gray-900 px-6 ">
                       <span className="mr-2 truncate">
                         {truncateDescription(item.description)}
                       </span>
@@ -235,28 +237,30 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
 
                   {/* Last Edit Column */}
                   <td className="px-6 py-4 whitespace-nowrap w-40">
-                    <div className="text-sm text-gray-900 ">
-                      {formatLastEdit(item.updated_at)}
+                    <div className="text-sm text-gray-900">
+                      {item.updated_at == "0001-01-01T00:00:00Z"
+                        ? formatLastEdit(item.created_at)
+                        : formatLastEdit(item.updated_at)}
+                    </div>
+                  </td>
+                  {/* Actions Column */}
+                  <td className="py-4 whitespace-nowrap text-sm font-medium w-32">
+                    <div className="flex pr-6 justify-end items-center gap-3">
+                      <button
+                        onClick={() => handleEdit(item)}
+                        className="text-white rounded text-xs font-medium transition-colors duration-200"
+                      >
+                        <MdEdit className="h-5 w-5 text-black hover:text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        className="text-white rounded text-xs font-medium transition-colors duration-200"
+                      >
+                        <MdDelete className="h-6 w-6 text-black hover:text-red-500" />
+                      </button>
                     </div>
                   </td>
 
-                  {/* Actions Column */}
-                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-end w-16">
-                    <button
-                      onClick={() => handleEdit(item)}
-                      className="text-white rounded text-xs font-medium transition-colors duration-200"
-                    >
-                      <MdEdit className="-mr-5 h-5 w-5 text-black" />
-                    </button>
-                  </td>
-                  <td className="whitespace-nowrap text-sm font-medium text-right w-16">
-                    <button
-                      onClick={() => handleDelete(item)}
-                      className="text-white rounded text-xs font-medium transition-colors duration-200t"
-                    >
-                      <MdDelete className=" mr-8 h-6 w-6 text-red-500 hover:text-red-700" />
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -275,7 +279,7 @@ const ReusableTable = ({ data = [], onProjectCreated }) => {
       <div className="flex justify-end mt-4">
         <button
           onClick={() => setCreateModalOpen(true)}
-          className="bg-red-500 hover:bg-red-600 text-white w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+          className="bg-[#F88F2D] hover:bg-[#fb9a40] text-white w-16 h-16 rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
         >
           <MdCreateNewFolder className="h-8 w-8" />
         </button>

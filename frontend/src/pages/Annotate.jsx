@@ -358,7 +358,7 @@ const Annotate = () => {
   function Loader({ text }) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-[#ff3f34]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-[#12284c]" />
         <span className="text-sm text-gray-700">{text}</span>
       </div>
     );
@@ -366,15 +366,15 @@ const Annotate = () => {
 
   return (
     <div className="min-h-full bg-gray-50">
-      <div className="flex justify-between px-6 pt-6">
-        <h1 className="text-5xl text-[#ff3f34] font-cadt pb-5">Annotate</h1>
+      <div className="flex justify-center px-6 pt-6">
+        <h1 className="text-5xl text-[#F88F2D] font-cadt pb-5">My Workspace</h1>
       </div>
 
       {/* Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-6">
         {/* Upload + Dataset */}
         <div>
-          <Card className="bg-white rounded-xl h-full shadow-md border-b-4 border-t-4 border-[#ff3f34]">
+          <Card className="bg-white rounded-xl h-full shadow-md border-b-4 border-t-4 border-[#12284c]">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <ImagePlus className="w-4 h-4" />
@@ -409,7 +409,7 @@ const Annotate = () => {
                 <div className="mt-2 max-h-56 overflow-auto border rounded-md divide-y">
                   {images.length === 0 && (
                     <p className="text-sm text-gray-500 p-3">
-                      no images uploaded yet
+                      No images uploaded yet
                     </p>
                   )}
                   {images.map((img, idx) => (
@@ -417,7 +417,7 @@ const Annotate = () => {
                       key={img.id}
                       className={`w-full text-left p-2 text-sm hover:bg-blue-50 ${
                         img.id === currentId
-                          ? "bg-blue-50 border-l-4 border-[#ff3f34]"
+                          ? "bg-blue-50 border-l-4 border-[#12284c]"
                           : ""
                       }`}
                       onClick={() => setCurrentId(img.id)}
@@ -470,10 +470,10 @@ const Annotate = () => {
 
         {/* Annotation Canvas */}
         <div className="col-span-1 md:col-span-1 lg:col-span-3">
-          <Card className="overflow-hidden bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]">
+          <Card className="overflow-hidden bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#12284c]">
             <CardHeader className="pb-3 flex items-center justify-between">
               <CardTitle className="text-base">Annotation Canvas</CardTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 overflow-auto">
                 <Button
                   variant="outline"
                   size="sm"
@@ -493,7 +493,7 @@ const Annotate = () => {
                 <Button
                   variant={mode === "box" ? "default" : "outline"}
                   onClick={() => setMode("box")}
-                  className={mode === "box" ? "bg-[#ff3f34] text-white" : ""}
+                  className={mode === "box" ? "bg-[#12284c] text-white" : ""}
                 >
                   <SquareDashedMousePointer className="w-4 h-4" />
                 </Button>
@@ -501,7 +501,7 @@ const Annotate = () => {
                   variant={mode === "polygon" ? "default" : "outline"}
                   onClick={() => setMode("polygon")}
                   className={
-                    mode === "polygon" ? "bg-[#ff3f34] text-white" : ""
+                    mode === "polygon" ? "bg-[#12284c] text-white" : ""
                   }
                 >
                   <VectorSquare className="w-4 h-4" />
@@ -509,7 +509,7 @@ const Annotate = () => {
                 <Button
                   variant={mode === "edit" ? "default" : "outline"}
                   onClick={() => setMode("edit")}
-                  className={mode === "edit" ? "bg-[#ff3f34] text-white" : ""}
+                  className={mode === "edit" ? "bg-[#12284c] text-white" : ""}
                 >
                   <PenTool className="w-4 h-4" /> Edit
                 </Button>
@@ -534,32 +534,33 @@ const Annotate = () => {
                   size="sm"
                   onClick={fetchSaveGroundTruth}
                   disabled={saveLoading}
+                  className={"bg-[#12284c] text-white"}
                 >
                   {saveLoading ? (
                     <>
-                      <ScanText className="w-4 h-4 mr-2" /> SAVING ..
+                      SAVING ..
                     </>
                   ) : (
                     <>
-                      <ScanText className="w-4 h-4 mr-2" /> SAVE
+                      Save project
                     </>
                   )}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setExportOpen(true)}
-                  className="bg-[#ff3f34] text-white"
+                  className="bg-[#12284c] text-white"
                 >
                   <Download className="w-4 h-4 mr-2" /> Export
                 </Button>
-                <Button
+                {/* <Button
                   variant="ghost"
                   onClick={onClearAll}
                   disabled={!images.length}
-                  className="bg-[#ff3f34] text-white"
+                  className="bg-[#12284c] text-white"
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> ClearAll
-                </Button>
+                </Button> */}
               </div>
             </CardHeader>
             <CardContent>
@@ -617,7 +618,7 @@ const Annotate = () => {
             </TabsContent>
             <TabsContent
               value="json"
-              className="mt-4 bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#ff3f34]"
+              className="mt-4 bg-white rounded-xl shadow-md border-b-4 border-t-4 border-[#12284c]"
             >
               <JsonEditor
                 images={images}
